@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="Smart1" />
+        <module name="Smart2" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
