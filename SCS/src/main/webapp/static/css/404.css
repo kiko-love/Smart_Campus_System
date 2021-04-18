@@ -1,0 +1,36 @@
+.not-found-page .content {
+    width: 992px;
+    margin: 0 auto 80px;
+    display: block;
+    position: relative;
+
+}
+
+.not-found-page .content .top-img {
+    display: block;
+    width: 288px;
+    margin: 0 auto;
+}
+
+.not-found-page .content .info {
+    font-size: 14px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.not-found-page .content .info h2 {
+    font-size: 26px;
+    color: #444;
+    line-height: 30px;
+}
+
+.not-found-page .content .info .state {
+    color: #777;
+    margin: 7px 0 35px;
+    font-size: 16px;
+    line-height: 20px;
+}
+
+.red-link {
+    color: #9A0000;
+}
