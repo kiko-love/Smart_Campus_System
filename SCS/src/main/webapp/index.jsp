@@ -86,7 +86,7 @@
 <div class="zy_lofo_main" id="Login_main">
     <fieldset class="layui-elem-field layui-field-title zy_mar_02">
         <legend>
-            <img src="../../../../../JavaWebDemo/response/src/main/webapp/image/plane.png" style="height: 50px;">
+            <img src="static/images/plane.png" style="height: 50px;">
             <h3>欢迎登陆</h3>
         </legend>
     </fieldset>
