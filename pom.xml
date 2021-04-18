@@ -8,6 +8,9 @@
     <artifactId>Smart_Campus_System</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>SCS</module>
+    </modules>
 
     <properties>
         <maven.compiler.source>15</maven.compiler.source>
