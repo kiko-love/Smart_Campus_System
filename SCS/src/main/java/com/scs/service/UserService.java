@@ -10,7 +10,6 @@ public interface UserService {
      * @param user
      */
     void Save(User user);
-
     /**
      * 查找该用户
      * @param username

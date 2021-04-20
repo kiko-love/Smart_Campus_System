@@ -1,0 +1,150 @@
+[
+	{
+		"id": 1,
+		"title": "个人中心",
+		"type": 0,
+		"icon": "layui-icon layui-icon-username",
+		"href": "",
+		"children": [
+			{
+				"id": 10,
+				"title": "个人信息",
+				"icon": "layui-icon layui-icon-console",
+				"type": 1,
+				"openType": "_iframe",
+				"href": "view/console/console1.html"
+			},
+			{
+				"id": 13,
+				"title": "信息管理",
+				"icon": "layui-icon layui-icon-console",
+				"type": 1,
+				"openType": "_iframe",
+				"href": "view/console/console2.html"
+			}
+		]
+	},
+	{
+		"id": "component",
+		"title": "日常管理",
+		"icon": "layui-icon layui-icon-component",
+		"type": 0,
+		"href": "",
+		"children": [
+			{
+				"id": 201,
+				"title": "我的考勤",
+				"icon": "layui-icon layui-icon-console",
+				"type": 0,
+				"children": [
+					{
+						"id": 2011,
+						"title": "考勤签到",
+						"icon": "layui-icon layui-icon-face-smile",
+						"type": 1,
+						"openType": "_iframe",
+						"href": "view/document/button.html"
+					}
+				]
+			},
+			{
+				"id": 203,
+				"title": "课程管理",
+				"icon": "layui-icon layui-icon-console",
+				"type": 0,
+				"children": [
+					{
+						"id": 2031,
+						"title": "数据表格",
+						"icon": "layui-icon layui-icon-face-cry",
+						"type": 1,
+						"openType": "_iframe",
+						"href": "view/document/table.html"
+					}
+				]
+			},
+			{
+				"id": 202,
+				"title": "作业管理",
+				"icon": "layui-icon layui-icon-console",
+				"type": 0,
+				"children": [
+					{
+						"id": 2021,
+						"title": "抽屉组件",
+						"icon": "layui-icon layui-icon-face-cry",
+						"type": 1,
+						"openType": "_iframe",
+						"href": "view/document/drawer.html"
+					}
+				]
+			},
+			{
+				"id": 60331,
+				"title": "资源管理",
+				"icon": "layui-icon layui-icon-console",
+				"type": 0,
+				"children": [
+					{
+						"id": 60131,
+						"title": "多选项卡",
+						"icon": "layui-icon layui-icon-face-cry",
+						"type": 1,
+						"openType": "_iframe",
+						"href": "view/document/tab.html"
+					}
+				]
+			}
+		]
+	},
+	{
+		"id": "system",
+		"title": "活动中心",
+		"icon": "layui-icon layui-icon-set-fill",
+		"type": 0,
+		"href": "",
+		"children": [
+			{
+				"id": 601,
+				"title": "活动列表",
+				"icon": "layui-icon layui-icon-face-smile",
+				"type": 1,
+				"openType": "_iframe",
+				"href": "view/system/user.html"
+			},
+			{
+				"id": 605,
+				"title": "行为日志",
+				"icon": "layui-icon layui-icon-face-cry",
+				"type": 1,
+				"openType": "_iframe",
+				"href": "view/system/log.html"
+			}
+		]
+	},
+	{
+		"id": "echarts",
+		"title": "数据图表",
+		"icon": "layui-icon layui-icon-chart",
+		"type": 0,
+		"href": "",
+		"children": [
+			{
+				"id": 12121,
+				"title": "折线图",
+				"icon": "layui-icon layui-icon-face-smile",
+				"type": 1,
+				"openType": "_iframe",
+				"href": "view/echarts/line.html"
+			},
+			{
+				"id": 121212,
+				"title": "柱状图",
+				"icon": "layui-icon layui-icon-face-smile",
+				"type": 1,
+				"openType": "_iframe",
+				"href": "view/echarts/column.html"
+			}
+		]
+	}
+]

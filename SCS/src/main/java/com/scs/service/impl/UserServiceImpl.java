@@ -13,18 +13,13 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserDao userDao;
-
-
     @Override
     public void Save(User user) {
 
     }
-
     @Override
-
     public List<User> FindByName(String username) {
         List<User> users = userDao.FindByName(username);
-
         return users;
     }
 }

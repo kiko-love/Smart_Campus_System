@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--绑定Mapper接口-->
+<mapper namespace="com.scs.dao.studentMapper">
+    <select id="getStudents" resultType="com.scs.pojo.student">
+        select *
+        from usersdb.students
+    </select>
+    <select id="getStudentById" resultType="com.scs.pojo.student">
+        select *
+        from usersdb.students
+        <where>
+            <if test="userId != null and userId != ''">
+                userId = #{userId}
+            </if>
+        </where>
+    </select>
+
+    <insert id="addStudent" parameterType="com.scs.pojo.student">
+        insert into usersdb.students(userid, realName, department, sex, phone, levels)
+        values (#{userId}, #{realName}, #{department}, #{sex}, #{phone}, #{levels})
+    </insert>
+
+    <delete id="removeStudent" parameterType="java.lang.String">
+        delete
+        from usersdb.students
+        where userId = #{userId}
+    </delete>
+
+    <update id="updateStudent" parameterType="com.scs.pojo.student" >
+        update usersdb.students
+        <set>
+            <if test="userId !=null and userId!=''">
+                userId=#{userId},
+            </if>
+            <if test="department !=null and department!=''">
+                department=#{department},
+            </if>
+            <if test="realName !=null and realName!=''">
+                realName=#{realName},
+            </if>
+            <if test="sex !=null and sex!=''">
+                sex=#{sex},
+            </if>
+            <if test="phone !=null and phone!=''">
+                phone=#{phone},
+            </if>
+            <if test="levels !=null and levels!=''">
+                levels=#{levels},
+            </if>
+        </set>
+        where userId = #{userId}
+    </update>
+</mapper>

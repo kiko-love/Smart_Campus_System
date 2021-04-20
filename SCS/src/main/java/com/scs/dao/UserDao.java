@@ -9,13 +9,11 @@ import java.util.List;
 
 @Repository("UserDao")
 public interface UserDao {
-@Insert("insert into user (username,password) values (#{username},#{password})")
+    @Insert("insert into user (username,password) values (#{username},#{password})")
     void Save(User user);
 
     @Select("select * from user where userName=#{userName}")
     List<User> FindByName(String username);
-
-
 
 
 }
