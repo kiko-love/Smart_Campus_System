@@ -20,18 +20,17 @@
     <spring.version>5.0.2.RELEASE</spring.version>
     <slf4j.version>1.6.6</slf4j.version>
     <log4j.version>1.2.12</log4j.version>
-    <shiro.version>1.2.3</shiro.version>
     <mysql.version>5.1.6</mysql.version>
     <mybatis.version>3.4.5</mybatis.version>
   </properties>
 
   <dependencies>
+    <!-- spring -->
     <dependency>
       <groupId>org.aspectj</groupId>
       <artifactId>aspectjweaver</artifactId>
       <version>1.6.8</version>
     </dependency>
-
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-aop</artifactId>
@@ -44,32 +43,7 @@
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
-      <artifactId>spring-context-support</artifactId>
-      <version>${spring.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
       <artifactId>spring-web</artifactId>
-      <version>${spring.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-orm</artifactId>
-      <version>${spring.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-beans</artifactId>
-      <version>${spring.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-core</artifactId>
-      <version>${spring.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-test</artifactId>
       <version>${spring.version}</version>
     </dependency>
     <dependency>
@@ -79,14 +53,24 @@
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
       <artifactId>spring-tx</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-jdbc</artifactId>
       <version>${spring.version}</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.12</version>
-      <scope>test</scope>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>mysql</groupId>
@@ -132,17 +116,33 @@
       <artifactId>mybatis</artifactId>
       <version>${mybatis.version}</version>
     </dependency>
+
     <dependency>
       <groupId>org.mybatis</groupId>
       <artifactId>mybatis-spring</artifactId>
       <version>1.3.0</version>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/com.alibaba/druid -->
+    <!-- https://mvnrepository.com/artifact/com.alibaba/druid -->
     <dependency>
       <groupId>com.alibaba</groupId>
       <artifactId>druid</artifactId>
       <version>1.1.17</version>
     </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>3.1.0</version>
+      <!--防止servlet自带api与tomcat配置的api相互冲突-->
+      <!--provided意味着只有在开发编译才会进行引用-->
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+    <groupId>com.alibaba</groupId>
+    <artifactId>fastjson</artifactId>
+    <version>1.2.28</version>
 
+  </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
@@ -158,6 +158,9 @@
       <artifactId>jackson-annotations</artifactId>
       <version>2.9.0</version>
     </dependency>
+
+
+
 
   </dependencies>
 
