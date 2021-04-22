@@ -11,9 +11,9 @@
         <div class="main-container">
             <div class="main-container">
                 <div class="layui-form-item">
-                    <label class="layui-form-label">账号</label>
+                    <label class="layui-form-label">学号</label>
                     <div class="layui-input-block">
-                        <input type="text" name="username" value="854085467" lay-verify="title" autocomplete="off" placeholder="请输入标题" class="layui-input">
+                        <input type="text" name="userId" lay-verify="title" autocomplete="off" placeholder="请输入标题" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -23,28 +23,34 @@
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label">邮箱</label>
+                    <label class="layui-form-label">院系</label>
                     <div class="layui-input-block">
-                        <input type="text"  name="email" value="854085467@qq.com" lay-verify="title" autocomplete="off" placeholder="请输入标题" class="layui-input">
+                        <input type="text"  name="department" lay-verify="title" autocomplete="off" placeholder="请输入标题" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
-                    <label class="layui-form-label">密码</label>
+                    <label class="layui-form-label">学历层次</label>
                     <div class="layui-input-block">
-                        <input type="text"  name="password" value="*******" lay-verify="title" autocomplete="off" placeholder="请输入标题" class="layui-input">
+                        <select name="levels" lay-verify="">
+                            <option id="level" value="" selected>请选择学历层次</option>
+                            <option id="level01" value="专科" >专科</option>
+                            <option id="level02" value="本科">本科</option>
+                            <option id="level03" value="硕士">硕士</option>
+                            <option id="level04" value="博士">博士</option>
+                        </select>
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">电话</label>
                     <div class="layui-input-block">
-                        <input type="text"  name="phone" value="15555555555" lay-verify="title" autocomplete="off" placeholder="请输入标题" class="layui-input">
+                        <input type="text"  name="phone" lay-verify="title" autocomplete="off" placeholder="请输入标题" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">性别</label>
                     <div class="layui-input-block">
-                        <input type="radio" name="sex" value="0" title="男">
-                        <input type="radio" name="sex" value="1" title="女" checked>
+                        <input type="radio" name="sex" value="1" title="男">
+                        <input type="radio" name="sex" value="2" title="女" checked>
                     </div>
                 </div>
             </div>
@@ -66,32 +72,39 @@
 <script src="../../../component/layui/layui.js"></script>
 <script src="../../../component/pear/pear.js"></script>
 <script>
-layui.use(['form','jquery'],function(){
+layui.use(['form','jquery','loading'],function(){
     let form = layui.form;
     let $ = layui.jquery;
+    let loading = layui.loading;
 
     form.on('submit(user-save)', function(data){
-        let roleIds = "";
-        $('input[type=checkbox]:checked').each(function() {
-            roleIds += $(this).val()+",";
-        });
-        roleIds = roleIds.substr(0,roleIds.length-1);
-        data.field.roleIds = roleIds;
-
+        //console.log(data.field);
+        loading.Load(3,"");
         $.ajax({
-            url:'/system/user/save',
-            data:JSON.stringify(data.field),
+            url:'/admin/stu/addStudent',
+            data: data.field,
             dataType:'json',
             contentType:'application/json',
-            type:'post',
+            type:'get',
             success:function(result){
+                loading.loadRemove();
+                //console.log(JSON.stringify(result.data));
                 if(result.success){
                     layer.msg(result.msg,{icon:1,time:1000},function(){
                         parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前页
-                        parent.layui.table.reload("user-table");
+                        //console.log(JSON.stringify(result.data));
+                        parent.layui.table.reload("user-table",{
+                            data:result.data,
+                            page: {
+                                layout: ['count', 'prev', 'page', 'next', 'skip']
+                                , curr: parent.layui.jquery(".layui-laypage-em").next().html()
+                                ,groups:3
+                                ,last: false
+                            }
+                        });
                     });
                 }else{
-                    layer.msg(result.msg,{icon:2,time:1000});
+                    layer.msg(result.msg,{icon:2,time:1500});
                 }
             }
         })

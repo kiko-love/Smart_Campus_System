@@ -1,6 +1,6 @@
 
 (function(define) {
-	define(['jquery'], function($) {
+	define(['src/main/webapp/static/component/pear/module/jQuery'], function($) {
 		return (function() {
 			var $container;
 			var listener;
@@ -477,7 +477,7 @@
 	});
 }(typeof define === 'function' && define.amd ? define : function(deps, factory) {
 	if (typeof module !== 'undefined' && module.exports) { //Node
-		module.exports = factory(require('jquery'));
+		module.exports = factory(require('src/main/webapp/static/component/pear/module/jQuery'));
 	} else if (window.layui && layui.define) {
 		layui.define('jquery', function(exports) { //layui加载
 			exports('toastr', factory(layui.jquery));

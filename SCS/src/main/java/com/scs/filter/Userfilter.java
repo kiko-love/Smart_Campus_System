@@ -24,7 +24,7 @@ public class Userfilter implements Filter {
             filterChain.doFilter(servletRequest, servletResponse);
         }
         else {
-            res.sendRedirect("http://localhost:8080/SCS/index.jsp");
+            res.sendRedirect("/");
         }
     }
     @Override

@@ -8,7 +8,7 @@
         select *
         from usersdb.students
     </select>
-    <select id="getStudentById" resultType="com.scs.pojo.student">
+    <select id="getStudentById" resultType="com.scs.pojo.student" parameterType="string">
         select *
         from usersdb.students
         <where>

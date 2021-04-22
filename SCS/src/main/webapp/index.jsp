@@ -12,7 +12,6 @@
     <link rel="shortcut icon" href="static/images/favicon.ico" type="image/x-icon">
     <script src="static/layui/layui.js" charset="UTF-8"></script>
     <script src="static/js/md5.js" charset="utf-8"></script>
-    <script src="static/js/jQuery.js" charset="UTF-8"></script>
     <script src="static/js/login.js" charset="UTF-8"></script>
 
     <style>
@@ -36,7 +35,9 @@
 <div class="layui-fluid">
     <div class="layui-row layui-col-space15">
         <div class="layui-col-sm12 layui-col-md12 zy_mar_01">
-            <blockquote class="layui-elem-quote"><h1>欢迎登录智慧校园系统</h1></blockquote>
+            <blockquote class="layui-elem-quote">
+                <h1>欢迎登录智慧校园系统</h1>
+            </blockquote>
         </div>
     </div>
 </div>
@@ -110,7 +111,7 @@
                 <div class="layui-row">
                     <div class="layui-col-xs4 layui-col-sm4 layui-col-md4">
                         <div class="layui-form-item">
-                            <input type="text" name="vercode" id="vercode" lay-verify="required|vercodes"
+                            <input type="text" id="vercode" lay-verify="required|vercodes"
                                    autocomplete="off" placeholder="验证码" lay-reqText="请填写验证码" class="layui-input" maxlength="4">
                             <i class="layui-icon layui-icon-vercode zy_lofo_icon"></i>
                         </div>

@@ -6,13 +6,13 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 		<title> 智慧校园系统-教师端 </title>
 		<!-- 依 赖 样 式 -->
-		<link rel="stylesheet" href="component/pear/css/pear.css" />
+		<link rel="stylesheet" href="static/component/pear/css/pear.css" />
 		<!-- 加 载 样 式-->
-		<link rel="stylesheet" href="admin/css/load.css" />
+		<link rel="stylesheet" href="static/admin/css/load.css" />
 		<!-- 布 局 样 式 -->
-		<link rel="stylesheet" href="admin/css/admin.css" />
+		<link rel="stylesheet" href="static/admin/css/admin.css" />
 		<!-- 网站图标 -->
-		<link rel="shortcut icon" href="admin/images/favicon.ico" type="image/x-icon">
+		<link rel="shortcut icon" href="static/admin/images/favicon.ico" type="image/x-icon">
 	</head>
 	<!-- 结 构 代 码 -->
 	<body class="layui-layout-body pear-admin">
@@ -33,7 +33,7 @@
 					<li class="layui-nav-item user">
 						<!-- 头 像 -->
 						<a href="javascript:;">
-							<img src="admin/images/avatar.jpg" class="layui-nav-img">
+							<img src="static/admin/images/avatar.jpg" class="layui-nav-img">
 						</a>
 						<!-- 功 能 菜 单 -->
 						<dl class="layui-nav-child">
@@ -76,8 +76,8 @@
 			<a href="#" class="layui-icon layui-icon-shrink-right"></a>
 		</div>
 		<!-- 依 赖 脚 本 -->
-		<script src="component/layui/layui.js"></script>
-		<script src="component/pear/pear.js"></script>
+		<script src="static/component/layui/layui.js"></script>
+		<script src="static/component/pear/pear.js"></script>
 		<!-- 框 架 初 始 化 -->
 		<script>
 			layui.use(['admin','jquery','convert','popup'], function() {

@@ -1,6 +1,6 @@
 [{
 		"id": 1,
-		"title": "工作空间",
+		"title": "主菜单",
 		"type": 0,
 		"icon": "layui-icon layui-icon-console",
 		"href": "",
@@ -18,20 +18,6 @@
 			"type": 1,
 			"openType": "_iframe",
 			"href": "view/console/console2.html"
-		}, {
-			"id": 14,
-			"title": "百度一下",
-			"icon": "layui-icon layui-icon-console",
-			"type": 1,
-			"openType": "_iframe",
-			"href": "http://www.baidu.com"
-		}, {
-			"id": 15,
-			"title": "主题预览",
-			"icon": "layui-icon layui-icon-console",
-			"type": 1,
-			"openType": "_iframe",
-			"href": "view/system/theme.html"
 		}]
 	},
 	{
@@ -232,30 +218,6 @@
 		}]
 	},
 	{
-		"id": "result",
-		"title": "结果页面",
-		"icon": "layui-icon layui-icon-auz",
-		"type": 0,
-		"href": "",
-		"children": [{
-				"id": "success",
-				"title": "成功",
-				"icon": "layui-icon layui-icon-face-smile",
-				"type": 1,
-				"openType": "_iframe",
-				"href": "view/result/success.html"
-			},
-			{
-				"id": "failure",
-				"title": "失败",
-				"icon": "layui-icon layui-icon-face-cry",
-				"type": 1,
-				"openType": "_iframe",
-				"href": "view/result/error.html"
-			}
-		]
-	},
-	{
 		"id": "error",
 		"title": "错误页面",
 		"icon": "layui-icon layui-icon-face-cry",
@@ -348,27 +310,6 @@
 		]
 	},
 	{
-		"id": "common",
-		"title": "常用页面",
-		"icon": "layui-icon layui-icon-template-1",
-		"type": 0,
-		"href": "",
-		"children": [{
-			"id": 701,
-			"title": "登录页面",
-			"icon": "layui-icon layui-icon-face-smile",
-			"type": 1,
-			"openType": "_iframe",
-			"href": "login.html"
-		}, {
-			"id": 702,
-			"title": "空白页面",
-			"icon": "layui-icon layui-icon-face-smile",
-			"type": 1,
-			"openType": "_iframe",
-			"href": "view/system/space.html"
-		}]
-	}, {
 		"id": "echarts",
 		"title": "数据图表",
 		"icon": "layui-icon layui-icon-chart",
@@ -388,21 +329,6 @@
 			"type": 1,
 			"openType": "_iframe",
 			"href": "view/echarts/column.html"
-		}]
-	},
-	{
-		"id": "code",
-		"title": "开发工具",
-		"icon": "layui-icon layui-icon-util",
-		"type": 0,
-		"href": "",
-		"children": [{
-			"id": 801,
-			"title": "表单构建",
-			"icon": "layui-icon layui-icon-util",
-			"type": 1,
-			"openType": "_iframe",
-			"href": "component/code/index.html"
 		}]
 	}
 ]

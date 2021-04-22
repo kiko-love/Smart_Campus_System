@@ -25,24 +25,35 @@ public class UserController {
     public @ResponseBody InformToFront Login(User user, HttpServletRequest request, HttpServletResponse response) throws Exception {
         String userName = user.getUserName();
         String password = user.getMd5password();
-        System.out.println(userName);
+        System.out.println(password);
         List<User> users = userService.FindByName(userName);
         System.out.println(users);
         System.out.println(users.size());
         if (users.size()==0){
-            InformToFront status1 =new InformToFront("用户名不存在", "-1", null);     //没有该用户
-            return status1;
+            InformToFront status_err =new InformToFront("Username does not exist", "-1", null);     //没有该用户
+            return status_err;
         }
-        if(users.size()==1&&users.get(0).getUserName().equals(userName)){       //查到一条记录，并且用户名对应
-            if(users.get(0).getMd5password().equals(password)){        //密码正确
-                request.getSession().setAttribute("userInformation",userName);
-                request.getRequestDispatcher("/WEB-INF/pages/success.jsp").forward(request,response);
+        if(users.size()==1&&users.get(0).getUserName().equals(userName)){
+            //查到一条记录，并且用户名对应
+            String md5password = users.get(0).getMd5password();
+            if (md5password!=null){
+                if(md5password.equals(password)){        //密码正确
+                    InformToFront status_success= new InformToFront("Success", "0", null);     //密码不正确
+                    request.getSession().setAttribute("userInformation",userName);
+                   // request.getRequestDispatcher("/admin.jsp").forward(request,response);
+                    return status_success;
+                }
+                else {
+                    InformToFront status_err= new InformToFront("Incorrect password", "-2", null);     //密码不正确
+                    return status_err;
+                }
+            }else {
+                InformToFront status_success= new InformToFront("Request error", "110", null);     //密码不正确
+                return status_success;
             }
-            else {
-               InformToFront status2= new InformToFront("密码错误", "-2", null);     //密码不正确
-                return status2;
-            }
+
         }
         return null;
     }
+
 }
