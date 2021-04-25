@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>用户管理</title>
+    <link rel="stylesheet" href="../../component/pear/css/pear.css"/>
+</head>
+
+<body class="pear-container">
+<div class="layui-card">
+    <div class="layui-card-body">
+        <form class="layui-form" action="">
+            <div class="layui-form-item">
+                <div class="layui-form-item layui-inline">
+                    <label class="layui-form-label">学生ID</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="userId" placeholder="" class="layui-input">
+                    </div>
+                </div>
+                <!--                <div class="layui-form-item layui-inline">-->
+                <!--                    <label class="layui-form-label">姓名</label>-->
+                <!--                    <div class="layui-input-inline">-->
+                <!--                        <input type="text" name="realName" placeholder="" class="layui-input">-->
+                <!--                    </div>-->
+                <!--                </div>-->
+                <!--                <div class="layui-form-item layui-inline">-->
+                <!--                    <label class="layui-form-label">邮箱</label>-->
+                <!--                    <div class="layui-input-inline">-->
+                <!--                        <input type="text" name="email" placeholder="" class="layui-input">-->
+                <!--                    </div>-->
+                <!--                </div>-->
+                <div class="layui-form-item layui-inline">
+                    <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="user-query">
+                        <i class="layui-icon layui-icon-search"></i>
+                        查询
+                    </button>
+                    <button type="reset" class="pear-btn pear-btn-md">
+                        <i class="layui-icon layui-icon-refresh"></i>
+                        重置
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="layui-card">
+    <div class="layui-card-body">
+        <table id="user-table" lay-filter="user-table"></table>
+    </div>
+</div>
+
+<script type="text/html" id="user-toolbar">
+    <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
+        <i class="layui-icon layui-icon-add-1"></i>
+        新增
+    </button>
+    <button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove">
+        <i class="layui-icon layui-icon-delete"></i>
+        删除
+    </button>
+</script>
+
+<script type="text/html" id="user-bar">
+    <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>
+    </button>
+    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i>
+    </button>
+</script>
+
+<script type="text/html" id="user-enable">
+    <input type="checkbox" name="enable" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="user-enable"
+           checked="{{ d.enable == 0 ? 'true' : 'false' }}">
+</script>
+
+<script type="text/html" id="user-sex">
+    {{#if (d.sex == 1) { }}
+    <span>男</span>
+    {{# }else if(d.sex == 2){ }}
+    <span>女</span>
+    {{# } }}
+</script>
+
+<script type="text/html" id="user-login">
+    {{#if (d.login == 0) { }}
+    <span>在线</span>
+    {{# }else if(d.sex == 1){ }}
+    <span>离线</span>
+    {{# } }}
+</script>
+
+<script type="text/html" id="user-createTime">
+    {{layui.util.toDateString(d.createTime, 'yyyy-MM-dd HH:mm:ss')}}
+</script>
+
+<script src="https://www.layuicdn.com/layui-v2.6.4/layui.js"></script>
+<script src="../../component/pear/pear.js"></script>
+<script>
+    layui.use(['table', 'form', 'jquery', 'common'], function () {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+        let common = layui.common;
+
+        let MODULE_PATH = "operate/";
+
+        let cols = [
+            [{
+                type: 'checkbox'
+            },
+                {
+                    field: 'userId',
+                    title: 'ID',
+                    //width: 80,
+                    sort: true,
+                    //fixed: true
+                },
+                {
+                    title: '姓名',
+                    field: 'realName',
+                    align: 'center'
+                },
+                {
+                    title: '性别',
+                    field: 'sex',
+                    align: 'center',
+                    width: 80,
+                    templet: '#user-sex'
+                },
+                {
+                    title: '班级',
+                    field: 'classes',
+                    align: 'center'
+                },
+                {
+                    title: '院系',
+                    field: 'department',
+                    align: 'center'
+                },
+                // {
+                //     title: '启用',
+                //     field: 'enable',
+                //     align: 'center',
+                //     templet: '#user-enable'
+                // },
+                {
+                    title: '电话',
+                    field: 'phone',
+                    align: 'center'
+                },
+                {
+                    title: '学历层次',
+                    field: 'levels',
+                    align: 'center'
+                },
+                // {
+                //     title: '登录',
+                //     field: 'login',
+                //     align: 'center',
+                //     templet: '#user-login'
+                // },
+                {
+                    title: '注册日期',
+                    field: 'createTime',
+                    align: 'center',
+                    templet: '#user-createTime'
+                },
+                {
+                    title: '操作',
+                    toolbar: '#user-bar',
+                    align: 'center',
+                    width: 130
+                }
+            ]
+        ]
+
+        var tableIns = table.render({
+            elem: '#user-table',
+            url: '/admin/stu/getStudents',
+            method:"post",
+            page: {
+                layout: ['count', 'prev', 'page', 'next', 'skip']
+                , curr: 1
+                , groups: 3
+                , last: false
+            },
+            limit: 5,
+            //limits:[5,10,20],
+            cols: cols,
+            id: 'user-table',
+            skin: 'line',
+            toolbar: '#user-toolbar',
+            defaultToolbar: [{
+                title: '重新获取数据',
+                layEvent: 'refresh',
+                icon: 'layui-icon-refresh',
+            }, 'filter', 'print', 'exports'],
+            //一定要加这个参数代码，否则会由于layui自身的bug导致无法分页
+            parseData: function (res) { //将原始数据解析成 table 组件所规定的数据，res为从url中get到的数据
+                var result;
+                //console.log(JSON.stringify(res.data));
+                if (this.page.curr) {
+                    result = res.data.slice(this.limit * (this.page.curr - 1), this.limit * this.page.curr);
+                } else {
+                    result = res.data.slice(0, this.limit);
+                }
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": res.count, //解析数据长度
+                    "data": result //解析数据列表
+                };
+            }
+        });
+
+        table.on('tool(user-table)', function (obj) {
+            if (obj.event === 'remove') {
+                window.remove(obj);
+            } else if (obj.event === 'edit') {
+                window.edit(obj);
+            }
+        });
+
+        table.on('toolbar(user-table)', function (obj) {
+            if (obj.event === 'add') {
+                window.add();
+            } else if (obj.event === 'refresh') {
+                window.refresh();
+            } else if (obj.event === 'batchRemove') {
+                window.batchRemove(obj);
+            } else if (obj.event === 'edit') {
+                //obj.del();
+                window.edit(obj);
+            }
+        });
+
+        form.on('submit(user-query)', function (data) {
+            tableIns.reload({
+                //url: '/getData2',
+                url: '/admin/stu/search',
+                method: 'post',
+                page: {
+                    layout: ['count', 'prev', 'page', 'next', 'skip']
+                    , curr: 1
+                    , groups: 3
+                    , last: false
+                }
+                , where: data.field
+            })
+            return false;
+        });
+
+        form.on('switch(user-enable)', function (obj) {
+            layer.tips(this.value + ' ' + this.name + '：' + obj.elem.checked, obj.othis);
+        });
+
+        window.add = function () {
+            layer.open({
+                type: 2,
+                title: '新增',
+                shade: 0.1,
+                area: [common.isModile() ? '100%' : '500px', common.isModile() ? '100%' : '550px'],
+                content: MODULE_PATH + 'add.html'
+            });
+        }
+
+        window.edit = function (obj) {
+            layer.open({
+                type: 2,
+                title: '修改:' + obj.data['userId'],
+                shade: 0.1,
+                area: ['500px', '550px'],
+                content: MODULE_PATH + 'edit.html',
+                success: function (layero, index) {
+                    var body = layer.getChildFrame('body', index);
+                    //得到iframe页的窗口对象，执行iframe页的方法：iframeWin.method();
+                    var iframeWin = window[layero.find('iframe')[0]['name']]
+                    body.find('#userId').val(obj.data['userId'])
+                    body.find('#realName').val(obj.data['realName'])
+                    body.find('#department').val(obj.data['department'])
+                    body.find('#phone').val(obj.data['phone'])
+                    //console.log(obj.data['levels']);
+                    if (obj.data['levels']=='专科'){
+                        body.find('#level01').attr("selected", "");
+                        iframeWin.layui.form.render('select');
+                    }else if (obj.data['levels']=='本科') {
+                        body.find('#level02').attr("selected", "");
+                        iframeWin.layui.form.render('select');
+                    }else if (obj.data['levels']=='硕士') {
+                        body.find('#level03').attr("selected", "");
+                        iframeWin.layui.form.render('select');
+                    }else if (obj.data['levels']=='博士') {
+                        body.find('#level04').attr("selected", "");
+                        iframeWin.layui.form.render('select');
+                    }
+                    if (obj.data['sex'] == '1') {
+                        body.find('#man').attr("checked", "");
+                        iframeWin.layui.form.render('radio');
+                    } else {
+                        body.find('#woman').attr("checked", "");
+                        iframeWin.layui.form.render('radio');
+                    }
+                }
+            });
+        }
+
+        window.remove = function (obj) {
+            console.log(obj.data['userId']);
+            layer.confirm('确定要删除该用户', {
+                icon: 3,
+                title: '提示'
+            }, function (index) {
+                layer.close(index);
+                let loading = layer.load();
+                $.ajax({
+                    url: "/admin/stu/removeStudent",
+                    data: {
+                        userId: obj.data['userId']
+                    },
+                    dataType: 'json',
+                    type: 'post',
+                    success: function (result) {
+                        layer.close(loading);
+                        if (result.success) {
+                            layer.msg(result.msg, {
+                                icon: 1,
+                                time: 1000
+                            }, function () {
+                                tableIns.reload({
+                                    url: "/admin/stu/getStudents",
+                                    page: {
+                                        layout: ['count', 'prev', 'page', 'next', 'skip']
+                                        , curr: $(".layui-laypage-em").next().html()
+                                        , groups: 3
+                                        , last: false
+                                    },
+                                    method:"post"
+                                });
+                                obj.del();
+                            });
+                        } else {
+                            layer.msg(result.msg, {
+                                icon: 2,
+                                time: 1000
+                            });
+                        }
+                    }
+                })
+            });
+        }
+
+        window.batchRemove = function (obj) {
+
+            var checkIds = common.checkField(obj, 'userId');
+
+            if (checkIds === "") {
+                layer.msg("未选中数据", {
+                    icon: 3,
+                    time: 1000
+                });
+                return false;
+            }
+            //批量删除
+            layer.confirm('确定要删除这些用户', {
+                icon: 3,
+                title: '提示'
+            }, function (index) {
+                layer.close(index);
+                //console.log(obj);
+                let loading = layer.load();
+                table.reload('user-table');
+                $.ajax({
+                    url: MODULE_PATH + "batchRemove/" + index,
+                    dataType: 'json',
+                    type: 'delete',
+                    success: function (result) {
+                        layer.close(loading);
+                        if (result.success) {
+                            layer.msg(result.msg, {
+                                icon: 1,
+                                time: 1000
+                            }, function () {
+                                table.reload('user-table');
+                            });
+                        } else {
+                            layer.msg(result.msg, {
+                                icon: 2,
+                                time: 1000
+                            });
+                        }
+                    }
+                })
+            });
+        }
+
+        window.refresh = function (param) {
+            table.reload('user-table',{
+                url:"/admin/stu/getStudents",
+                method:"post"
+            });
+        }
+    })
+</script>
+</body>
+
+</html>

@@ -2,7 +2,9 @@ package com.scs.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.scs.pojo.User;
+import com.scs.pojo.student;
 import com.scs.service.UserService;
+import com.scs.service.studentService;
 import com.scs.utils.InformToFront;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -20,6 +22,8 @@ import java.util.List;
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private studentService studentService;
 
     @RequestMapping(value = "/Login",method = RequestMethod.POST)
     public @ResponseBody InformToFront Login(User user, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -60,5 +64,27 @@ public class UserController {
     public String SignOut(HttpServletRequest request,HttpServletResponse response){
         request.getSession().setAttribute("userInformation",null);
         return "redirect:/index.jsp";
+    }
+
+    //获取该登录状态下的用户信息，头像处使用
+    @ResponseBody
+    @RequestMapping(value = "/getUserInfo",method = RequestMethod.POST,produces = "application/json;charset=utf-8" )
+    public String getUserInfo(HttpServletRequest request){
+        //获取session值
+        String userId = (String) request.getSession().getAttribute("userInformation");
+        List<student> student = studentService.getStudentById(userId);
+        if(student.size()!=0) {
+            //获取班级
+            String classes = student.get(0).getClasses();
+            //获取姓名
+            String realName = student.get(0).getRealName();
+            //封装成json
+            JSONObject data = new JSONObject();
+            data.put("classes", classes);
+            data.put("realName", realName);
+            //回传给前端
+            return data.toJSONString();
+        }
+       return null;
     }
 }

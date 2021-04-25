@@ -32,7 +32,7 @@ public class StudentController {
         data.put("data", list);
         return data.toJSONString();
     }
-
+    //查询学生信息
     @ResponseBody
     @RequestMapping(value = "/search", produces = "application/json;charset=utf-8")
     public String searchStudent(HttpServletRequest request) {
@@ -45,7 +45,7 @@ public class StudentController {
         data.put("data", list);
         return data.toJSONString();
     }
-
+    //添加学生信息
     @ResponseBody
     @RequestMapping(value = "/addStudent", produces = "application/json;charset=utf-8")
     public String addStudent(HttpServletRequest req) {
@@ -58,7 +58,7 @@ public class StudentController {
         String sexStr = req.getParameter("sex");
         String phone = req.getParameter("phone");
         String levels = req.getParameter("levels");
-        student stu = new student(userId, department, realName, sexStr, phone, levels);
+        student stu = new student(userId, department, realName, sexStr, phone, levels,null,null);
         int addNumber = studentService.addStudent(stu);
         if (addNumber > 0) {
             data.put("success", "1");
@@ -72,7 +72,7 @@ public class StudentController {
         data.put("data", null);
         return data.toJSONString();
     }
-
+    //删除学生信息
     @ResponseBody
     @RequestMapping(value = "/removeStudent", produces = "application/json;charset=utf-8")
     public String removeStudent(HttpServletRequest request) {
@@ -95,4 +95,5 @@ public class StudentController {
         data.put("data", null);
         return data.toJSONString();
     }
+
 }
