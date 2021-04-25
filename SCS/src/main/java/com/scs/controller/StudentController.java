@@ -95,5 +95,32 @@ public class StudentController {
         data.put("data", null);
         return data.toJSONString();
     }
+    //修改学生信息
+    @ResponseBody
+    @RequestMapping(value = "/updateStudent", produces = "application/json;charset=utf-8")
+    public String updateStudent(HttpServletRequest req){
+        JSONObject data = new JSONObject();
+        data.put("code", 0);
+        data.put("msg", "updateStudent");
+        String userId = req.getParameter("userId");
+        String realName = req.getParameter("realName");
+        String department = req.getParameter("department");
+        String sexStr = req.getParameter("sex");
+        String phone = req.getParameter("phone");
+        String levels = req.getParameter("levels");
+        student stu = new student(userId, department, realName, sexStr, phone, levels,null,null);
+        int addNumber = studentService.updateStudent(stu);
+        if (addNumber > 0) {
+            data.put("success", "1");
+            data.put("msg", "修改成功");
+        } else {
+            data.put("success", "0");
+            data.put("msg", "修改失败");
+        }
+        data.put("code", 0);
+        data.put("count", addNumber);
+        data.put("data", null);
+        return data.toJSONString();
+    }
 
 }

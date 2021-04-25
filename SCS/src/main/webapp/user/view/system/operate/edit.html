@@ -85,7 +85,7 @@
         form.on('submit(user-save)', function (data) {
             var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
             $.ajax({
-                url: '/user/update',
+                url: '/admin/stu/updateStudent',
                 data: data.field,
                 dataType: 'json',
                 contentType: 'application/json',
