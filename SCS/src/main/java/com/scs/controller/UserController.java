@@ -25,12 +25,13 @@ public class UserController {
     public @ResponseBody InformToFront Login(User user, HttpServletRequest request, HttpServletResponse response) throws Exception {
         String userName = user.getUserName();
         String password = user.getMd5password();
+        String role = user.getRole();
         System.out.println(password);
         List<User> users = userService.FindByName(userName);
         System.out.println(users);
         System.out.println(users.size());
         if (users.size()==0){
-            InformToFront status_err =new InformToFront("Username does not exist", "-1", null);     //没有该用户
+            InformToFront status_err =new InformToFront("Username does not exist", "-1",null, null);     //没有该用户
             return status_err;
         }
         if(users.size()==1&&users.get(0).getUserName().equals(userName)){
@@ -38,22 +39,26 @@ public class UserController {
             String md5password = users.get(0).getMd5password();
             if (md5password!=null){
                 if(md5password.equals(password)){        //密码正确
-                    InformToFront status_success= new InformToFront("Success", "0", null);     //密码不正确
+                    InformToFront status_success= new InformToFront("Success", "0", role,null);
                     request.getSession().setAttribute("userInformation",userName);
                    // request.getRequestDispatcher("/admin.jsp").forward(request,response);
                     return status_success;
                 }
                 else {
-                    InformToFront status_err= new InformToFront("Incorrect password", "-2", null);     //密码不正确
+                    InformToFront status_err= new InformToFront("Incorrect password", "-2", null,null);     //密码不正确
                     return status_err;
                 }
             }else {
-                InformToFront status_success= new InformToFront("Request error", "110", null);     //密码不正确
+                InformToFront status_success= new InformToFront("Request error", "110", null,null);     //密码不正确
                 return status_success;
             }
-
         }
         return null;
     }
 
+    @RequestMapping(value = "/SignOut",method = RequestMethod.POST)
+    public String SignOut(HttpServletRequest request,HttpServletResponse response){
+        request.getSession().setAttribute("userInformation",null);
+        return "redirect:/index.jsp";
+    }
 }

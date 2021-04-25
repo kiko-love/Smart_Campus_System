@@ -6,11 +6,11 @@
 <mapper namespace="com.scs.dao.studentMapper">
     <select id="getStudents" resultType="com.scs.pojo.student">
         select *
-        from usersdb.students
+        from students
     </select>
     <select id="getStudentById" resultType="com.scs.pojo.student" parameterType="string">
         select *
-        from usersdb.students
+        from students
         <where>
             <if test="userId != null and userId != ''">
                 userId = #{userId}
@@ -19,18 +19,18 @@
     </select>
 
     <insert id="addStudent" parameterType="com.scs.pojo.student">
-        insert into usersdb.students(userid, realName, department, sex, phone, levels)
+        insert into students(userid, realName, department, sex, phone, levels)
         values (#{userId}, #{realName}, #{department}, #{sex}, #{phone}, #{levels})
     </insert>
 
     <delete id="removeStudent" parameterType="java.lang.String">
         delete
-        from usersdb.students
+        from students
         where userId = #{userId}
     </delete>
 
     <update id="updateStudent" parameterType="com.scs.pojo.student" >
-        update usersdb.students
+        update students
         <set>
             <if test="userId !=null and userId!=''">
                 userId=#{userId},
