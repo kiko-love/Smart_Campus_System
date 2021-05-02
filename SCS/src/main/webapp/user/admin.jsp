@@ -28,7 +28,6 @@
 				<div id="control" class="layui-layout-control"></div>
 				<ul class="layui-nav layui-layout-right">
 					<li class="layui-nav-item layui-hide-xs"><a href="#" class="fullScreen layui-icon layui-icon-screen-full"></a></li>
-					<li class="layui-nav-item layui-hide-xs message"></li>
 					<li class="layui-nav-item user">
 						<!-- 头 像 -->
 						<a href="javascript:;">

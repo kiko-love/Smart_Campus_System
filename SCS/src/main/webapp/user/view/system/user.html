@@ -160,10 +160,10 @@
                 //     templet: '#user-login'
                 // },
                 {
-                    title: '注册日期',
-                    field: 'createTime',
+                    title: '辅导员',
+                    field: 'counselor',
                     align: 'center',
-                    templet: '#user-createTime'
+                    //templet: '#user-createTime'
                 },
                 {
                     title: '操作',
@@ -177,7 +177,7 @@
         var tableIns = table.render({
             elem: '#user-table',
             url: '/admin/stu/getStudents',
-            method:"post",
+            method: "post",
             page: {
                 layout: ['count', 'prev', 'page', 'next', 'skip']
                 , curr: 1
@@ -279,17 +279,19 @@
                     body.find('#realName').val(obj.data['realName'])
                     body.find('#department').val(obj.data['department'])
                     body.find('#phone').val(obj.data['phone'])
+                    body.find('#classes').val(obj.data['classes'])
+                    body.find('#counselor').val(obj.data['counselor'])
                     //console.log(obj.data['levels']);
-                    if (obj.data['levels']=='专科'){
+                    if (obj.data['levels'] == '专科') {
                         body.find('#level01').attr("selected", "");
                         iframeWin.layui.form.render('select');
-                    }else if (obj.data['levels']=='本科') {
+                    } else if (obj.data['levels'] == '本科') {
                         body.find('#level02').attr("selected", "");
                         iframeWin.layui.form.render('select');
-                    }else if (obj.data['levels']=='硕士') {
+                    } else if (obj.data['levels'] == '硕士') {
                         body.find('#level03').attr("selected", "");
                         iframeWin.layui.form.render('select');
-                    }else if (obj.data['levels']=='博士') {
+                    } else if (obj.data['levels'] == '博士') {
                         body.find('#level04').attr("selected", "");
                         iframeWin.layui.form.render('select');
                     }
@@ -334,7 +336,7 @@
                                         , groups: 3
                                         , last: false
                                     },
-                                    method:"post"
+                                    method: "post"
                                 });
                                 obj.del();
                             });
@@ -366,13 +368,22 @@
                 title: '提示'
             }, function (index) {
                 layer.close(index);
-                //console.log(obj);
+                var checkStatus = table.checkStatus('user-table');
+                let userIds = [];
+                for (let i = 0; i < checkStatus.data.length; i++) {
+                    userIds[i] = checkStatus.data[i].userId;
+                    //console.log(checkStatus.data[i].userId);
+                }
+                console.log(userIds);
                 let loading = layer.load();
                 table.reload('user-table');
                 $.ajax({
-                    url: MODULE_PATH + "batchRemove/" + index,
+                    url: "/admin/stu/batchRemove",
+                    data:{
+                        userIds:JSON.stringify(userIds)
+                    },
                     dataType: 'json',
-                    type: 'delete',
+                    type: 'post',
                     success: function (result) {
                         layer.close(loading);
                         if (result.success) {
@@ -380,7 +391,16 @@
                                 icon: 1,
                                 time: 1000
                             }, function () {
-                                table.reload('user-table');
+                                tableIns.reload({
+                                    url: "/admin/stu/getStudents",
+                                    page: {
+                                        layout: ['count', 'prev', 'page', 'next', 'skip']
+                                        , curr: 1
+                                        , groups: 3
+                                        , last: false
+                                    },
+                                    method: "post"
+                                });
                             });
                         } else {
                             layer.msg(result.msg, {
@@ -394,9 +414,9 @@
         }
 
         window.refresh = function (param) {
-            table.reload('user-table',{
-                url:"/admin/stu/getStudents",
-                method:"post"
+            table.reload('user-table', {
+                url: "/admin/stu/getStudents",
+                method: "post"
             });
         }
     })

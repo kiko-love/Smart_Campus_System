@@ -7,7 +7,76 @@
     <link rel="stylesheet" href="../component/layui/css/layui.css">
 
 </head>
+<style>
+    /* #copyRights {
+    margin: 0 auto;
+    width: 150px;
+    margin-top: 260px;
+    color: rgb(121, 121, 121);
+    font-weight: 500;
+    text-align: center;
+}*/
+    video::-webkit-media-controls {
+        display: none !important;
+    }
+    .background {
+        background-image: url('../admin/images/face_bg.png');
+        background-repeat: no-repeat;
+    }
+    .buttons {
+        text-align: center;
+        position: relative;
+        top: 80px;
+        width: 800px;
+        margin: auto;
+    }
 
+    #tips1 {
+        text-align: center;
+        color: rgb(15, 92, 5);
+        font-weight: 600;
+        font-size: 22px;
+        width: 1000px;
+        position: relative;
+        top: 60px;
+        margin: auto;
+    }
+
+    .contents_video {
+        margin: auto;
+        width: 350px;
+    }
+
+    .contents_canvas {
+        margin: auto;
+        width: 350px;
+    }
+
+    #video {
+        display: inline;
+        position: relative;
+        top: 50px;
+        width: 350px;
+        height: 350px;
+        box-shadow: 1px 2px 10px 6px rgba(0, 0, 0, 0.1);
+        background-image: url("../../static/images/人脸.png");
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+
+    #canvas {
+        display: none;
+        position: relative;
+        top: 50px;
+        width: 350px;
+        height: 350px;
+        border: 4px solid rgb(9, 114, 53);
+        box-shadow: 1px 2px 10px 6px rgba(0, 0, 0, 0.1);
+        background-image: url("../../static/images/人脸.png");
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+</style>
 <body>
     <div >
 
@@ -38,78 +107,8 @@
     </div>
     <!-- <div id="copyRights">
         ©2021-2021 195_ZY
-    </div>
-</body> -->
-    <style>
-        /* #copyRights {
-        margin: 0 auto;
-        width: 150px;
-        margin-top: 260px;
-        color: rgb(121, 121, 121);
-        font-weight: 500;
-        text-align: center;
-    }*/
-        video::-webkit-media-controls {
-            display: none !important;
-        }
-        .background {
-            background-image: url('../admin/images/face_bg.png');
-            background-repeat: no-repeat;
-        }
-        .buttons {
-            text-align: center;
-            position: relative;
-            top: 100px;
-            width: 800px;
-            margin: auto;
-        }
-
-        #tips1 {
-            text-align: center;
-            color: rgb(15, 92, 5);
-            font-weight: 600;
-            font-size: 22px;
-            width: 1000px;
-            position: relative;
-            top: 80px;
-            margin: auto;
-        }
-
-        .contents_video {
-            margin: auto;
-            width: 400px;
-        }
-
-        .contents_canvas {
-            margin: auto;
-            width: 400px;
-        }
-
-        #video {
-            display: inline;
-            position: relative;
-            top: 50px;
-            width: 400px;
-            height: 400px;
-            box-shadow: 1px 2px 10px 6px rgba(0, 0, 0, 0.1);
-            background-image: url("../admin/images/人脸.png");
-            background-repeat: no-repeat;
-            background-position: center;
-        }
-
-        #canvas {
-            display: none;
-            position: relative;
-            top: 50px;
-            width: 400px;
-            height: 400px;
-            border: 4px solid rgb(9, 114, 53);
-            box-shadow: 1px 2px 10px 6px rgba(0, 0, 0, 0.1);
-            background-image: url("img/人脸.png");
-            background-repeat: no-repeat;
-            background-position: center;
-        }
-    </style>
+    </div>-->
+</body>
     <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"></script>
     <script src="https://www.layuicdn.com/layui/layui.js"></script>
     <script>
@@ -117,7 +116,7 @@
         var isgetPic = false;
         var handling = false;
         var first_get_pic = false;
-        var upload_url = "http://localhost:8080/ai_face_war_exploded/api/faceCheck";
+        var upload_url = "/aipFace/detect";
         $(function () {
             $("#open").click(getMedia);
             $("#close").click(closeMedia);
@@ -234,6 +233,7 @@
                             }
                         }
                         if (type === "2") {
+                            console.log(result.result);
                             var faceObj = {
                                 face_token: result.result.face_token
                                 , face_name: result.result.name
@@ -460,6 +460,7 @@
                 , click: function (obj) {
                     if (obj.id == 100) {
                         // layer.msg('100');
+                        upload_url="/aipFace/detect"
                         snap_upload("0");
                     }
                     if (obj.id == 101) {
@@ -468,6 +469,7 @@
                     }
                     if (obj.id == 102) {
                         //layer.msg('102');
+                        upload_url="/aipFace/search"
                         snap_upload("2");
                     }
 

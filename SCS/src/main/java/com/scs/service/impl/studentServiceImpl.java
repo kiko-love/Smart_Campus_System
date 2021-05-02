@@ -37,4 +37,9 @@ public class studentServiceImpl implements studentService {
     public int updateStudent(student stu) {
         return studentMapper.updateStudent(stu);
     }
+
+    @Override
+    public int batchRemove(List<String> List) {
+        return studentMapper.batchRemove(List);
+    }
 }

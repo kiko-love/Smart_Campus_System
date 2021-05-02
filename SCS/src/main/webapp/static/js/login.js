@@ -58,6 +58,7 @@ layui.use(['carousel', 'form','jquery'], function () {
                 }
                 },
             error:function(){
+                layer.close(index);
                 layer.open({
                     title: '提示'
                     ,icon:2

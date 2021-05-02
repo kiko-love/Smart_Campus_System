@@ -13,8 +13,9 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">学号</label>
                     <div class="layui-input-block">
-                        <input id="userId" type="text" name="userId" value="" lay-verify="title" autocomplete="off"
-                               placeholder="学号" class="layui-input"
+                        <input id="userId" type="text" name="userId" value="" lay-verify="title"
+                               autocomplete="off"
+                               placeholder="请输入学号" class="layui-input"
                                style="cursor:not-allowed;color: #a1a1a1;" disabled>
                     </div>
                 </div>
@@ -22,15 +23,31 @@
                     <label class="layui-form-label">姓名</label>
                     <div class="layui-input-block">
                         <input id="realName" type="text" name="realName" lay-verify="required" autocomplete="off"
-                               placeholder="请输入标题"
+                               placeholder="请输入姓名"
                                class="layui-input" lay-reqText="请输入姓名">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">班级</label>
+                    <div class="layui-input-block">
+                        <input id="classes" type="text" name="classes" lay-verify="required" autocomplete="off"
+                               placeholder="班级"
+                               class="layui-input" lay-reqText="班级">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">辅导员</label>
+                    <div class="layui-input-block">
+                        <input id="counselor" type="text" name="realName" lay-verify="required" autocomplete="off"
+                               placeholder="请输入辅导员姓名"
+                               class="layui-input" lay-reqText="请输入辅导员姓名">
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">院系</label>
                     <div class="layui-input-block">
                         <input id="department" type="text" name="department" value="" lay-verify="title"
-                               autocomplete="off" placeholder="请输入标题" class="layui-input">
+                               autocomplete="off" placeholder="请输入院系" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -48,7 +65,7 @@
                     <label class="layui-form-label">电话</label>
                     <div class="layui-input-block">
                         <input id="phone" type="text" name="phone" value="" lay-verify="required|phone" autocomplete="off"
-                               placeholder="请输入标题" class="layui-input" lay-reqText="请输入手机号码">
+                               placeholder="请输入手机号码" class="layui-input" lay-reqText="请输入手机号码">
                     </div>
                 </div>
                 <div class="layui-form-item">

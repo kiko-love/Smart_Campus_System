@@ -16,4 +16,6 @@ public interface studentMapper {
     public List<student> getStudentById(@Param("userId")String userId);
     //修改学生信息
     public int updateStudent(student stu);
+    //批量删除学生
+    public int batchRemove(List<String> List);
 }

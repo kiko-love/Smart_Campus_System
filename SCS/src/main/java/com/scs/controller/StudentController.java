@@ -1,6 +1,8 @@
 package com.scs.controller;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.mysql.cj.xdevapi.JsonArray;
 import com.scs.pojo.student;
 import com.scs.service.UserService;
 import com.scs.service.studentService;
@@ -21,6 +23,29 @@ public class StudentController {
     @Autowired
     private studentService studentService;
 
+    //批量删除学生信息
+    @ResponseBody
+    @RequestMapping(value = "/batchRemove", produces = "application/json;charset=utf-8")
+    public String batchRemoveStudent(HttpServletRequest request) {
+        JSONObject data = new JSONObject();
+        List<String> List = JSONObject.parseArray(request.getParameter("userIds"),String.class);
+        System.out.println(List);
+;       data.put("code", 0);
+        data.put("msg", "batchRemoveStudent");
+        int removeNumber = studentService.batchRemove(List);
+        if (removeNumber > 0) {
+            data.put("success", "1");
+            data.put("msg", "删除选中用户成功");
+        } else {
+            data.put("success", "0");
+            data.put("msg", "删除选中用户失败");
+        }
+        data.put("count", removeNumber);
+        data.put("data", null);
+        return data.toJSONString();
+    }
+
+    //获取全部学生信息
     @ResponseBody
     @RequestMapping(value = "/getStudents", produces = "application/json;charset=utf-8")
     public String getStudent(HttpServletRequest request) {
@@ -58,7 +83,9 @@ public class StudentController {
         String sexStr = req.getParameter("sex");
         String phone = req.getParameter("phone");
         String levels = req.getParameter("levels");
-        student stu = new student(userId, department, realName, sexStr, phone, levels,null,null);
+        String classes = req.getParameter("classes");
+        String counselor = req.getParameter("counselor");
+        student stu = new student(userId, department, realName, sexStr, phone, levels,classes,counselor);
         int addNumber = studentService.addStudent(stu);
         if (addNumber > 0) {
             data.put("success", "1");
@@ -108,7 +135,9 @@ public class StudentController {
         String sexStr = req.getParameter("sex");
         String phone = req.getParameter("phone");
         String levels = req.getParameter("levels");
-        student stu = new student(userId, department, realName, sexStr, phone, levels,null,null);
+        String classes = req.getParameter("classes");
+        String counselor = req.getParameter("counselor");
+        student stu = new student(userId, department, realName, sexStr, phone, levels,classes,counselor);
         int addNumber = studentService.updateStudent(stu);
         if (addNumber > 0) {
             data.put("success", "1");

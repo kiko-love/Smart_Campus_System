@@ -217,40 +217,7 @@
 			]
 		}]
 	},
-	{
-		"id": "error",
-		"title": "错误页面",
-		"icon": "layui-icon layui-icon-face-cry",
-		"type": 0,
-		"href": "",
-		"children": [{
-				"id": 403,
-				"title": "403",
-				"icon": "layui-icon layui-icon-face-smile",
-				"type": 1,
-				"openType": "_iframe",
-				"href": "view/error/403.html"
-			},
-			{
-				"id": 404,
-				"title": "404",
-				"icon": "layui-icon layui-icon-face-cry",
-				"type": 1,
-				"openType": "_iframe",
-				"href": "view/error/404.html"
-			},
 
-			{
-				"id": 500,
-				"title": "500",
-				"icon": "layui-icon layui-icon-face-cry",
-				"type": 1,
-				"openType": "_iframe",
-				"href": "view/error/500.html"
-			}
-
-		]
-	},
 	{
 		"id": "system",
 		"title": "系统管理",
@@ -266,24 +233,6 @@
 				"href": "view/system/user.html"
 			},
 			{
-				"id": 602,
-				"title": "角色管理",
-				"icon": "layui-icon layui-icon-face-cry",
-				"type": 1,
-				"openType": "_iframe",
-				"href": "view/system/role.html"
-			},
-
-			{
-				"id": 603,
-				"title": "权限管理",
-				"icon": "layui-icon layui-icon-face-cry",
-				"type": 1,
-				"openType": "_iframe",
-				"href": "view/system/power.html"
-			},
-
-			{
 				"id": 604,
 				"title": "部门管理",
 				"icon": "layui-icon layui-icon-face-cry",
@@ -293,20 +242,12 @@
 			},
 			{
 				"id": 605,
-				"title": "行为日志",
+				"title": "人脸考勤",
 				"icon": "layui-icon layui-icon-face-cry",
 				"type": 1,
 				"openType": "_iframe",
-				"href": "view/system/log.html"
-			}, {
-				"id": 606,
-				"title": "数据字典",
-				"icon": "layui-icon layui-icon-face-cry",
-				"type": 1,
-				"openType": "_iframe",
-				"href": "view/system/dict.html"
+				"href": "view/face.html"
 			}
-
 		]
 	},
 	{
