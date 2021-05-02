@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--绑定Mapper接口-->
+<mapper namespace="com.scs.dao.FaceUserMapper">
+    <select id="getUserList" resultType="com.scs.pojo.FaceUser">
+        select *
+        from usersdb.users
+    </select>
+    <select id="getUserById" parameterType="String" resultType="com.scs.pojo.FaceUser">
+        select *
+        from usersdb.users
+        where id = #{id}
+    </select>
+    <insert id="addUser" parameterType="com.scs.pojo.FaceUser">
+        insert into usersdb.users (id, name, class,profession)
+        values (#{id}, #{name}, #{classes},#{profession});
+    </insert>
+    <update id="updateUser" parameterType="com.scs.pojo.FaceUser">
+        update usersdb.users
+        set name=#{name },
+            classes=#{classes},
+            profession=#{profession}
+        where id = #{id};
+    </update>
+    <delete id="deleteUser" parameterType="String">
+        delete
+        from usersdb.users
+        where id = #{id};
+    </delete>
+</mapper>

@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>人脸识别</title>
+    <link rel="stylesheet" href="../component/layui/css/layui.css">
+
+</head>
+<style>
+    /* #copyRights {
+    margin: 0 auto;
+    width: 150px;
+    margin-top: 260px;
+    color: rgb(121, 121, 121);
+    font-weight: 500;
+    text-align: center;
+}*/
+    video::-webkit-media-controls {
+        display: none !important;
+    }
+    .background {
+        background-image: url('../admin/images/face_bg.png');
+        background-repeat: no-repeat;
+    }
+    .buttons {
+        text-align: center;
+        position: relative;
+        top: 80px;
+        width: 800px;
+        margin: auto;
+    }
+
+    #tips1 {
+        text-align: center;
+        color: rgb(15, 92, 5);
+        font-weight: 600;
+        font-size: 22px;
+        width: 1000px;
+        position: relative;
+        top: 60px;
+        margin: auto;
+    }
+
+    .contents_video {
+        margin: auto;
+        width: 350px;
+    }
+
+    .contents_canvas {
+        margin: auto;
+        width: 350px;
+    }
+
+    #video {
+        display: inline;
+        position: relative;
+        top: 50px;
+        width: 350px;
+        height: 350px;
+        box-shadow: 1px 2px 10px 6px rgba(0, 0, 0, 0.1);
+        background-image: url("../../static/images/人脸.png");
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+
+    #canvas {
+        display: none;
+        position: relative;
+        top: 50px;
+        width: 350px;
+        height: 350px;
+        border: 4px solid rgb(9, 114, 53);
+        box-shadow: 1px 2px 10px 6px rgba(0, 0, 0, 0.1);
+        background-image: url("../../static/images/人脸.png");
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+</style>
+<body>
+    <div >
+
+        <div class="contents_video">
+            <video id="video" toplay="autoplay"></video>
+        </div>
+        <div class="contents_canvas">
+            <canvas id="canvas" width="500" height="500"></canvas>
+        </div>
+
+    </div>
+    <div id="tips1">
+        人脸识别系统（暂未开启摄像头）
+    </div>
+    <div class="buttons">
+        <button id="open" class="layui-btn layui-btn-radius">
+            <i class="layui-icon layui-icon-camera-fill"></i>
+            打开摄像头</button>
+        <button id="close" class="layui-btn layui-btn-radius">
+            <i class="layui-icon layui-icon-unlink"></i>
+            关闭摄像头</button>
+        <button id="snapAndupload" class="layui-btn layui-btn-radius">拍照上传
+            <i class="layui-icon layui-icon-down layui-font-12"></i>
+        </button>
+        <button type="button" class="layui-btn layui-btn-radius" id="test1" style="display: none;">
+            <i class="layui-icon">&#xe67c;</i>上传测试图片
+        </button>
+    </div>
+    <!-- <div id="copyRights">
+        ©2021-2021 195_ZY
+    </div>-->
+</body>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"></script>
+    <script src="https://www.layuicdn.com/layui/layui.js"></script>
+    <script>
+        var isopen = false;
+        var isgetPic = false;
+        var handling = false;
+        var first_get_pic = false;
+        var upload_url = "/aipFace/detect";
+        $(function () {
+            $("#open").click(getMedia);
+            $("#close").click(closeMedia);
+            //$("#snapAndupload").click(snap_upload);
+            $("#upload").click(uploadPic);
+
+        })
+        function test(type) {
+            alert(type);
+        }
+        //拍照后上传
+        function snap_upload(type) {
+            if (isopen == false) {
+                layer.open({
+                    title: '提示'
+                    , content: '摄像头未开启，请先开启并采集人像后再进行拍照识别'
+                    , icon: 5
+                });
+                return;
+            }
+            if (handling == true) {
+                layer.open({
+                    title: '提示'
+                    , content: '服务器正在处理人像数据，请稍后尝试'
+                    , icon: 0
+                    , anim: 0
+                });
+                return;
+            }
+            /*---------------------分割线-----------------------*/
+            if (isgetPic == false || isopen == true) {
+                if (!first_get_pic || isopen) {
+                    //获得Canvas对象
+                    let canvas = document.getElementById("canvas");
+                    let ctx = canvas.getContext('2d');
+                    //清空画布
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    //绘图
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    isgetPic = true;
+                    first_get_pic = true;
+                }
+            }
+            /*---------------------分割线-----------------------*/
+            if (isopen == true) {
+                $("#video").css("display", "none");
+                $("#canvas").css("display", "inline");
+                mediaStreamTrack.stop();
+                video.style.border = "";
+                isopen = false;
+            }
+            /*---------------------分割线-----------------------*/
+            var picinfo = canvas.toDataURL("image/png") + "";
+            picinfo = picinfo.replace("data:image/png;base64,", "");
+            //console.log(picinfo);
+            handling = true;
+            //alert(type);
+            $("#tips1").css("color", "rgb(15, 92, 5)")
+            $("#tips1")
+                .html("服务器正在处理人脸信息，请等待处理结果 <i class=\"layui-icon layui-icon-loading layui-icon layui-anim layui-anim-rotate layui-anim-loop\" style=\"color:black\"></i>");
+            $.ajax({
+                type: "post",
+                url: upload_url,
+                data: { //【这里填写是传给服务端的数据 可传可不传 数据必须是json格式】
+                    picBASE64: picinfo,
+                    //type:0为人脸检测，1为人脸注册，2为人脸搜索（在已注册的人脸库中搜索）
+                    type: type
+                },
+                dataType: 'json',  //【这里要小心啊，不要用jsonp，一定是json】
+                crossDomain: true,  //【跨域访问必须加这个】
+                /*---------------------分割线-----------------------*/
+                success: function (result, textStatus) {
+                    //console.log(result.result.face_num);
+                    if (result.error_msg == "SUCCESS") {
+                        if (type === "0") {
+                            var faceObj = {
+                                face_num: result.result.face_num
+                                , gender: result.result.face_list[0].gender.type
+                                , mask: result.result.face_list[0].mask.type
+                                , glasses: result.result.face_list[0].glasses.type
+                                , face_type: result.result.face_list[0].face_type.type
+                                , face_age: result.result.face_list[0].age
+                            }
+                            let canvas = document.getElementById("canvas");
+                            let ctx = canvas.getContext('2d');
+                            ctx.strokeStyle = '#ce0a0a';
+                            ctx.lineWidth = 4;
+                            ctx.strokeRect(result.result.face_list[0].location.left, result.result.face_list[0].location.top, result.result.face_list[0].location.width, result.result.face_list[0].location.height);
+                            if (result.error_msg == "SUCCESS") {
+                                if (faceObj.gender == "male") {
+                                    faceObj.gender = "男"
+                                } else {
+                                    faceObj.gender = "女"
+                                }
+                                if (faceObj.mask == 0) {
+                                    faceObj.mask = "否"
+                                } else {
+                                    faceObj.mask = "是"
+                                }
+                                if (faceObj.glasses == "common") {
+                                    faceObj.glasses = "普通眼镜"
+                                } else if (faceObj.glasses == "sun") {
+                                    faceObj.glasses = "墨镜"
+                                } else {
+                                    faceObj.glasses = "无眼镜"
+                                }
+                                $("#tips1").css("color", "rgb(15, 92, 5)")
+                                $("#tips1").html("人脸识别成功" + "<br>" + "检测到的人脸数：" + faceObj.face_num + "<br>" + "性别：" + faceObj.gender + "<br>"
+                                    + "年龄判断：" + faceObj.face_age + "<br>" + "是否佩戴口罩：" + faceObj.mask + "<br>" + "是否佩戴眼镜：" + faceObj.glasses);
+                            }
+                            else {
+                                $("#tips1").css("color", "#aa310c")
+                                $("#tips1").html("人脸识别失败，请检查拍摄环境是否光线充足或拍摄姿势是否正确");
+                            }
+                        }
+                        if (type === "2") {
+                            console.log(result.result);
+                            var faceObj = {
+                                face_token: result.result.face_token
+                                , face_name: result.result.name
+                                , group_id: result.result.user_list[0].group_id
+                                , user_id: result.result.user_list[0].user_id
+                                , user_info: result.result.user_list[0].user_info
+                                , score: result.result.user_list[0].score
+                            }
+                            if (faceObj.score >= 80) {
+                                $("#tips1").css("color", "rgb(15, 92, 5)")
+                                $("#tips1").html("人脸匹配成功" + "<br>" + "姓名：" + faceObj.face_name + "<br>" + "学号：" + faceObj.user_id + "<br>" + "人脸组id：" + faceObj.group_id);
+                            } else {
+                                $("#tips1").css("color", "#aa310c")
+                                $("#tips1").html("人脸匹配失败，未在人脸库中找到符合数据，请确认是否已注册该人脸");
+                            }
+                        }
+                    } else {
+                        $("#tips1").css("color", "#aa310c")
+                        $("#tips1").html("数据处理失败" + "<br>" + "错误原因：" + result.error_msg + "<br>" + "错误代码：" + result.error_code);
+                    }
+                    handling = false;
+                    isgetPic = false;
+                    /* let json_face_search = JSON.stringify(result);
+                     layer.open({
+                         title: '服务器返回数据'
+                         , content: json_face_search
+                         , anim: 0
+                     });*/
+
+                },
+                error: function (result) {
+                    $("#tips1").css("color", "#aa310c")
+                    $("#tips1").html("服务器处理数据异常，请稍后尝试！");
+                    //console.log(result);
+                    layer.open({
+                        title: '异常提示'
+                        , content: "服务器处理数据异常，请稍后尝试！"
+                        , icon: 5
+                        , anim: 0
+                    });
+                    handling = false;
+                    isgetPic = false;
+                }
+            });
+
+        }
+
+        //开启摄像头（测试环境为Edge和chrome）
+        function getMedia() {
+            if (isopen) {
+                layer.open({
+                    title: '提示'
+                    , content: '摄像头已开启，请点击拍照上传进行人脸检测'
+                    , icon: 0
+                });
+                return;
+            }
+            let constraints = {
+                //参数
+                video: { width: 500, height: 500 },
+                audio: false
+            };
+            //获得video摄像头区域
+            let video = document.getElementById("video");
+            //返回的Promise对象
+            let promise = navigator.mediaDevices.getUserMedia(constraints);
+            //video 静音
+            video.muted = true;
+            //then()异步，调用MediaStream对象作为参数
+            promise.then(function (MediaStream) {
+                video.srcObject = MediaStream;
+                mediaStreamTrack = typeof MediaStream.stop === 'function' ? MediaStream : MediaStream.getTracks()[0];
+                video.play();
+                $("#video").css("display", "inline");
+                $("#canvas").css("display", "none");
+                $("#tips1").css("color", "rgb(15, 92, 5)");
+                $("#tips1").html("正在检测你的人像数据，请不要晃动并确保环境光线充足,点击拍照上传开始检测人像");
+                video.style.border = "4px solid rgb(189, 21, 21)";
+                isopen = true;
+            });
+        }
+        //关闭摄像头
+        function closeMedia() {
+            if (isopen == false) {
+                layer.open({
+                    title: '提示'
+                    , content: '摄像头未开启，无需关闭'
+                    , icon: 1
+                });
+                return;
+            }
+            mediaStreamTrack.stop();
+            video.style.border = "";
+            $("#tips1").html("已关闭摄像头，人脸检测请重新打开摄像头");
+            isopen = false;
+        }
+        //拍照截图
+        function takePhoto() {
+            if (isopen == false) {
+                layer.open({
+                    title: '提示'
+                    , content: '摄像头未开启，请先开启后再进行拍照截图'
+                    , icon: 5
+                });
+                return;
+            }
+            //获得Canvas对象
+            let canvas = document.getElementById("canvas");
+            let ctx = canvas.getContext('2d');
+            //绘图
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            isgetPic = true;
+        }
+        //上传得到的人脸图像
+        function uploadPic() {
+            if (handling == true) {
+                layer.open({
+                    title: '提示'
+                    , content: '服务器正在处理人像数据，请稍后尝试'
+                    , icon: 0
+                    , anim: 0
+                });
+                return;
+            }
+            if (isopen == true) {
+                closeMedia();
+            }
+            if (isgetPic == false) {
+                layer.open({
+                    title: '提示'
+                    , content: '检测到人像数据为空，请先打开摄像头进行拍照截图'
+                    , icon: 5
+                    , anim: 6
+                });
+                return;
+            }
+            var picinfo = canvas.toDataURL("image/png") + "";
+            let url = uplood_url;
+            picinfo = picinfo.replace("data:image/png;base64,", "");
+            //console.log(picinfo);
+            handling = true;
+            $.ajax({
+                type: "post",
+                url: url,
+                data: { //【这里填写是传给服务端的数据 可传可不传 数据必须是json格式】
+                    picBASE64: picinfo
+                },
+                dataType: 'json',  //【这里要小心啊，不要用jsonp，一定是json】
+                crossDomain: true,  //【这个很重要，一定要加】
+                success: function (result, textStatus) {
+                    console.log(result);
+                    let json_face_search = JSON.stringify(result);
+                    layer.open({
+                        title: '服务器返回数据'
+                        , content: json_face_search
+                        , anim: 0
+                    });
+                    handling = false;
+                },
+                error: function (result) {
+                    console.log(result);
+                    layer.open({
+                        title: '上传异常'
+                        , content: "上传图像失败，请重新尝试！"
+                        , icon: 5
+                        , anim: 0
+                    });
+                    handling = false;
+                }
+            });
+
+        }
+
+
+    </script>
+    <script>
+        layui.use('upload', function () {
+            var upload = layui.upload;
+            //执行实例
+            var uploadInst = upload.render({
+                elem: '#test1' //绑定元素
+                , url: upload_url //上传接口
+                , before: function (obj) { //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+                    console.log(obj)
+                }
+                , choose: function (obj) {
+                    //预读本地文件，如果是多文件，则会遍历。(不支持ie8/9)
+                    obj.preview(function (index, file, result) {
+                        console.log(index); //得到文件索引
+                        console.log(file); //得到文件对象
+                        console.log(result); //得到文件base64编码，比如图片
+
+                    })
+                }
+                , done: function (res) {
+                    //上传完毕回调
+                    console.log(res.result.face_num)
+
+                }
+                , error: function () {
+                    layer.open({
+                        title: '提示'
+                        , content: '上传失败'
+                        , icon: 5
+                    });
+                }
+            });
+        });
+        layui.use('dropdown', function () {
+            var dropdown = layui.dropdown
+            dropdown.render({
+                elem: '#snapAndupload' //可绑定在任意元素中，此处以上述按钮为例
+                , trigger: 'hover'
+                , data: [{
+                    title: '人脸检测'
+                    , id: 100
+                }, {
+                    title: '人脸匹配'
+                    , id: 102
+                }
+                ]
+                , id: 'snapAndupload'
+                //菜单被点击的事件
+                , click: function (obj) {
+                    if (obj.id == 100) {
+                        // layer.msg('100');
+                        upload_url="/aipFace/detect"
+                        snap_upload("0");
+                    }
+                    if (obj.id == 101) {
+                        //layer.msg('101');
+                        snap_upload("1");
+                    }
+                    if (obj.id == 102) {
+                        //layer.msg('102');
+                        upload_url="/aipFace/search"
+                        snap_upload("2");
+                    }
+
+                }
+            });
+        });
+    </script>
+
+</html>
