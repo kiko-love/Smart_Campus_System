@@ -242,11 +242,27 @@
 			},
 			{
 				"id": 605,
-				"title": "人脸考勤",
+				"title": "考勤中心",
 				"icon": "layui-icon layui-icon-face-cry",
 				"type": 1,
 				"openType": "_iframe",
-				"href": "view/face.html"
+				"children": [
+					{
+						"id": 6051,
+						"title": "人脸考勤",
+						"icon": "layui-icon layui-icon-face-cry",
+						"type": 1,
+						"openType": "_iframe",
+						"href": "view/face.html"
+					},{
+						"id": 6052,
+						"title": "考勤记录",
+						"icon": "layui-icon layui-icon-face-cry",
+						"type": 1,
+						"openType": "_iframe",
+						"href": "view/face.html"
+					}
+				]
 			}
 		]
 	},

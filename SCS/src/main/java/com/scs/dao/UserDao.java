@@ -10,7 +10,7 @@ import java.util.List;
 @Repository("UserDao")
 public interface UserDao {
     @Insert("insert into userinfo (username,password) values (#{username},#{password})")
-    void Save(User user);
+    int Save(User user);
 
     @Select("select * from userinfo where userName=#{userName}")
     List<User> FindByName(String username);

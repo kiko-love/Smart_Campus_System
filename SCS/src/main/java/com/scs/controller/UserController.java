@@ -30,11 +30,11 @@ public class UserController {
     InformToFront Login(User user, HttpServletRequest request, HttpServletResponse response) throws Exception {
         String userName = user.getUserName();
         String password = user.getMd5password();
-        String role = user.getRole();
+
         System.out.println(password);
         List<User> users = userService.FindByName(userName);
-        System.out.println(users);
-        System.out.println(users.size());
+        String role = users.get(0).getRole();
+
         if (users.size() == 0) {
             InformToFront status_err = new InformToFront("Username does not exist", "-1", null, null);     //没有该用户
             return status_err;
@@ -59,7 +59,6 @@ public class UserController {
         }
         return null;
     }
-
 
     //注销用户session
     @ResponseBody

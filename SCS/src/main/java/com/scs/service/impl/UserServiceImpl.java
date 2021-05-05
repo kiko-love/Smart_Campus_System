@@ -14,8 +14,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserDao userDao;
     @Override
-    public void Save(User user) {
-
+    public int Save(User user) {
+        return userDao.Save(user);
     }
     @Override
     public List<User> FindByName(String username) {

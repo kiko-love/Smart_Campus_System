@@ -9,7 +9,7 @@ public interface UserService {
      * 向数据库存入新注册的用户
      * @param user
      */
-    void Save(User user);
+    int Save(User user);
     /**
      * 查找该用户
      * @param username

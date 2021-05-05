@@ -96,10 +96,27 @@
 				
 				// 登出逻辑
 				admin.logout(function(){
-				
-					popup.success("注销成功",function(){
-						location.href = "";
+					$.ajax({
+						url:"/User/SignOut",
+						type:"POST",
+						dataType:'json',
+						success:function (res){
+							//let result = JSON.parse(res)
+							//console.log(result.success);
+							if (res.success){
+								popup.success("注销成功",function(){
+									location.href = "";
+								})
+							}else{
+								popup.success("用户信息注销失败，请重新尝试",function(){
+								})
+							}
+						},
+						error:function (){
+							layer.msg('服务器处理异常，请稍后再试', {icon: 2});
+						}
 					})
+
 					// 注销逻辑 返回 true / false
 					return true;
 				})

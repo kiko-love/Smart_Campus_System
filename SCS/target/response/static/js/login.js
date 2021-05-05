@@ -54,7 +54,14 @@ layui.use(['carousel', 'form','jquery'], function () {
                     let pos = curWwwPath.indexOf(pathName);
                     //获取主机地址，如： http://localhost:8080
                     let localhostPaht = curWwwPath.substring(0, pos);
-                    window.location.replace(localhostPaht+"/user/admin.jsp");
+                    console.log(result.role);
+                    if (result.role=='admin') {
+                        window.location.replace(localhostPaht+"/user/admin.jsp");
+                    }else if (result.role=='teacher') {
+                        window.location.replace(localhostPaht+"/user/teacher.jsp");
+                    }else {
+                        window.location.replace(localhostPaht+"/user/student.jsp");
+                    }
                 }
                 },
             error:function(){

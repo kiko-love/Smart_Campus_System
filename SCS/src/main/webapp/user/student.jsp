@@ -6,13 +6,13 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 		<title> 智慧校园系统-学生端 </title>
 		<!-- 依 赖 样 式 -->
-		<link rel="stylesheet" href="static/component/pear/css/pear.css" />
+		<link rel="stylesheet" href="component/pear/css/pear.css" />
 		<!-- 加 载 样 式-->
-		<link rel="stylesheet" href="static/admin/css/load.css" />
+		<link rel="stylesheet" href="admin/css/load.css" />
 		<!-- 布 局 样 式 -->
-		<link rel="stylesheet" href="static/admin/css/admin.css" />
+		<link rel="stylesheet" href="admin/css/admin.css" />
 		<!-- 网站图标 -->
-		<link rel="shortcut icon" href="static/admin/images/favicon.ico" type="image/x-icon">
+		<link rel="shortcut icon" href="admin/images/favicon.ico" type="image/x-icon">
 	</head>
 	<!-- 结 构 代 码 -->
 	<body class="layui-layout-body pear-admin">
@@ -29,7 +29,7 @@
 				<ul class="layui-nav layui-layout-right">
 					<li class="layui-nav-item layui-hide-xs"><a href="#" class="fullScreen layui-icon layui-icon-screen-full"></a></li>
 					<!-- <li class="layui-nav-item layui-hide-xs"><a href="http://www.pearadmin.com" class="layui-icon layui-icon-website"></a></li> -->
-					<li class="layui-nav-item layui-hide-xs message"></li>
+<%--					<li class="layui-nav-item layui-hide-xs message"></li>--%>
 					<li class="layui-nav-item user">
 						<!-- 头 像 -->
 						<a href="javascript:;">
@@ -76,8 +76,8 @@
 			<a href="#" class="layui-icon layui-icon-shrink-right"></a>
 		</div>
 		<!-- 依 赖 脚 本 -->
-		<script src="static/component/layui/layui.js"></script>
-		<script src="static/component/pear/pear.js"></script>
+		<script src="component/layui/layui.js"></script>
+		<script src="component/pear/pear.js"></script>
 		<!-- 框 架 初 始 化 -->
 		<script>
 			layui.use(['admin','jquery','convert','popup'], function() {
@@ -85,33 +85,50 @@
 				var $ = layui.jquery;
 				var convert = layui.convert;
 				var popup = layui.popup;
-		
+
 				// 初始化顶部用户信息,使用ajax获取后端seesion即可实现动态更换用户名
 				admin.setAvatar("admin/images/avatar.jpg","admin");
-				
+
 				// 根目录下 pear.config.yml 文件为初始化配置
 				// 你可以通过 admin.setConfigPath 方法修改配置文件位置
 				// 你可以通过 admin.setConfigType 方法修改配置文件类型
 				admin.setConfigType("yml");
 				admin.setConfigPath("config/pear.config_stu.yml");
 				admin.render();
-				
+
 				// 登出逻辑
 				admin.logout(function(){
-				
-					popup.success("注销成功",function(){
-						location.href = "login.html";
+					$.ajax({
+						url:"/User/SignOut",
+						type:"POST",
+						dataType:'json',
+						success:function (res){
+							//let result = JSON.parse(res)
+							//console.log(result.success);
+							if (res.success){
+								popup.success("注销成功",function(){
+									location.href = "";
+								})
+							}else{
+								popup.success("用户信息注销失败，请重新尝试",function(){
+								})
+							}
+						},
+						error:function (){
+							layer.msg('服务器处理异常，请稍后再试', {icon: 2});
+						}
 					})
+
 					// 注销逻辑 返回 true / false
 					return true;
 				})
-				
+
 				// 初始化消息回调
 				admin.message();
-				
+
 				// 重写消息回调 [消息列表点击事件]
 				// admin.message(function(id, title, context, form) {});
-				
+
 			})
 		</script>
 	</body>
