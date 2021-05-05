@@ -2,7 +2,7 @@
 ## 网站配置
 logo: 
   ## 网站名称
-  title: "智慧校园管理系统"
+  title: "智慧校园管理-学生端"
   ## 网站图标
   image: "admin/images/logo.png"
 ## 菜单配置
