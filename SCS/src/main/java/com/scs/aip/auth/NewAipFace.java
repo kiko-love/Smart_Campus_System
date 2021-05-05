@@ -2,6 +2,7 @@ package com.scs.aip.auth;
 
 import com.baidu.aip.face.AipFace;
 
+//全局AipFace对象
 public class NewAipFace {
     public static final String APP_ID = "23940837";
     public static final String API_KEY = "0zjph1CSKBMM7GUTFnOy1GUz";
