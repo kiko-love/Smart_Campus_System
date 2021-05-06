@@ -22,41 +22,13 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
     <filter>
-        <filter-name>loginFilter</filter-name>
-        <filter-class>com.scs.filter.Loginfilter</filter-class>
+        <filter-name>userFilter</filter-name>
+        <filter-class>com.scs.filter.Userfilter</filter-class>
     </filter>
     <filter-mapping>
-        <filter-name>loginFilter</filter-name>
+        <filter-name>userFilter</filter-name>
         <url-pattern>/user/*</url-pattern>
     </filter-mapping>
-    <filter>
-        <filter-name>studentFilter</filter-name>
-        <filter-class>com.scs.filter.studentFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>studentFilter</filter-name>
-        <url-pattern>/user/student.jsp</url-pattern>
-    </filter-mapping>
-
-    <filter>
-        <filter-name>teacherFilter</filter-name>
-        <filter-class>com.scs.filter.teacherFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>teacherFilter</filter-name>
-        <url-pattern>/user/teacher.jsp</url-pattern>
-    </filter-mapping>
-
-    <filter>
-        <filter-name>adminFilter</filter-name>
-        <filter-class>com.scs.filter.adminFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>adminFilter</filter-name>
-        <url-pattern>/user/admin.jsp</url-pattern>
-    </filter-mapping>
-
-
     <!--配置监听器  用于拦截ApplicationContext.xml-->
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
