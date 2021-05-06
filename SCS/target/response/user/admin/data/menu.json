@@ -244,8 +244,8 @@
 				"id": 605,
 				"title": "考勤中心",
 				"icon": "layui-icon layui-icon-face-cry",
-				"type": 1,
-				"openType": "_iframe",
+				"type": 0,
+				"href": "",
 				"children": [
 					{
 						"id": 6051,

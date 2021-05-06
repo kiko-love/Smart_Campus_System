@@ -45,7 +45,7 @@ public class UserController {
                     InformToFront status_success = new InformToFront("Success", "0", role, null);
                     request.getSession().setAttribute("userInformation", userName);
                     request.getSession().setAttribute("role",role);
-                    // request.getRequestDispatcher("/admin.jsp").forward(request,response);
+
                     return status_success;
                 } else {
                     InformToFront status_err = new InformToFront("Incorrect password", "-2", null, null);     //密码不正确
@@ -85,8 +85,7 @@ public class UserController {
         String username = (String) request.getSession().getAttribute("userInformation");
         List<User> User = userService.FindByName(username);
         if (User.size() != 0) {
-
-            //获取姓名
+            //获取用户id
             String realName = User.get(0).getUserName();
 
             //封装成json

@@ -1,13 +1,12 @@
 package com.scs.filter;
 
-import javax.imageio.spi.ServiceRegistry;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-public class Userfilter implements Filter {
+public class studentFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
 
@@ -15,19 +14,20 @@ public class Userfilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        HttpServletRequest req = (HttpServletRequest) servletRequest;
-        HttpServletResponse res = (HttpServletResponse) servletResponse;
-        HttpSession session = req.getSession();
-
-        String username = (String) session.getAttribute("userInformation");
-        if (username!=null) {
-            filterChain.doFilter(servletRequest, servletResponse);
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        HttpServletResponse response = (HttpServletResponse) servletResponse;
+        HttpSession session = request.getSession();
+        String role = (String) session.getAttribute("role");
+        if(role.equals("student")){
+            filterChain.doFilter(servletRequest,servletResponse);
         }
         else {
-            res.sendRedirect("/");
+            response.sendRedirect("/user/"+role+".jsp");
         }
     }
+
     @Override
     public void destroy() {
+
     }
 }
