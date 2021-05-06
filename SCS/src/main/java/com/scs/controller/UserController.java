@@ -30,8 +30,6 @@ public class UserController {
     InformToFront Login(User user, HttpServletRequest request, HttpServletResponse response) throws Exception {
         String userName = user.getUserName();
         String password = user.getMd5password();
-
-        System.out.println(password);
         List<User> users = userService.FindByName(userName);
         String role = users.get(0).getRole();
 
@@ -46,6 +44,7 @@ public class UserController {
                 if (md5password.equals(password)) {        //密码正确
                     InformToFront status_success = new InformToFront("Success", "0", role, null);
                     request.getSession().setAttribute("userInformation", userName);
+                    request.getSession().setAttribute("role",role);
                     // request.getRequestDispatcher("/admin.jsp").forward(request,response);
                     return status_success;
                 } else {
@@ -59,6 +58,7 @@ public class UserController {
         }
         return null;
     }
+
 
     //注销用户session
     @ResponseBody
@@ -82,16 +82,16 @@ public class UserController {
     @RequestMapping(value = "/getUserInfo", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public String getUserInfo(HttpServletRequest request) {
         //获取session值
-        String userId = (String) request.getSession().getAttribute("userInformation");
-        List<student> student = studentService.getStudentById(userId);
-        if (student.size() != 0) {
-            //获取班级
-            String classes = student.get(0).getClasses();
+        String username = (String) request.getSession().getAttribute("userInformation");
+        List<User> User = userService.FindByName(username);
+        if (User.size() != 0) {
+
             //获取姓名
-            String realName = student.get(0).getRealName();
+            String realName = User.get(0).getUserName();
+
             //封装成json
             JSONObject data = new JSONObject();
-            data.put("classes", classes);
+
             data.put("realName", realName);
             //回传给前端
             return data.toJSONString();
