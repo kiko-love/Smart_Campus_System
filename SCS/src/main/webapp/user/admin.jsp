@@ -96,10 +96,11 @@
             dataType: "json",
             success: function (res) {
                 console.log(res);
+				admin.setAvatar("admin/images/avatar.jpg", res.userName);
             }
         })
 
-        admin.setAvatar("admin/images/avatar.jpg", "admin");
+
 
         // 根目录下 pear.config.yml 文件为初始化配置
         // 你可以通过 admin.setConfigPath 方法修改配置文件位置

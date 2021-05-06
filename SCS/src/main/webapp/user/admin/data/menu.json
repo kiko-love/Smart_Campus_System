@@ -1,3 +1,5 @@
+
+
 [{
 		"id": 1,
 		"title": "主菜单",
@@ -6,19 +8,74 @@
 		"href": "",
 		"children": [{
 			"id": 10,
-			"title": "控制后台",
+			"title": "首页",
 			"icon": "layui-icon layui-icon-console",
 			"type": 1,
 			"openType": "_iframe",
 			"href": "view/console/console1.html"
+		},{
+			"id": 11,
+			"title": "控制后台",
+			"icon": "layui-icon layui-icon-console",
+			"type": 1,
+			"openType": "_iframe",
+			"href": "view/console/console2.html"
 		}, {
-			"id": 13,
+			"id": 12,
 			"title": "数据分析",
 			"icon": "layui-icon layui-icon-console",
 			"type": 1,
 			"openType": "_iframe",
 			"href": "view/console/console2.html"
 		}]
+	},
+	{
+		"id": "system",
+		"title": "系统管理",
+		"icon": "layui-icon layui-icon-set-fill",
+		"type": 0,
+		"href": "",
+		"children": [{
+				"id": 601,
+				"title": "用户管理",
+				"icon": "layui-icon layui-icon-face-smile",
+				"type": 1,
+				"openType": "_iframe",
+				"href": "view/system/user.html"
+			},
+			{
+				"id": 604,
+				"title": "部门管理",
+				"icon": "layui-icon layui-icon-face-cry",
+				"type": 1,
+				"openType": "_iframe",
+				"href": "view/system/deptment.html"
+			},
+			{
+				"id": 605,
+				"title": "考勤中心",
+				"icon": "layui-icon layui-icon-face-cry",
+				"type": 0,
+				"href": "",
+				"children": [
+					{
+						"id": 6051,
+						"title": "人脸考勤",
+						"icon": "layui-icon layui-icon-face-cry",
+						"type": 1,
+						"openType": "_iframe",
+						"href": "view/face.html"
+					},{
+						"id": 6052,
+						"title": "考勤记录",
+						"icon": "layui-icon layui-icon-face-cry",
+						"type": 1,
+						"openType": "_iframe",
+						"href": "view/face.html"
+					}
+				]
+			}
+		]
 	},
 	{
 		"id": "component",
@@ -175,13 +232,13 @@
 			"icon": "layui-icon layui-icon-console",
 			"type": 0,
 			"children": [{
-					"id": 2041,
-					"title": "哈希加密",
-					"icon": "layui-icon layui-icon-face-cry",
-					"type": 1,
-					"openType": "_iframe",
-					"href": "view/document/hash.html"
-				},
+				"id": 2041,
+				"title": "哈希加密",
+				"icon": "layui-icon layui-icon-face-cry",
+				"type": 1,
+				"openType": "_iframe",
+				"href": "view/document/hash.html"
+			},
 				{
 					"id": 2042,
 					"title": "图标选择",
@@ -216,55 +273,6 @@
 				}
 			]
 		}]
-	},
-
-	{
-		"id": "system",
-		"title": "系统管理",
-		"icon": "layui-icon layui-icon-set-fill",
-		"type": 0,
-		"href": "",
-		"children": [{
-				"id": 601,
-				"title": "用户管理",
-				"icon": "layui-icon layui-icon-face-smile",
-				"type": 1,
-				"openType": "_iframe",
-				"href": "view/system/user.html"
-			},
-			{
-				"id": 604,
-				"title": "部门管理",
-				"icon": "layui-icon layui-icon-face-cry",
-				"type": 1,
-				"openType": "_iframe",
-				"href": "view/system/deptment.html"
-			},
-			{
-				"id": 605,
-				"title": "考勤中心",
-				"icon": "layui-icon layui-icon-face-cry",
-				"type": 0,
-				"href": "",
-				"children": [
-					{
-						"id": 6051,
-						"title": "人脸考勤",
-						"icon": "layui-icon layui-icon-face-cry",
-						"type": 1,
-						"openType": "_iframe",
-						"href": "view/face.html"
-					},{
-						"id": 6052,
-						"title": "考勤记录",
-						"icon": "layui-icon layui-icon-face-cry",
-						"type": 1,
-						"openType": "_iframe",
-						"href": "view/face.html"
-					}
-				]
-			}
-		]
 	},
 	{
 		"id": "echarts",

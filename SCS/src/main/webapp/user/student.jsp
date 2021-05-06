@@ -88,7 +88,15 @@
 				var popup = layui.popup;
 
 				// 初始化顶部用户信息,使用ajax获取后端seesion即可实现动态更换用户名
-				admin.setAvatar("admin/images/avatar.jpg","admin");
+				$.ajax({
+					url: "/User/getUserInfo",
+					type: "POST",
+					dataType: "json",
+					success: function (res) {
+						console.log(res);
+						admin.setAvatar("admin/images/avatar.jpg", res.userName);
+					}
+				})
 
 				// 根目录下 pear.config.yml 文件为初始化配置
 				// 你可以通过 admin.setConfigPath 方法修改配置文件位置
