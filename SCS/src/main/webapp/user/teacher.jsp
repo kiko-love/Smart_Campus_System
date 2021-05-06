@@ -38,6 +38,7 @@
 						<!-- 功 能 菜 单 -->
 						<dl class="layui-nav-child">
 							<dd><a user-menu-url="view/system/person.html" user-menu-id="5555" user-menu-title="基本资料">个人信息</a></dd>
+							<dd><a user-menu-url="view/system/person.html" user-menu-id="5555" user-menu-title="基本资料">修改密码</a></dd>
 							<dd><a href="javascript:void(0);" class="logout">退出登录</a></dd>
 						</dl>
 					</li>
