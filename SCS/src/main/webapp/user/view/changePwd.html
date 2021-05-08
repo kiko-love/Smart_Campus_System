@@ -42,7 +42,7 @@
         $('#changeDo').click(function (){
             $('#md5_old').val(md5($('#oldpassword').val()));
             $('#md5_new').val(md5($('#repassword_1').val()));
-            $('#username').val(getCookie('username'));
+            $('#username').val(sessionStorage.getItem("username"));
             console.log(getCookie('username'))
         })
         form.on('submit(changePwd)', function (data) {
