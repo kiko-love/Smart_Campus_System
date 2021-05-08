@@ -4,6 +4,7 @@ import com.scs.dao.UserDao;
 import com.scs.pojo.User;
 import com.scs.service.UserService;
 
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,5 +22,15 @@ public class UserServiceImpl implements UserService {
     public List<User> FindByName(String username) {
         List<User> users = userDao.FindByName(username);
         return users;
+    }
+
+    @Override
+    public int updatePassword(String username,String newPassword) {
+        return userDao.updatePassword(username,newPassword);
+    }
+
+    @Override
+    public String findPassword(String username) {
+        return userDao.findPassword(username);
     }
 }

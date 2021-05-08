@@ -36,9 +36,7 @@
                 </a>
                 <!-- 功 能 菜 单 -->
                 <dl class="layui-nav-child">
-                    <dd><a user-menu-url="view/system/person.html" user-menu-id="5555" user-menu-title="基本资料">基本资料</a>
-                    </dd>
-                    <dd><a user-menu-url="view/system/person.html" user-menu-id="5555" user-menu-title="基本资料">修改密码</a>
+                    <dd style="cursor: pointer"><a id="changePassword">修改密码</a>
                     </dd>
                     <dd><a href="javascript:void(0);" class="logout">注销登录</a></dd>
                 </dl>
@@ -83,12 +81,34 @@
 <!-- 框 架 初 始 化 -->
 <script>
     layui.use(['admin', 'jquery', 'convert', 'popup'], function () {
-        var admin = layui.admin;
-        var $ = layui.jquery;
-        var convert = layui.convert;
-        var popup = layui.popup;
-
+        let admin = layui.admin;
+        let $ = layui.jquery;
+        let convert = layui.convert;
+        let popup = layui.popup;
+        let common = layui.common;
+        let cp = $('#changePassword');
         // 初始化顶部用户信息,使用ajax获取后端seesion即可实现动态更换用户名
+
+        cp.click(function () {
+            layer.open({
+                type: 2,
+                title: '新增',
+                shade: 0.1,
+                area: ['60%', '70%'],
+                content: '../user/view/changePwd.html',
+                success: function (layero, index) {
+                    var body = layer.getChildFrame('body', index);
+                    //得到iframe页的窗口对象，执行iframe页的方法：iframeWin.method();
+                    var iframeWin = window[layero.find('iframe')[0]['name']]
+                    body.find('#userId').val(obj.data['userId'])
+                    body.find('#counselor').val(obj.data['counselor'])
+                    //console.log(obj.data['levels']);
+                    if (obj.data['levels'] == '专科') {
+                        body.find('#level01').attr("selected", "");
+                        iframeWin.layui.form.render('select');
+                    }}
+                });
+        })
 
         $.ajax({
             url: "/User/getUserInfo",
@@ -96,10 +116,9 @@
             dataType: "json",
             success: function (res) {
                 console.log(res);
-				admin.setAvatar("admin/images/avatar.jpg", res.userName);
+                admin.setAvatar("admin/images/avatar.jpg", res.userName);
             }
         })
-
 
 
         // 根目录下 pear.config.yml 文件为初始化配置
@@ -131,7 +150,6 @@
                     layer.msg('服务器处理异常，请稍后再试', {icon: 2});
                 }
             })
-
             // 注销逻辑 返回 true / false
             return true;
         })

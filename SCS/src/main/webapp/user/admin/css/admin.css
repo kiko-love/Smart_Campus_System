@@ -66,6 +66,10 @@ body,
 	display: none;
 }
 
+.pear-admin .layui-side a:hover {
+	background-color: #378e53;
+}
+
 .pear-admin .layui-side {
 	top: 0px;
 	width: 230px;
@@ -85,7 +89,7 @@ body,
 
 }
 
-.pear-admin .layui-header .layui-nav .layui-nav-item>a {
+.pear-admin .layui-header .layui-nav .layui-nav-item a {
 	color: black;
 	font-size: 15px;
 }

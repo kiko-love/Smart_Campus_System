@@ -17,5 +17,18 @@ public interface UserService {
      */
     List<User> FindByName(String username);
 
+    /**
+     * 修改用户密码
+     * @param username
+     * @param newPassword
+     * @return int
+     */
+    int updatePassword(String username,String newPassword);
 
+    /**
+     * 查找用户密码
+     * @param username
+     * @return int
+     */
+    String findPassword(String username);
 }

@@ -47,6 +47,8 @@ layui.use(['carousel', 'form','jquery'], function () {
                     // $('#vercode').val('');
                     zyVerCode();
             }else if (result.code=='0'){
+                    console.log(data.field.userName);
+                    document.cookie="username="+data.field.userName;
                     //获取完整路径
                     let curWwwPath = window.document.location.href;
                     //获取主机地址之后的目录，如： index.jsp

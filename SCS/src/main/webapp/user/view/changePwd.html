@@ -15,14 +15,37 @@
     body {
         background-color: rgba(179, 180, 180, 0.3);
     }
+    .layui-card{
+        position: relative;
+        top: 50px;
+
+    }
 </style>
 <script>
+    function getCookie(cookieName) {
+        const strCookie = document.cookie
+        const cookieList = strCookie.split(';')
+
+        for(let i = 0; i < cookieList.length; i++) {
+            const arr = cookieList[i].split('=')
+            if (cookieName === arr[0]) {
+                return arr[1]
+            }
+        }
+
+        return ''
+    }
     layui.use('form', function () {
         let form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
         let $ = layui.$;
         let myform = $('#pwdForm');
 
-
+        $('#changeDo').click(function (){
+            $('#md5_old').val(md5($('#oldpassword').val()));
+            $('#md5_new').val(md5($('#repassword_1').val()));
+            $('#username').val(getCookie('username'));
+            console.log(getCookie('username'))
+        })
         form.on('submit(changePwd)', function (data) {
             console.log(data);
             let oldp = $('#oldpassword').val();
@@ -90,24 +113,50 @@
                 });
                 return false;
             }
-            $('#md5_old').val(md5($('#oldpassword').val()));
-            $('#md5_new').val(md5($('#repassword').val()));
-            $('#username').val("1234");
-            data.userName="123";
-            myform.attr('method', 'POST');
-            myform.attr('action', '');
-
             $.ajax({
                 url:'/User/updatePwd',
-                type:'POST',
+                type:'post',
+                data:data.field,
                 datatype:"json",
                 success:function(res){
                     if(res.success==1){
-                        layer.open({
-                            title: '提示'
-                            , icon: 1
-                            , content: '密码修改成功！'
-                        });
+                        $.ajax({
+                            url: '../../User/SignOut',
+                            type: 'post',
+                            success:function (res){
+                                layer.open({
+                                    title: '提示'
+                                    , icon: 1
+                                    , content: '密码修改成功！'
+                                    ,end:function (){
+                                        let curWwwPath = window.document.location.href;
+                                        //获取主机地址之后的目录，如： index.jsp
+                                        let pathName = window.document.location.pathname;
+                                        let pos = curWwwPath.indexOf(pathName);
+                                        //获取主机地址，如： http://localhost:8080
+                                        let localhostPaht = curWwwPath.substring(0, pos);
+                                        parent.window.location.replace(localhostPaht);
+                                    }
+                                });
+
+                            },
+                            err: function (){
+                                layer.open({
+                                    title: '提示'
+                                    , icon: 1
+                                    , content: '密码修改成功！'
+                                    ,end:function (){
+                                        let curWwwPath = window.document.location.href;
+                                        //获取主机地址之后的目录，如： index.jsp
+                                        let pathName = window.document.location.pathname;
+                                        let pos = curWwwPath.indexOf(pathName);
+                                        //获取主机地址，如： http://localhost:8080
+                                        let localhostPaht = curWwwPath.substring(0, pos);
+                                        parent.window.location.replace(localhostPaht);
+                                    }
+                                });
+                            }
+                        })
                     }
                     if(res.success==0){
                         layer.open({
@@ -136,7 +185,7 @@
 <body>
 
     <div class="layui-fluid">
-        <div class="layui-row layui-col-space15">
+        <div class="layui-row layui-col-space30">
             <div class="layui-col-md12">
                 <div class="layui-card">
                     <div class="layui-card-header">
@@ -149,7 +198,7 @@
                             <div class="layui-form-item">
                                 <label class="layui-form-label">当前密码</label>
                                 <div class="layui-input-inline">
-                                    <input id="oldpassword" type="text" required lay-reqText="请输入当前密码"
+                                    <input id="oldpassword" type="password" required lay-reqText="请输入当前密码"
                                         lay-verify="required" placeholder="当前密码" autocomplete="off" class="layui-input">
                                     <input type="hidden" name="oldpassword" id="md5_old">
                                     <input type="hidden" name="userName" id="username">
@@ -179,7 +228,7 @@
 
                             <div class="layui-form-item">
                                 <div class="layui-input-block">
-                                    <button class="layui-btn" lay-submit lay-filter="changePwd">修改</button>
+                                    <button id="changeDo" class="layui-btn" lay-submit lay-filter="changePwd">修改</button>
                                     <button type="reset" class="layui-btn layui-btn-primary">重置</button>
                                 </div>
                             </div>

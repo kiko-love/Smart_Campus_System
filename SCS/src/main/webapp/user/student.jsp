@@ -37,8 +37,7 @@
 						</a>
 						<!-- 功 能 菜 单 -->
 						<dl class="layui-nav-child">
-							<dd><a user-menu-url="view/system/person.html" user-menu-id="5555" user-menu-title="基本资料">基本资料</a></dd>
-							<dd><a user-menu-url="view/system/person.html" user-menu-id="5555" user-menu-title="基本资料">修改密码</a></dd>
+							<dd style="cursor: pointer"><a user-menu-url="view/system/person.html" user-menu-id="5555" user-menu-title="修改密码">修改密码</a></dd>
 							<dd><a href="javascript:void(0);" class="logout">注销登录</a></dd>
 						</dl>
 					</li>
@@ -82,10 +81,10 @@
 		<!-- 框 架 初 始 化 -->
 		<script>
 			layui.use(['admin','jquery','convert','popup'], function() {
-				var admin = layui.admin;
-				var $ = layui.jquery;
-				var convert = layui.convert;
-				var popup = layui.popup;
+				let admin = layui.admin;
+				let $ = layui.jquery;
+				let convert = layui.convert;
+				let popup = layui.popup;
 
 				// 初始化顶部用户信息,使用ajax获取后端seesion即可实现动态更换用户名
 				$.ajax({

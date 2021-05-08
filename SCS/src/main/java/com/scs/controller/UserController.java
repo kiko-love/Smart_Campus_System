@@ -22,8 +22,6 @@ import java.util.List;
 public class UserController {
     @Autowired
     private UserService userService;
-    @Autowired
-    private studentService studentService;
 
     @RequestMapping(value = "/Login", method = RequestMethod.POST)
     public @ResponseBody
@@ -59,7 +57,6 @@ public class UserController {
         return null;
     }
 
-
     //注销用户session
     @ResponseBody
     @RequestMapping(value = "/SignOut", method = RequestMethod.POST,produces = "application/json;charset=utf-8")
@@ -91,10 +88,42 @@ public class UserController {
             //封装成json
             JSONObject data = new JSONObject();
 
-            data.put("realName", realName);
+            data.put("userName", realName);
             //回传给前端
             return data.toJSONString();
         }
         return null;
     }
+
+    @ResponseBody
+    @RequestMapping(value = "/updatePwd", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public String updatePassword(HttpServletRequest request) {
+
+        String oldPassword = request.getParameter("oldpassword");
+        String rePassword = request.getParameter("repassword");
+        String username = request.getParameter("userName");
+        System.out.println(oldPassword);
+        JSONObject jsonObject = new JSONObject();
+        String password = userService.findPassword(username);
+        if (oldPassword==null) {
+            oldPassword="";
+        }
+
+        if (!oldPassword.equals(password)) {
+            jsonObject.put("success",0);
+            jsonObject.put("msg","原始密码错误，请重新输入");
+        }else {
+            int i = userService.updatePassword(username, rePassword);
+            if (i>0){
+                jsonObject.put("success",1);
+                jsonObject.put("msg","密码修改成功");
+            }else {
+                jsonObject.put("success",0);
+                jsonObject.put("msg","修改密码失败");
+            }
+        }
+
+        return jsonObject.toJSONString();
+    }
+
 }
