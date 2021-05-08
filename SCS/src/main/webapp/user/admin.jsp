@@ -92,21 +92,10 @@
         cp.click(function () {
             layer.open({
                 type: 2,
-                title: '新增',
+                title: '修改密码',
                 shade: 0.1,
                 area: ['60%', '70%'],
-                content: '../user/view/changePwd.html',
-                success: function (layero, index) {
-                    var body = layer.getChildFrame('body', index);
-                    //得到iframe页的窗口对象，执行iframe页的方法：iframeWin.method();
-                    var iframeWin = window[layero.find('iframe')[0]['name']]
-                    body.find('#userId').val(obj.data['userId'])
-                    body.find('#counselor').val(obj.data['counselor'])
-                    //console.log(obj.data['levels']);
-                    if (obj.data['levels'] == '专科') {
-                        body.find('#level01').attr("selected", "");
-                        iframeWin.layui.form.render('select');
-                    }}
+                content: '../user/view/changePwd.html'
                 });
         })
 
