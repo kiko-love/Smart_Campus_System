@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../../static/layui/css/layui.css" rel="stylesheet">
+    <script src="../../static/layui/layui.js"></script>
+    <script src="../../static/js/md5.js"></script>
+    <title>修改密码</title>
+</head>
+
+
+<style>
+    body {
+        background-color: rgba(179, 180, 180, 0.3);
+    }
+</style>
+<script>
+    layui.use('form', function () {
+        let form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
+        let $ = layui.$;
+        let myform = $('#pwdForm');
+
+
+        form.on('submit(changePwd)', function (data) {
+            console.log(data);
+            let oldp = $('#oldpassword').val();
+            let newp1 = $('#repassword_1').val();
+            let newp2 = $('#repassword_2').val();
+            if (oldp.length < 6 || oldp.length > 12) {
+
+                layer.open({
+                    title: '提示'
+                    , icon: 5
+                    , content: '当前密码长度错误，请重新输入'
+                    , end: function () {
+                        $('#oldpassword').addClass("layui-form-danger");
+                        $('#oldpassword').focus();
+                    }
+                });
+
+                return false;
+
+            }
+            if (newp1.length < 6 || newp1.length > 12) {
+
+                layer.open({
+                    title: '提示'
+                    , icon: 5
+                    , content: '新密码长度必须在6-12位之间，请重新输入'
+                    , end: function () {
+                        $('#repassword_1').addClass("layui-form-danger");
+                        $('#repassword_1').focus();
+                    }
+                });
+
+                return false;
+
+            }
+            if (!new RegExp("^[a-zA-Z0-9_\u4e00-\u9fa5\\s·]+$").test(newp1)) {
+                layer.open({
+                    title: '提示'
+                    , icon: 5
+                    , content: '新密码不能出现特殊字符'
+                    , end: function () {
+                        $('#repassword_2').addClass("layui-form-danger");
+                        $('#repassword_2').focus();
+                    }
+                });
+                return false;
+            }
+            if (/(^\_)|(\__)|(\_+$)/.test(newp1)) {
+                layer.open({
+                    title: '提示'
+                    , icon: 5
+                    , content: '新密码不能出现下划线'
+                    , end: function () {
+                        $('#oldpassword').addClass("layui-form-danger");
+                        $('#oldpassword').focus();
+                    }
+                });
+                return false;
+            }
+            if (newp1 != newp2) {
+                layer.open({
+                    title: '提示'
+                    , icon: 5
+                    , content: '两次输入密码不一致，请重新输入'
+                });
+                return false;
+            }
+            $('#md5_old').val(md5($('#oldpassword').val()));
+            $('#md5_new').val(md5($('#repassword').val()));
+            $('#username').val("1234");
+            data.userName="123";
+            myform.attr('method', 'POST');
+            myform.attr('action', '');
+
+            $.ajax({
+                url:'/User/updatePwd',
+                type:'POST',
+                datatype:"json",
+                success:function(res){
+                    if(res.success==1){
+                        layer.open({
+                            title: '提示'
+                            , icon: 1
+                            , content: '密码修改成功！'
+                        });
+                    }
+                    if(res.success==0){
+                        layer.open({
+                            title: '提示'
+                            , icon: 5
+                            , content: res.msg
+                        });
+                    }
+
+                },
+                error:function(){
+                    layer.open({
+                        title: '服务器异常提示'
+                        , icon: 2
+                        , content: '服务器处理异常，请稍后再试'
+                    });
+                }
+            })
+
+            return false;
+        });
+
+    })
+</script>
+
+<body>
+
+    <div class="layui-fluid">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <div class="layui-card">
+                    <div class="layui-card-header">
+                        <h2>修改密码</h2>
+                    </div>
+                    <div class="layui-card-body" pad15>
+
+                        <form class="layui-form" id="pwdForm" lay-verify='cForm'>
+                            <!-- 当前密码 -->
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">当前密码</label>
+                                <div class="layui-input-inline">
+                                    <input id="oldpassword" type="text" required lay-reqText="请输入当前密码"
+                                        lay-verify="required" placeholder="当前密码" autocomplete="off" class="layui-input">
+                                    <input type="hidden" name="oldpassword" id="md5_old">
+                                    <input type="hidden" name="userName" id="username">
+                                </div>
+                                <div class="layui-form-mid layui-word-aux">输入你当前的账号密码</div>
+                            </div>
+                            <!-- 新密码 -->
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">新密码</label>
+                                <div class="layui-input-inline">
+                                    <input id="repassword_1" type="password" required
+                                        lay-reqText="请输入新密码" lay-verify="required" placeholder="新密码" autocomplete="off"
+                                        class="layui-input">
+                                    <input type="hidden" name="repassword" id="md5_new">
+                                </div>
+                                <div class="layui-form-mid layui-word-aux">输入新密码 6-12位</div>
+                            </div>
+                            <!-- 确认新密码 -->
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">确认密码</label>
+                                <div class="layui-input-inline">
+                                    <input id="repassword_2" type="password" required lay-reqText="请确认新密码"
+                                        lay-verify="required" placeholder="确认密码" autocomplete="off" class="layui-input">
+                                </div>
+                                <div class="layui-form-mid layui-word-aux">确认新密码</div>
+                            </div>
+
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button class="layui-btn" lay-submit lay-filter="changePwd">修改</button>
+                                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
