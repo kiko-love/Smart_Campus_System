@@ -12,7 +12,6 @@ public class studentServiceImpl implements studentService {
     @Autowired
     private studentMapper studentMapper;
 
-
     @Override
     public List<student> getStudents() {
         return studentMapper.getStudents();
