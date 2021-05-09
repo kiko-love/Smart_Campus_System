@@ -19,8 +19,8 @@
     </select>
 
     <insert id="addStudent" parameterType="com.scs.pojo.student">
-        insert into students(userid, department, realName, sex, phone, levels, classes, counselor)
-        values (#{userId}, #{department}, #{realName}, #{sex}, #{phone}, #{levels}, #{classes}, #{counselor})
+        insert into students(userid, Major, realName, sex, phone, levels, classes, counselor)
+        values (#{userId}, #{Major}, #{realName}, #{sex}, #{phone}, #{levels}, #{classes}, #{counselor})
     </insert>
 
     <delete id="batchRemove" parameterType="java.util.List">
@@ -44,8 +44,8 @@
             <if test="userId !=null and userId!=''">
                 userId=#{userId},
             </if>
-            <if test="department !=null and department!=''">
-                department=#{department},
+            <if test="Major !=null and Major!=''">
+                Major=#{Major},
             </if>
             <if test="realName !=null and realName!=''">
                 realName=#{realName},

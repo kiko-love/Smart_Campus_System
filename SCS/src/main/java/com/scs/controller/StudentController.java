@@ -79,13 +79,13 @@ public class StudentController {
         data.put("msg", "addStudent");
         String userId = req.getParameter("userId");
         String realName = req.getParameter("realName");
-        String department = req.getParameter("department");
+        String Major = req.getParameter("department");
         String sexStr = req.getParameter("sex");
         String phone = req.getParameter("phone");
         String levels = req.getParameter("levels");
         String classes = req.getParameter("classes");
         String counselor = req.getParameter("counselor");
-        student stu = new student(userId, department, realName, sexStr, phone, levels,classes,counselor);
+        student stu = new student(userId, Major, realName, sexStr, phone, levels,classes,counselor);
         int addNumber = studentService.addStudent(stu);
         if (addNumber > 0) {
             data.put("success", "1");
@@ -131,13 +131,13 @@ public class StudentController {
         data.put("msg", "updateStudent");
         String userId = req.getParameter("userId");
         String realName = req.getParameter("realName");
-        String department = req.getParameter("department");
+        String Major = req.getParameter("department");
         String sexStr = req.getParameter("sex");
         String phone = req.getParameter("phone");
         String levels = req.getParameter("levels");
         String classes = req.getParameter("classes");
         String counselor = req.getParameter("counselor");
-        student stu = new student(userId, department, realName, sexStr, phone, levels,classes,counselor);
+        student stu = new student(userId, Major, realName, sexStr, phone, levels,classes,counselor);
         int addNumber = studentService.updateStudent(stu);
         if (addNumber > 0) {
             data.put("success", "1");

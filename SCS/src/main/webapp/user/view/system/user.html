@@ -133,8 +133,8 @@
                     align: 'center'
                 },
                 {
-                    title: '院系',
-                    field: 'department',
+                    title: '专业',
+                    field: 'major',
                     align: 'center'
                 },
                 // {
@@ -277,7 +277,7 @@
                     var iframeWin = window[layero.find('iframe')[0]['name']]
                     body.find('#userId').val(obj.data['userId'])
                     body.find('#realName').val(obj.data['realName'])
-                    body.find('#department').val(obj.data['department'])
+                    body.find('#department').val(obj.data['major'])
                     body.find('#phone').val(obj.data['phone'])
                     body.find('#classes').val(obj.data['classes'])
                     body.find('#counselor').val(obj.data['counselor'])
