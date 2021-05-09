@@ -193,7 +193,7 @@
   <build>
     <resources>
       <resource>
-        <directory>C:\Users\帅\IdeaProjects\Smart_Campus_System\SCS\src\main\java</directory>
+        <directory>C:\Users\KIKO\IdeaProjects\Smart_Campus_System\SCS\src\main\java</directory>
         <includes>
           <include>**/*.jpg</include>
           <include>**/*.ico</include>
