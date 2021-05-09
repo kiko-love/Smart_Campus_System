@@ -1,120 +1,129 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8">
-	<title></title>
-	<link rel="stylesheet" href="../../component/pear/css/pear.css" />
-	<link rel="stylesheet" href="../../admin/css/other/person.css" />
+    <meta charset="utf-8">
+    <title></title>
+    <link rel="stylesheet" href="../../component/pear/css/pear.css"/>
+    <link rel="stylesheet" href="../../admin/css/other/person.css"/>
 </head>
 <style>
-	.list-item:hover {
-		background-color: rgba(88, 84, 84, 0.1);
-	}
-	a:hover{
-		color: #1673b4;
-	}
+    .list-item:hover {
+        background-color: rgba(88, 84, 84, 0.1);
+    }
+
+    a:hover {
+        color: #1673b4;
+    }
+
+    #userAvatar:hover {
+        filter: alpha(Opacity=80);
+        -moz-opacity: 0.8;
+        opacity: 0.8
+    }
 </style>
 <body class="pear-container">
-	<div class="layui-row layui-col-space10">
-		<div class="layui-col-md3">
-			<div class="layui-card">
-				<div class="layui-card-body" style="padding: 25px;height: 505px">
-					<div class="text-center layui-text">
-						<div class="user-info-head" id="userInfoHead">
-							<img src="" id="userAvatar" width="115px" height="115px" alt="">
-						</div>
-						<h2 style="padding-top: 20px;font-size: 20px;" id="userInfoHead_name"></h2>
-						<p style="padding-top: 8px;margin-top: 10px;font-size: 13.5px;">China ， 中国</p>
-					</div>
-				</div>
-				<div style="height: 45px;border-top: 1px whitesmoke solid;text-align: center;line-height: 45px;font-size: 13.5px;">
-					<span>智慧校园管理系统</span>
-				</div>
-			</div>
+<div class="layui-row layui-col-space10">
+    <div class="layui-col-md3">
+        <div class="layui-card">
+            <div class="layui-card-body" style="padding: 25px;height: 505px">
+                <div class="text-center layui-text">
+                    <div class="user-info-head" id="userInfoHead">
+                        <img src="" id="userAvatar" width="115px" height="115px" alt="">
+                    </div>
+                    <h2 style="padding-top: 20px;font-size: 20px;" id="userInfoHead_name"></h2>
+                    <p style="padding-top: 8px;margin-top: 10px;font-size: 13.5px;">China ， 中国</p>
+                </div>
+            </div>
+            <div style="height: 45px;border-top: 1px whitesmoke solid;text-align: center;line-height: 45px;font-size: 13.5px;">
+                <span>智慧校园管理系统</span>
+            </div>
+        </div>
 
 
-		</div>
-		<div class="layui-col-md9">
-			<div class="layui-card">
-				<div class="layui-card-header">
-					<h2>&nbsp;&nbsp;&nbsp;今日热点</h2>
-				</div>
-				<div class="layui-card-body">
-					<div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
-						<div class="layui-tab-content">
-							<div class="layui-tab-item layui-show">
-								<div class="layui-row layui-col-space10" style="margin: 15px;" id="newsContainer">
-									<div class="layui-col-md1">
-										<img src="" style="width: 100%;height: 100%;border-radius: 5px;" />
-									</div>
-									<div class="layui-col-md11" style="height: 80px;">
-										<div class="title"></div>
-										<div class="content"></div>
-										<div class="comment"></div>
-									</div>
+    </div>
+    <div class="layui-col-md9">
+        <div class="layui-card">
+            <div class="layui-card-header">
+                <h2>&nbsp;&nbsp;&nbsp;今日热点</h2>
+            </div>
+            <div class="layui-card-body">
+                <div class="layui-tab layui-tab-brief" lay-filter="docDemoTabBrief">
+                    <div class="layui-tab-content">
+                        <div class="layui-tab-item layui-show">
+                            <div class="layui-row layui-col-space10" style="margin: 15px;" id="newsContainer">
+                                <div class="layui-col-md1">
+                                    <img src="" style="width: 100%;height: 100%;border-radius: 5px;"/>
+                                </div>
+                                <div class="layui-col-md11" style="height: 80px;">
+                                    <div class="title"></div>
+                                    <div class="content"></div>
+                                    <div class="comment"></div>
+                                </div>
 
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<script src="../../../static/layui/layui.js"></script>
-	<script>
-		layui.use(['jquery', 'element', 'layer'], function () {
-			var element = layui.element,
-				layer = layui.layer,
-				$ = layui.jquery;
-			let MODULE_PATH = "operate/";
-			$("#userAvatar").attr("src", parent.layui.$(".layui-nav-img").attr("src"));
-			$('#userInfoHead_name').html(sessionStorage.getItem("username"));
-			window.callback = function (data) {
-				layer.close(data.index);
-                $("#userAvatar").attr("src", data.newAvatar);
-                parent.layui.$(".layui-nav-img").attr("src", data.newAvatar);
-            }
-			function getNews() {
-				fetch('https://v2.alapi.cn/api/new/toutiao?type=5&token=HicXVerwmfUY2K8r')
-						.then(response => response.json())
-						.then(data => {
-							console.log(data);
-							const news = document.getElementById('newsContainer')
-							const newsNum = 6
-							news.innerHTML='';
-							for (let i = 0; i < newsNum; i++) {
-								news.innerHTML=news.innerHTML+ '<div class="layui-col-md1">\n' +
-										'<img src=\"'+data.data[i].imgsrc+'\" style="width: 70px;height: 65px;border-radius: 2px;" />\n' +
-										'</div>\n' +
-										'<div class="layui-col-md11 list-item" style="height: 80px;">\n' +
-										'<div class="title" style="font-weight: 600">'
-										+'<a title=\"'+'https://www.163.com/dy/article/'+data.data[i].docid+'.html'+'\"' +
-										'target="_blank" href=\"https://www.163.com/dy/article/'+data.data[i].docid+'.html\">'
-										+data.data[i].title+'</a>'+'</div>\n' +
-										'<div class="content">'+data.data[i].digest+'</div>\n' +
-										'<div class="comment">'+data.data[i].source+'&nbsp;&nbsp;&nbsp;'
-										+data.data[i].time+'</div>\n' +
-										'</div><br><br>\n'
-							}
-						})
-						.catch(console.error)
-			}
-			getNews();
-			$("#userAvatar").click(function () {
-				layer.open({
-					type: 2,
-					title: '更换头像',
-					shade: 0.1,
-					area: ["900px", "500px"],
-					content: MODULE_PATH + 'uploadProfile.html',
-					btn: ['确定', '取消'],
-					yes: function (index, layero) {
-						window['layui-layer-iframe' + index].submitForm();
-					}
-				});
-			});
-		});
-	</script>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../../../static/layui/layui.js"></script>
+<script>
+    layui.use(['jquery', 'element', 'layer'], function () {
+        var element = layui.element,
+            layer = layui.layer,
+            $ = layui.jquery;
+        let MODULE_PATH = "operate/";
+        $("#userAvatar").attr("src", parent.layui.$(".layui-nav-img").attr("src"));
+        $('#userInfoHead_name').html(sessionStorage.getItem("username"));
+        window.callback = function (data) {
+            layer.close(data.index);
+            $("#userAvatar").attr("src", data.newAvatar);
+            parent.layui.$(".layui-nav-img").attr("src", data.newAvatar);
+        }
+
+        function getNews() {
+            fetch('https://v2.alapi.cn/api/new/toutiao?type=5&token=HicXVerwmfUY2K8r')
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    const news = document.getElementById('newsContainer')
+                    const newsNum = 6
+                    news.innerHTML = '';
+                    for (let i = 0; i < newsNum; i++) {
+                        news.innerHTML = news.innerHTML + '<div class="layui-col-md1">\n' +
+                            '<img src=\"' + data.data[i].imgsrc + '\" style="width: 70px;height: 65px;border-radius: 2px;" />\n' +
+                            '</div>\n' +
+                            '<div class="layui-col-md11 list-item" style="height: 80px;">\n' +
+                            '<div class="title" style="font-weight: 600">'
+                            + '<a title=\"' + 'https://www.163.com/dy/article/' + data.data[i].docid + '.html' + '\"' +
+                            'target="_blank" href=\"https://www.163.com/dy/article/' + data.data[i].docid + '.html\">'
+                            + data.data[i].title + '</a>' + '</div>\n' +
+                            '<div class="content">' + data.data[i].digest + '</div>\n' +
+                            '<div class="comment">' + data.data[i].source + '&nbsp;&nbsp;&nbsp;'
+                            + data.data[i].time + '</div>\n' +
+                            '</div><br><br>\n'
+                    }
+                })
+                .catch(console.error)
+        }
+
+        getNews();
+        $("#userAvatar").click(function () {
+            layer.open({
+                type: 2,
+                title: '更换头像',
+                shade: 0.1,
+                area: ["900px", "500px"],
+                content: MODULE_PATH + 'uploadProfile.html',
+                btn: ['确定', '取消'],
+                yes: function (index, layero) {
+                    window['layui-layer-iframe' + index].submitForm();
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>
