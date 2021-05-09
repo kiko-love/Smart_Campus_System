@@ -32,7 +32,7 @@
 <%--					<li class="layui-nav-item layui-hide-xs message"></li>--%>
 					<li class="layui-nav-item user">
 						<!-- 头 像 -->
-						<a href="javascript:;">
+						<a user-menu-url="./view/system/person.html" user-menu-id="1111" user-menu-title="账号信息">
 							<img src="static/admin/images/avatar.jpg" class="layui-nav-img">
 						</a>
 						<!-- 功 能 菜 单 -->

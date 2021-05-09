@@ -12,9 +12,6 @@
 
 
 <style>
-    body {
-        background-color: rgba(179, 180, 180, 0.3);
-    }
     .layui-card{
         position: relative;
         top: 50px;
@@ -43,7 +40,7 @@
             $('#md5_old').val(md5($('#oldpassword').val()));
             $('#md5_new').val(md5($('#repassword_1').val()));
             $('#username').val(sessionStorage.getItem("username"));
-            console.log(getCookie('username'))
+            //console.log(getCookie('username'))
         })
         form.on('submit(changePwd)', function (data) {
             console.log(data);
@@ -181,7 +178,7 @@
     })
 </script>
 
-<body>
+<body layui-layout-body pear-admin dark-theme>
 
     <div class="layui-fluid">
         <div class="layui-row layui-col-space30">

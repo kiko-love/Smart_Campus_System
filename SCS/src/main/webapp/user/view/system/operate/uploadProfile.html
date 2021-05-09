@@ -26,10 +26,10 @@
                 <label for="uploadPicture" class="pear-btn pear-btn-sm pear-btn-primary layui-icon layui-icon-upload" title="选择图片"></label>
                 <input class="layui-upload-file" id="uploadPicture" type="file" value="选择图片">
             </div>
-            <div class="layui-form-mid layui-word-aux">建议:图片的尺寸宽高比为1:1,大小在5m以内。</div>
+            <div class="layui-form-mid layui-word-aux">建议:图片的尺寸宽高比为1:1,大小在2MB以内。</div>
         </div>
     </div>
-    <script src="../../../component/layui/layui.js"></script>
+    <script src="../../../../static/layui/layui.js"></script>
     <script src="../../../component/pear/pear.js"></script>
     <script>
         layui.use(['jquery','layer','cropper'], function () {
@@ -44,45 +44,52 @@
             };
             
             $("#sourceImage").attr("src", parent.layui.$("#userAvatar").attr("src"));
-            console.log(parent.layui.$("#userAvatar").attr("src"));
+            //console.log(parent.layui.$("#userAvatar").attr("src"));
             $("#sourceImage").cropper(options);
 
             window.submitForm = function () {
                 $("#sourceImage").crossOrigin = 'anonymous';//解决跨域图片问题
                 $("#sourceImage").cropper("getCroppedCanvas", {
-                    width: 280,
-                    height: 140
+                    width: 800,
+                    height: 800
                 }).toBlob(function (blob) {
                     var timeStamp = Date.parse(new Date());
                     var fileName = timeStamp + '.jpg';
                     var formData = new FormData();
-                    formData.append('file', blob, fileName);
-                    formData.append('fileName', fileName);
-                    formData.append('fileToken', timeStamp);
+                    formData.append('portrait', blob, fileName);
                     
-					// $.ajax({
-                    //     method: "post",
-                    //     url: "", //用于文件上传的服务器端请求地址
-                    //     data: formData,
-                    //     processData: false,
-                    //     contentType: false,
-                    //     success: function (result) {
-                    //         //后续操作
-                    //     }
-                    // });
+					$.ajax({
+                        type: "post",
+                        url: "/Portrait/uploadPortrait", //用于文件上传的服务器端请求地址
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function (result) {
+                            console.log(result);
+                            layer.open({
+                                title: '提示'
+                                ,content: result.msg
+                                ,end:function (){
+                                    var index = parent.layer.getFrameIndex(window.name); //先得到当前iframe层的索引
+                                    parent.layer.close(index);
+                                }
+                            });
+                        }
+                    });
                     
                     //demo环境，直接返回
-                    console.log(blob);
-                    var reader = new FileReader();
-                    reader.readAsDataURL(blob);
-                    reader.onload = function (e) {
-                        var data={
-                            index:parent.layer.getFrameIndex(window.name),
-                            newAvatar : e.target.result
-                        };
-                        console.log(data);
-                        parent.window.callback(data);
-                    };
+                    // console.log('12124124124');
+                    // console.log(blob);
+                    // var reader = new FileReader();
+                    // reader.readAsDataURL(blob);
+                    // reader.onload = function (e) {
+                    //     var data={
+                    //         index:parent.layer.getFrameIndex(window.name),
+                    //         newAvatar : e.target.result
+                    //     };
+                    //     console.log(data);
+                    //     parent.window.callback(data);
+                    // };
                 });
             }
 
@@ -97,17 +104,17 @@
                 }
 
                 $("#uploadPicture").change(function () {
-                    var r = new FileReader();
-                    var f = this.files[0];
+                    var fileReader = new FileReader();
+                    var file1 = this.files[0];
 
-                    var uploadFileSize = f.size / 1024;
-                    if (uploadFileSize > 5120) {
-                        parent.layer.msg("上传文件不得超过5m", { icon: 5 });
+                    var uploadFileSize = file1.size / 1024;
+                    if (uploadFileSize > 2048) {
+                        parent.layer.msg("上传的图片文件不得超过2MB", { icon: 5 });
                         return false;
                     }
 
-                    r.readAsDataURL(f);
-                    r.onload = function (e) {
+                    fileReader.readAsDataURL(file1);
+                    fileReader.onload = function (e) {
                         $("#sourceImage")
                             .cropper('destroy')
                             .attr('src', this.result)
