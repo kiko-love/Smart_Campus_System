@@ -29,9 +29,9 @@
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item layui-hide-xs"><a href="#"
                                                         class="fullScreen layui-icon layui-icon-screen-full"></a></li>
-            <li class="layui-nav-item user">
+            <li class="layui-nav-item user" style="cursor: pointer">
                 <!-- 头 像 -->
-                <a href="javascript:;">
+                <a user-menu-url="./view/system/person.html" user-menu-id="1111" user-menu-title="账号信息">
                     <img src="admin/images/avatar.jpg" class="layui-nav-img">
                 </a>
                 <!-- 功 能 菜 单 -->
@@ -104,7 +104,7 @@
             type: "POST",
             dataType: "json",
             success: function (res) {
-                console.log(res);
+                //console.log(res);
                 admin.setAvatar("admin/images/avatar.jpg", res.userName);
             }
         })

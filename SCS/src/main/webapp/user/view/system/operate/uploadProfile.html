@@ -26,7 +26,7 @@
                 <label for="uploadPicture" class="pear-btn pear-btn-sm pear-btn-primary layui-icon layui-icon-upload" title="选择图片"></label>
                 <input class="layui-upload-file" id="uploadPicture" type="file" value="选择图片">
             </div>
-            <div class="layui-form-mid layui-word-aux">建议:图片的尺寸宽高比为1:1,大小在5m以内。</div>
+            <div class="layui-form-mid layui-word-aux">建议:图片的尺寸宽高比为1:1,大小在2MB以内。</div>
         </div>
     </div>
     <script src="../../../component/layui/layui.js"></script>
@@ -50,8 +50,8 @@
             window.submitForm = function () {
                 $("#sourceImage").crossOrigin = 'anonymous';//解决跨域图片问题
                 $("#sourceImage").cropper("getCroppedCanvas", {
-                    width: 280,
-                    height: 140
+                    width: 800,
+                    height: 800
                 }).toBlob(function (blob) {
                     var timeStamp = Date.parse(new Date());
                     var fileName = timeStamp + '.jpg';
@@ -101,8 +101,8 @@
                     var f = this.files[0];
 
                     var uploadFileSize = f.size / 1024;
-                    if (uploadFileSize > 5120) {
-                        parent.layer.msg("上传文件不得超过5m", { icon: 5 });
+                    if (uploadFileSize > 2048) {
+                        parent.layer.msg("上传的图片文件不得超过2MB", { icon: 5 });
                         return false;
                     }
 
