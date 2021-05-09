@@ -29,7 +29,6 @@ public class PortraitController {
     public String uploadPortrait(HttpServletRequest request, @RequestParam(value="portrait") MultipartFile portrait, HttpServletResponse response) throws Exception {
         //获取要存放的位置,request.getSession().getServletContext()  获取项目路径
         String savePath = request.getSession().getServletContext().getRealPath("/portrait/");
-        System.out.println(savePath);
         File file = new File(savePath);
         //判断该文件夹是否存在
         if (!file.exists()){
@@ -42,7 +41,7 @@ public class PortraitController {
         //设置最终的存放在服务器上的文件的名字
         String p_name=uuid+"_"+filename;
         //存放在服务器的地址为路径加文件名
-        String p_path="http://localhost:8080/portrait/"+p_name;
+        String p_path=request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/portrait/"+p_name;
         System.out.println(p_path);
         //获取当前要上传头像的用户的用户名和角色
         String userid = (String) request.getSession().getAttribute("userInformation");
