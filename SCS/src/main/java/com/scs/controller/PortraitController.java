@@ -58,7 +58,7 @@ public class PortraitController {
         else {
             data.put("success",0);
             data.put("msg","头像上传失败");
-            data.put("p_path","头像上传失败");
+            data.put("p_path","");
         }
         //上传头像到服务器储存
         portrait.transferTo(new File(savePath+p_name));

@@ -61,7 +61,7 @@
 			</div>
 		</div>
 	</div>
-	<script src="../../component/layui/layui.js"></script>
+	<script src="../../../static/layui/layui.js"></script>
 	<script>
 		layui.use(['jquery', 'element', 'layer'], function () {
 			var element = layui.element,
@@ -76,7 +76,7 @@
                 parent.layui.$(".layui-nav-img").attr("src", data.newAvatar);
             }
 			function getNews() {
-				fetch('https://v1.alapi.cn/api/new/toutiao?start=1')
+				fetch('https://v2.alapi.cn/api/new/toutiao?type=5&token=HicXVerwmfUY2K8r')
 						.then(response => response.json())
 						.then(data => {
 							console.log(data);
