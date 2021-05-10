@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 @Service("portraitService")
 public class portraitServiceImpl implements portraitService {
+
     @Autowired
     private portraitMapper portMapper;
 
@@ -17,7 +18,13 @@ public class portraitServiceImpl implements portraitService {
     }
 
     @Override
-    public int getPortraitById(String userId) {
+    public portrait getPortraitById(String userId) {
         return portMapper.getPortraitById(userId);
     }
+
+    @Override
+    public int updatePortrait(String p_name, String p_path, String userId) {
+        return portMapper.updatePortrait(p_name, p_path, userId);
+    }
+
 }
