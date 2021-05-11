@@ -12,5 +12,6 @@ public class resource {
     private String fileName;
     private String teacherId;
     private String filePath;
+    private String profession;
 
 }
