@@ -85,21 +85,25 @@ public class UserController {
         //获取session值
         String username = (String) request.getSession().getAttribute("userInformation");
         List<User> User = userService.FindByName(username);
+        JSONObject data = new JSONObject();
         if (User.size() != 0) {
             //获取用户id
             String realName = User.get(0).getUserName();
             portrait portrait = portraitService.getPortraitById(username);
             String p_path = portrait.getP_path();
-
             //封装成json
-            JSONObject data = new JSONObject();
-
             data.put("userName", realName);
             data.put("p_path",p_path);
+            data.put("success",1);
+            data.put("msg","获取信息成功");
             //回传给前端
             return data.toJSONString();
         }
-        return null;
+        data.put("userName","");
+        data.put("p_path","");
+        data.put("success",0);
+        data.put("msg","获取信息失败");
+        return data.toJSONString();
     }
 
     @ResponseBody
