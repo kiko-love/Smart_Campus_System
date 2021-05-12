@@ -2,8 +2,10 @@ package com.scs.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.scs.pojo.User;
+import com.scs.pojo.portrait;
 import com.scs.pojo.student;
 import com.scs.service.UserService;
+import com.scs.service.portraitService;
 import com.scs.service.studentService;
 import com.scs.utils.InformToFront;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,8 @@ import java.util.List;
 public class UserController {
     @Autowired
     private UserService userService;
+
+    private portraitService portraitService;
 
     @RequestMapping(value = "/Login", method = RequestMethod.POST)
     public @ResponseBody
@@ -84,18 +88,25 @@ public class UserController {
         //获取session值
         String username = (String) request.getSession().getAttribute("userInformation");
         List<User> User = userService.FindByName(username);
+        JSONObject data = new JSONObject();
         if (User.size() != 0) {
             //获取用户id
             String realName = User.get(0).getUserName();
-
+            portrait portrait = portraitService.getPortraitById(username);
+            String p_path = portrait.getP_path();
             //封装成json
-            JSONObject data = new JSONObject();
-
             data.put("userName", realName);
+            data.put("p_path",p_path);
+            data.put("success",1);
+            data.put("msg","获取信息成功");
             //回传给前端
             return data.toJSONString();
         }
-        return null;
+        data.put("userName","");
+        data.put("p_path","");
+        data.put("success",0);
+        data.put("msg","获取信息失败");
+        return data.toJSONString();
     }
 
     @ResponseBody
@@ -105,7 +116,8 @@ public class UserController {
         String oldPassword = request.getParameter("oldpassword");
         String rePassword = request.getParameter("repassword");
         String username = request.getParameter("userName");
-        System.out.println(oldPassword);
+        System.out.println(username);
+
         JSONObject jsonObject = new JSONObject();
         String password = userService.findPassword(username);
         if (oldPassword==null) {
