@@ -1,10 +1,9 @@
-<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8" %>
 <!DOCTYPE html>
 <html>
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>登陆</title>
     <link rel="stylesheet" href="static/layui/css/layui.css" media="all" charset="utf-8">
@@ -15,16 +14,36 @@
     <script src="static/js/login.js" charset="UTF-8"></script>
 
     <style>
-        /* 覆盖原框架样式 */
         .layui-elem-quote {
-            background-color: inherit !important;
+            position: relative;
+            top: 0px;
+            left: -10px;
+            width: 99%;
+            background-color: rgba(245, 250, 250, 0.8);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
         }
+
+        .spanTitle {
+            position: relative;
+            top: 5px;
+            font-size: 18px;
+        }
+
+        /* 覆盖原框架样式 */
+        /*.layui-elem-quote {*/
+        /*    background-color: inherit !important;*/
+        /*}*/
 
         .layui-input,
         .layui-select,
         .layui-textarea {
             background-color: inherit;
             padding-left: 30px;
+        }
+
+        a:hover {
+            color: #03a2d2;
+            text-decoration:underline;
         }
     </style>
     <input type="hidden" id="_w_elixir">
@@ -36,7 +55,10 @@
     <div class="layui-row layui-col-space15">
         <div class="layui-col-sm12 layui-col-md12 zy_mar_01">
             <blockquote class="layui-elem-quote">
-                <h1>欢迎登录智慧校园系统</h1>
+                <a href="">
+                    <img src="./static/images/school.png" alt="LOGO">
+                </a>
+                <span class="spanTitle">欢迎登录智慧校园系统</span>
             </blockquote>
         </div>
     </div>
@@ -49,8 +71,10 @@
         <div class="layui-carousel zy_login_height carousel-background" id="login" lay-filter="login" lay-anim="fade">
             <div carousel-item="">
                 <div class="">
-                    <div class="zy_login_cont"><canvas width="506" height="574"
-                                                        style="display: block; background: rgba(0, 0, 0, 0);"></canvas></div>
+                    <div class="zy_login_cont">
+                        <canvas width="506" height="574"
+                                style="display: block; background: rgba(0, 0, 0, 0);"></canvas>
+                    </div>
                 </div>
                 <div class="layui-this">
                     <div class="background">
@@ -68,8 +92,11 @@
                     <li class="layui-this"></li>
                     <li class=""></li>
                 </ul>
-            </div><button class="layui-icon layui-carousel-arrow" lay-type="sub"></button><button
-                class="layui-icon layui-carousel-arrow" lay-type="add"></button>
+            </div>
+            <button class="layui-icon layui-carousel-arrow" lay-type="sub"></button>
+            <button
+                    class="layui-icon layui-carousel-arrow" lay-type="add">
+            </button>
         </div>
     </div>
 </div>
@@ -78,7 +105,7 @@
 <!-- Footer -->
 <div class="layui-row">
     <div class="layui-col-sm12 layui-col-md12 zy_center zy_mar_01">
-        ©2021-2022  工程实践Ⅱ-测试项目
+        ©2021-2022 工程实践Ⅱ-测试项目
     </div>
 </div>
 <!-- Footer End -->
@@ -112,20 +139,26 @@
                     <div class="layui-col-xs4 layui-col-sm4 layui-col-md4">
                         <div class="layui-form-item">
                             <input type="text" id="vercode" lay-verify="required|vercodes"
-                                   autocomplete="off" placeholder="验证码" lay-reqText="请填写验证码" class="layui-input" maxlength="4">
+                                   autocomplete="off" placeholder="验证码" lay-reqText="请填写验证码" class="layui-input"
+                                   maxlength="4">
                             <i class="layui-icon layui-icon-vercode zy_lofo_icon"></i>
                         </div>
                     </div>
                     <div class="layui-col-xs4 layui-col-sm4 layui-col-md4">
-                        <div  class="zy_lofo_vercode zyVerCode veriCode"></div>
+                        <div class="zy_lofo_vercode zyVerCode veriCode"></div>
                     </div>
                 </div>
             </div>
             <div class="layui-col-sm12 layui-col-md12">
                 <br>
+                <a href="/static/html/findPwd.html"
+                   style="color: #027b70;right: 2%;position: absolute;">
+                    忘记密码</a>
+                <br>
                 <br>
                 <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="formLogin"
-                        id="LoginGo">立即登录</button>
+                        id="LoginGo">立即登录
+                </button>
             </div>
         </form>
     </div>

@@ -2,6 +2,17 @@ layui.use(['carousel', 'form','jquery'], function () {
     var carousel = layui.carousel
         , form = layui.form
         ,$ = layui.jquery;
+    //Login轮播主体
+    carousel.render({
+        elem: '#login'//指向容器选择器
+        , indicator: 'none' //指示器位置||外部：outside||内部：inside||不显示：none
+        , width: '100%' //设置容器宽度
+        , height: 'zy_car_height'
+        , arrow: 'none' //不显示箭头
+        , anim: 'fade' //切换动画方式
+        , autoplay: false //是否自动切换false true
+        , interval: '5000' //自动切换时间:单位：ms（毫秒）
+    });
     //监听提交
     form.on('submit(formLogin)', function (data) {
         //console.log(data.field); // 得到checkbox原始DOM对象
@@ -102,18 +113,6 @@ layui.use(['carousel', 'form','jquery'], function () {
         }
     });
 
-
-    //Login轮播主体
-    carousel.render({
-        elem: '#login'//指向容器选择器
-        , indicator: 'none' //指示器位置||外部：outside||内部：inside||不显示：none
-        , width: '100%' //设置容器宽度
-        , height: 'zy_car_height'
-        , arrow: 'none' //不显示箭头
-        , anim: 'fade' //切换动画方式
-        , autoplay: false //是否自动切换false true
-        , interval: '5000' //自动切换时间:单位：ms（毫秒）
-    });
 
     //监听轮播--案例暂未使用
     carousel.on('change(zylogin)', function (obj) {

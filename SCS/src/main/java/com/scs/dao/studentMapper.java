@@ -2,9 +2,11 @@ package com.scs.dao;
 
 import com.scs.pojo.student;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface studentMapper {
     //获取学生列表
     public List<student> getStudents();

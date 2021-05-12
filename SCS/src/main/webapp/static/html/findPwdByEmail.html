@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>邮箱验证</title>
+    <link href="../layui/css/layui.css" rel="stylesheet" charset="utf-8">
+    <link href="../pearPwd/css/pear.css" rel="stylesheet" charset="utf-8">
+    <script src="../layui/layui.js" charset="UTF-8"></script>
+    <script src="../step-lay/step.js"></script>
+    <script src="../js/md5.js"></script>
+</head>
+<style>
+    .layui-elem-quote {
+        position: relative;
+        top: 5px;
+        left: -10px;
+        width: 99%;
+        background-color: rgba(245, 250, 250, 0.8);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+    }
+
+    .spanTitle {
+        position: relative;
+        top: 5px;
+        font-size: 18px;
+    }
+
+    .cardBody {
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 80%;
+        width: 80%;
+        margin: 0 auto;
+    }
+
+    .layui-card-header {
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .cardBody_title {
+        position: relative;
+        top: 5%;
+        text-align: center;
+        color: rgb(98, 84, 89);
+        font-weight: 600;
+        font-size: 18px;
+    }
+
+
+    .cardBody_inline {
+        display: inline-block;
+        position: relative;
+        width: 2px;
+        height: 100px;
+    }
+
+    .contenSpanHeader {
+        margin: auto;
+        font-weight: 600;
+        font-size: 18px;
+        display: inline-block;
+        position: relative;
+        width: 200px;
+        top: 20%;
+
+    }
+
+    .layui-input {
+        border: 1px solid rgba(49, 49, 49, 0.2);
+    }
+
+
+    .layui-input:hover {
+        border: 1px solid rgba(0, 0, 0, 0.2);
+    }
+
+
+    .cardFooter {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .veriCode {
+        position: relative;
+        left: 45%;
+        top: -38px;
+        width: 80px;
+        height: 35px;
+        text-align: center;
+        line-height: 35px;
+        font-size: 18px;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+
+        user-select: none;
+        cursor: pointer;
+        color: rgb(143, 140, 140);
+    }
+
+    .layui-btn-disabled,
+    .layui-btn-disabled:active,
+    .layui-btn-disabled:hover {
+        color: #999 !important;
+    }
+</style>
+<script>
+    layui.config({
+        base: '../step/step-lay/'
+    }).use(['form', 'step'], function () {
+        var $ = layui.$
+            , form = layui.form
+            , step = layui.step
+            , email = null
+            , veriCode = ''
+            , email_username = null
+            , token_change = null;
+
+        step.render({
+            elem: '#stepForm',
+            filter: 'stepForm',
+            width: '100%', //设置容器宽度
+            stepWidth: '750px',
+            height: '500px',
+            stepItems: [{
+                title: '填写用户名'
+            }, {
+                title: '验证身份'
+            }, {
+                title: '重置密码'
+            }, {
+                title: '修改成功'
+            }]
+        });
+        $("#sendEmailCode").click(secondsEmail);
+
+        function zyVerCode(len) {
+            len = len || 4;
+            var $chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';//默认去掉了容易混淆的字符oOLl,9gq,Vv,Uu,I1
+            var maxPos = $chars.length;
+            var zyCode = '';
+            for (let i = 0; i < len; i++) {
+                zyCode += $chars.charAt(Math.floor(Math.random() * maxPos));
+            }
+            veriCode = zyCode;
+            $('#veriCode_input').val('');
+            $('.veriCode').html(zyCode);
+        }
+
+        //验证验证码
+        form.on('submit(formStep)', function (data) {
+            if ($('#veriCode_input').val().toLowerCase() != veriCode.toLowerCase()) {
+                layer.msg('验证码错误', {
+                    icon: 5,
+                    anim: 6
+                });
+                return false;
+            }
+            var index = layer.load(2, {
+                //time: 1000 * 1,
+                shade: [0.4, 'rgba(0,0,0,0.1)'],
+                content: '<span class="loadtip">正在查询</span>',
+                success: function (layer) {
+                    layer.find('.layui-layer-content').css({
+                        'padding-top': '40px',
+                        'width': '100px',
+                    });
+                    layer.find('.loadtip').css({
+                        'font-size': '20px',
+                        'margin-left': '-18px'
+                    });
+                }
+            });
+
+            $.ajax({
+                url: '/findPassword/getUserVer',
+                type: 'post',
+                dataType: 'json',
+                data: {
+                    username: data.field.username
+                },
+                success: function (res) {
+                    console.log(res);
+                    layer.close(index);
+                    if (res.success == 1) {
+                        email_username = data.field.username;
+                        $('#username1').html(email_username);
+                        email = res.userEmail;
+                        step.next('#stepForm');
+                        secondsEmail(email);
+                    } else {
+                        layer.open({
+                            title: '提示'
+                            , icon: 2
+                            , content: res.msg
+                            , end: function () {
+                                zyVerCode();
+                                $('#veriCode_input').focus();
+                            }
+                        });
+                        return false;
+                    }
+
+                },
+                error: function (res) {
+                    console.log(res.statusText);
+                    layer.close(index);
+                    layer.open({
+                        title: res.statusText
+                        , icon: 2
+                        , content: "请求服务器出错，请稍后再试"
+                    });
+                }
+            })
+
+            return false;
+        });
+
+        function secondsEmail() {
+            let userEmail = email;
+            console.log(userEmail);
+            let seconds = 60;
+            $('#sendEmailCode').val('已发送验证码至235****86@qq.com (' + seconds + 's)');
+            $("#sendEmailCode").attr("disabled", "disabled");
+            $('#sendEmailCode').removeClass('layui-btn-primary');
+            $('#sendEmailCode').addClass('layui-btn-disabled');
+            var id = setInterval(function () {
+                $('#sendEmailCode').val('已发送验证码至235****86@qq.com (' + seconds + 's)');
+                seconds = seconds - 1;
+                if (seconds == 0) {
+                    window.clearInterval(id);
+                    $('#sendEmailCode').val('重新发送验证码');
+                    $('#sendEmailCode').removeClass('layui-btn-disabled');
+                    $('#sendEmailCode').addClass('layui-btn-primary');
+                    $("#sendEmailCode").removeAttr("disabled");
+                }
+            }, 1000)
+
+            if (userEmail != null) {
+                $.ajax({
+                    url: '/findPassword/GetEmailCode',
+                    data: {
+                        email: userEmail
+                    },
+                    type: 'post',
+                    dataType: 'json',
+                    success: function (res) {
+                        console.log(res);
+                    },
+                    error: function () {
+                        layer.open({
+                            title: res.statusText
+                            , icon: 2
+                            , content: "请求服务器出错，请稍后再试"
+                        });
+                    }
+                })
+            }
+
+        }
+
+        form.on('submit(formStep2)', function (data) {
+            console.log(data);
+            var index2 = layer.load(2, {
+                //time: 1000 * 1,
+                shade: [0.4, 'rgba(0,0,0,0.1)'],
+                content: '<span class="loadtip">正在验证</span>',
+                success: function (layer) {
+                    layer.find('.layui-layer-content').css({
+                        'padding-top': '40px',
+                        'width': '100px',
+                    });
+                    layer.find('.loadtip').css({
+                        'font-size': '20px',
+                        'margin-left': '-18px'
+                    });
+                }
+            });
+            $.ajax({
+                url: '/findPassword/verEmailCode',
+                data: {
+                    username: email_username,
+                    emailCode: data.field.emailCode
+                },
+                type: 'post',
+                dataType: 'json',
+                success: function (res) {
+                    layer.close(index2);
+                    console.log(res);
+                    if (res.success == 1) {
+                        token_change = res.token_change;
+                        $('#username2').html(email_username)
+                        step.next('#stepForm');
+                    } else {
+                        layer.open({
+                            title: res.statusText
+                            , icon: 2
+                            , content: res.msg
+                        });
+                    }
+                },
+                error: function () {
+                    layer.close(index2);
+                    layer.open({
+                        title: '提示'
+                        , icon: 2
+                        , content: "请求服务器出错，请稍后再试"
+                    });
+                }
+            })
+            return false;
+        });
+
+
+        form.on('submit(formStep3)', function (data) {
+            console.log(data.field);
+            let reg = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,12}$/;
+            let reg1 = /^[\S]{6,12}$/;
+            if (data.field.newPassword_1 != data.field.newPassword_2) {
+                layer.open({
+                    title: '提示'
+                    , icon: 5
+                    , content: '两次输入密码不一致'
+                });
+                return false;
+            }
+            if (!reg1.test(data.field.newPassword_1)) {
+                layer.open({
+                    title: '提示'
+                    , icon: 5
+                    , content: '密码长度在6-12位之间，且由数字与字母组成'
+                });
+                return false;
+            }
+
+            var index3 = layer.load(2, {
+                //time: 1000 * 1,
+                shade: [0.4, 'rgba(0,0,0,0.1)'],
+                content: '<span class="loadtip">正在修改</span>',
+                success: function (layer) {
+                    layer.find('.layui-layer-content').css({
+                        'padding-top': '40px',
+                        'width': '100px',
+                    });
+                    layer.find('.loadtip').css({
+                        'font-size': '20px',
+                        'margin-left': '-18px'
+                    });
+                }
+            });
+
+            $.ajax({
+                url: '/findPassword/EmailToChangePwd',
+                type: 'post',
+                dataType: 'json',
+                data: {
+                    newPassword: md5(data.field.newPassword_1),
+                    username: email_username,
+                    token_Email: token_change
+                },
+                success: function (res) {
+                    layer.close(index3);
+                    console.log(res);
+                    if (res.success == 1) {
+                        step.next('#stepForm');
+                    } else {
+                        layer.open({
+                            title: '提示'
+                            , icon: 2
+                            , content: res.msg
+                            , end: function () {
+                                location.reload();
+                            }
+                        });
+                    }
+                },
+                error: function () {
+                    layer.close(index3);
+                    layer.open({
+                        title: res.statusText
+                        , icon: 2
+                        , content: "请求服务器出错，请稍后再试"
+                    });
+                }
+            })
+            return false;
+        });
+
+        $('.pre').click(function () {
+            step.pre('#stepForm');
+        });
+
+        $('.veriCode').click(function () {
+            zyVerCode();
+            $('#veriCode_input').focus();
+        })
+
+        zyVerCode();
+
+        $('.next').click(function () {
+            step.next('#stepForm');
+        });
+    })
+
+</script>
+
+<body style="background-color: rgba(0, 0, 0, 0.1);">
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-sm12 layui-col-md12 zy_mar_01">
+            <blockquote class="layui-elem-quote">
+                <a href="../../user/view">
+                    <img src="../images/school.png" alt="LOGO">
+                </a>
+                <span class="spanTitle">智慧校园系统-找回密码-邮箱验证</span>
+                <a href="../../">
+                    <span class="spanTitle" style="position: absolute;right:10%;top:40%">登录</span>
+                </a>
+            </blockquote>
+        </div>
+    </div>
+</div>
+
+<div class="layui-card layui-col-md6 cardBody">
+    <div class="layui-card-header">邮箱验证</div>
+
+    <div class="layui-card-body" style="padding-top: 40px;">
+        <div class="layui-carousel" id="stepForm" lay-filter="stepForm" style="margin: 0 auto;">
+            <div carousel-item>
+                <div>
+                    <form class="layui-form" style="margin: 0 auto;max-width: 460px;padding-top: 60px;">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">用户名:</label>
+                            <div class="layui-input-block">
+                                <input type="text" placeholder="请填写你的学号" name="username"
+                                       class="layui-input" lay-reqText="请先填写你的学号"
+                                       lay-verify="required"/>
+
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">验证码:</label>
+                            <div class="layui-input-block">
+                                <input type="text" placeholder="验证码" id="veriCode_input" class="layui-input"
+                                       lay-reqText="请输入验证码" lay-verify="required" style="width: 40%;"/>
+                                <div class="veriCode">JK64</div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button class="layui-btn" lay-submit lay-filter="formStep">
+                                    &emsp;下一步&emsp;
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div>
+                    <form class="layui-form" style="margin: 0 auto;max-width: 460px;padding-top: 60px;">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">用户名:</label>
+                            <div class="layui-input-block">
+                                <div class="layui-form-mid layui-word-aux">
+                                    <span style="font-size: 18px;color: #333;" id="username1"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">邮箱验证码:</label>
+                            <div class="layui-input-block">
+                                <input type="text" placeholder="邮箱验证码" name="emailCode" class="layui-input"
+                                       lay-reqText="请输入验证码" lay-verify="required" style="width: 39%;"/>
+
+                                <input style="margin-top: 10px;" type="button" id="sendEmailCode"
+                                       value="已发送验证码至235****86@qq.com (60s)" class="layui-btn layui-btn-disabled"/>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button class="layui-btn" lay-submit lay-filter="formStep2">
+                                    &emsp;下一步&emsp;
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div>
+                    <form class="layui-form" style="margin: 0 auto;max-width: 460px;padding-top: 60px;">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">用户名:</label>
+                            <div class="layui-input-block">
+                                <div class="layui-form-mid layui-word-aux">
+                                    <span style="font-size: 18px;color: #333;" id="username2"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">新密码:</label>
+                            <div class="layui-input-block">
+                                <input type="password" placeholder="输入新密码" name="newPassword_1" class="layui-input"
+                                       lay-reqText="请输入新密码" lay-verify="required"/>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">确认密码:</label>
+                            <div class="layui-input-block">
+                                <input type="password" placeholder="确认新密码" name="newPassword_2" class="layui-input"
+                                       lay-reqText="请再次输入新密码" lay-verify="required"/>
+                            </div>
+                        </div>
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button class="layui-btn" lay-submit lay-filter="formStep3">
+                                    &emsp;下一步&emsp;
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div>
+                    <div style="text-align: center;margin-top: 60px;">
+                        <i class="layui-icon layui-circle"
+                           style="color: white;font-size:30px;font-weight:bold;background: #52C41A;padding: 20px;line-height: 80px;">&#xe605;</i>
+                        <div style="font-size: 24px;color: #333;font-weight: 500;margin-top: 30px;">
+                            密码修改成功
+                        </div>
+                        <div style="font-size: 14px;color: #666;margin-top: 20px;">确认后将返回到登陆页面</div>
+                    </div>
+                    <div style="text-align: center;margin-top: 50px;">
+                        <a href="../../">
+                            <button class="layui-btn">我知道了</button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+
+</html>

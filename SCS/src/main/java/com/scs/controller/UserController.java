@@ -74,6 +74,9 @@ public class UserController {
         return data.toJSONString();
     }
 
+
+
+
     //获取该登录状态下的用户信息，头像处使用
     @ResponseBody
     @RequestMapping(value = "/getUserInfo", method = RequestMethod.POST, produces = "application/json;charset=utf-8")

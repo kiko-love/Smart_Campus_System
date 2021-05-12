@@ -3,6 +3,7 @@ package com.scs.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.mysql.cj.xdevapi.JsonArray;
+import com.scs.pojo.User;
 import com.scs.pojo.student;
 import com.scs.service.UserService;
 import com.scs.service.studentService;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +24,10 @@ import java.util.List;
 public class StudentController {
     @Autowired
     private studentService studentService;
+
+
+
+
 
     //批量删除学生信息
     @ResponseBody
@@ -85,7 +91,8 @@ public class StudentController {
         String levels = req.getParameter("levels");
         String classes = req.getParameter("classes");
         String counselor = req.getParameter("counselor");
-        student stu = new student(userId, Major, realName, sexStr, phone, levels,classes,counselor);
+        String email = req.getParameter("counselor");
+        student stu = new student(userId, Major, realName, sexStr, phone, levels,classes,counselor,email);
         int addNumber = studentService.addStudent(stu);
         if (addNumber > 0) {
             data.put("success", "1");
@@ -137,7 +144,8 @@ public class StudentController {
         String levels = req.getParameter("levels");
         String classes = req.getParameter("classes");
         String counselor = req.getParameter("counselor");
-        student stu = new student(userId, Major, realName, sexStr, phone, levels,classes,counselor);
+        String email = req.getParameter("email");
+        student stu = new student(userId, Major, realName, sexStr, phone, levels,classes,counselor,email);
         int addNumber = studentService.updateStudent(stu);
         if (addNumber > 0) {
             data.put("success", "1");
