@@ -52,28 +52,30 @@ public class PortraitController {
         System.out.println(por);
         JSONObject data = new JSONObject();
         //当已经存在该用户头像
-        if (por.getUserId().equals(userid)){
-            //获取原来存在服务器的头像
-            com.scs.pojo.portrait portraitById = portraitService.getPortraitById(userid);
-            String p_name_origin = portraitById.getP_name();
-            File fileExist = new File(savePath+p_name_origin);
-            //删除原来的头像
-            fileExist.delete();
-            //更新数据库
-            int count = portraitService.updatePortrait(p_name,p_path,userid);
-            if(count==1){
-                //上传成功返回的信息
-                data.put("success",1);
-                data.put("msg","头像上传成功");
-                data.put("p_path",p_path);
+        if (por!=null){
+            if (por.getUserId().equals(userid)){
+                //获取原来存在服务器的头像
+                com.scs.pojo.portrait portraitById = portraitService.getPortraitById(userid);
+                String p_name_origin = portraitById.getP_name();
+                File fileExist = new File(savePath+p_name_origin);
+                //删除原来的头像
+                fileExist.delete();
+                //更新数据库
+                int count = portraitService.updatePortrait(p_name,p_path,userid);
+                if(count==1){
+                    //上传成功返回的信息
+                    data.put("success",1);
+                    data.put("msg","头像上传成功");
+                    data.put("p_path",p_path);
+                }
+                else{
+                    data.put("success",0);
+                    data.put("msg","头像上传失败");
+                    data.put("p_path","");
+                }
+                //上传头像到服务器储存
+                portrait.transferTo(new File(savePath+p_name));
             }
-            else{
-                data.put("success",0);
-                data.put("msg","头像上传失败");
-                data.put("p_path","");
-            }
-            //上传头像到服务器储存
-            portrait.transferTo(new File(savePath+p_name));
         }
         //当还没有该头像信息
         else {
