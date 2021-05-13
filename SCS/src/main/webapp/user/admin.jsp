@@ -32,7 +32,7 @@
             <li class="layui-nav-item user" style="cursor: pointer">
                 <!-- 头 像 -->
                 <a user-menu-url="./view/system/person.html" user-menu-id="1111" user-menu-title="账号信息">
-                    <img src="admin/images/avatar.jpg" class="layui-nav-img">
+                    <img src="" class="layui-nav-img" id="avatar">
                 </a>
                 <!-- 功 能 菜 单 -->
                 <dl class="layui-nav-child">
@@ -101,11 +101,18 @@
 
         $.ajax({
             url: "/User/getUserInfo",
-            type: "POST",
+            type: "post",
             dataType: "json",
             success: function (res) {
-                //console.log(res);
-                admin.setAvatar("admin/images/avatar.jpg", res.userName);
+                console.log(res);
+                if (res.p_path==''){
+                    admin.setAvatar("/user/admin/images/avatar.jpg", res.userName);
+                }else {
+                    admin.setAvatar(res.p_path, res.userName);
+                }
+            },
+            error:function (res){
+                console.log(res);
             }
         })
 

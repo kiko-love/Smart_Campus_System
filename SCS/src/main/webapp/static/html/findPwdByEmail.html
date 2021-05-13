@@ -217,16 +217,50 @@
             return false;
         });
 
+        //邮箱脱敏处理
+        function noPassByEmail(email) {
+            let new_email = email;
+            if (String(email).indexOf('@') > 0) {
+                let str = email.split('@');
+                let _s = '';
+
+                console.log(str[0].length);
+
+                let formerLen = Math.floor(str[0].length / 3);
+                console.log(formerLen);
+
+                let latterLen = Math.floor(str[0].length / 3) - 1
+                console.log(latterLen);
+                if (str[0].length > 3) { //@前面多于3位
+                    for (let i = 0; i < str[0].length - formerLen - latterLen; i++) {
+                        _s += '*';
+                    }
+
+                    _s += str[0].substr(str[0].length - latterLen, str[0].length);
+
+                    new_email = str[0].substr(0, formerLen) + _s + '@' + str[1];
+                } else { //@前面小于等于于3位
+                    for (let i = 1; i < str[0].length; i++) {
+                        _s += '*'
+                    }
+                    new_email = str[0].substr(0, 1) + _s + '@' + str[1]
+                }
+            }
+            return new_email;
+
+        }
+
         function secondsEmail() {
             let userEmail = email;
+            let priEmail = noPassByEmail(email);
             console.log(userEmail);
             let seconds = 60;
-            $('#sendEmailCode').val('已发送验证码至235****86@qq.com (' + seconds + 's)');
+            $('#sendEmailCode').val('已发送验证码至' + priEmail + ' (' + seconds + 's)');
             $("#sendEmailCode").attr("disabled", "disabled");
             $('#sendEmailCode').removeClass('layui-btn-primary');
             $('#sendEmailCode').addClass('layui-btn-disabled');
             var id = setInterval(function () {
-                $('#sendEmailCode').val('已发送验证码至235****86@qq.com (' + seconds + 's)');
+                $('#sendEmailCode').val('已发送验证码至' + priEmail + ' (' + seconds + 's)');
                 seconds = seconds - 1;
                 if (seconds == 0) {
                     window.clearInterval(id);
@@ -248,7 +282,7 @@
                     success: function (res) {
                         console.log(res);
                     },
-                    error: function () {
+                    error: function (res) {
                         layer.open({
                             title: res.statusText
                             , icon: 2

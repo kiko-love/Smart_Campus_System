@@ -33,7 +33,7 @@
 					<li class="layui-nav-item user">
 						<!-- 头 像 -->
 						<a user-menu-url="./view/system/person.html" user-menu-id="1111" user-menu-title="账号信息">
-							<img src="static/admin/images/avatar.jpg" class="layui-nav-img">
+							<img src="" class="layui-nav-img">
 						</a>
 						<!-- 功 能 菜 单 -->
 						<dl class="layui-nav-child">
@@ -89,11 +89,18 @@
 				// 初始化顶部用户信息,使用ajax获取后端seesion即可实现动态更换用户名
 				$.ajax({
 					url: "/User/getUserInfo",
-					type: "POST",
+					type: "post",
 					dataType: "json",
 					success: function (res) {
 						console.log(res);
-						admin.setAvatar("admin/images/avatar.jpg", res.userName);
+						if (res.p_path==''){
+							admin.setAvatar("/user/admin/images/avatar.jpg", res.userName);
+						}else {
+							admin.setAvatar(res.p_path, res.userName);
+						}
+					},
+					error:function (res){
+						console.log(res);
 					}
 				})
 

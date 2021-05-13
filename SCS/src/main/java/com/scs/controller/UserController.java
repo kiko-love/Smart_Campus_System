@@ -24,7 +24,7 @@ import java.util.List;
 public class UserController {
     @Autowired
     private UserService userService;
-
+    @Autowired
     private portraitService portraitService;
 
     @RequestMapping(value = "/Login", method = RequestMethod.POST)
@@ -89,11 +89,17 @@ public class UserController {
         String username = (String) request.getSession().getAttribute("userInformation");
         List<User> User = userService.FindByName(username);
         JSONObject data = new JSONObject();
+        String p_path = null;
         if (User.size() != 0) {
             //获取用户id
             String realName = User.get(0).getUserName();
             portrait portrait = portraitService.getPortraitById(username);
-            String p_path = portrait.getP_path();
+            if (portrait!=null){
+                p_path = portrait.getP_path();
+            }else {
+                p_path = "";
+            }
+
             //封装成json
             data.put("userName", realName);
             data.put("p_path",p_path);
