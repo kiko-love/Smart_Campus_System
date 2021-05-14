@@ -17,8 +17,8 @@ public interface resourceMapper {
     int saveRes(resource res);
 
     //根据文件名和所属科目查询资源信息
-    @Select("select * from resource where fileName=#{arg0} and profession=#{arg1}")
-    resource getResInfoById(String fileName,String profession);
+    @Select("select * from resource where fileName=#{arg0} and profession=#{arg1} and teacherId=#{arg2}")
+    resource getResInfoById(String fileName,String profession,String teacherId);
 
     //删除信息
     @Delete("delete from resource where fileName=#{arg0} and profession=#{arg1}")

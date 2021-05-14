@@ -13,7 +13,7 @@ public interface resourceService {
     int saveRes(resource res);
 
     //查询资源信息
-    resource getResInfoById(String fileName,String profession);
+    resource getResInfoById(String fileName,String profession,String teacherId);
 
     //删除信息
     int deleteRes(String fileName,String profession);
