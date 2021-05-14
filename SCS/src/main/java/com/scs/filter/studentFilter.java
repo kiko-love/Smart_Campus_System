@@ -18,7 +18,7 @@ public class studentFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         HttpSession session = request.getSession();
         String role = (String) session.getAttribute("role");
-        if(role.equals("student")){
+        if(role.equals("2")){
             filterChain.doFilter(servletRequest,servletResponse);
         }
         else {

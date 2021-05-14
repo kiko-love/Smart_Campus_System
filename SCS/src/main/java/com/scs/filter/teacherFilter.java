@@ -19,7 +19,7 @@ public class teacherFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         HttpSession session = request.getSession();
         String role = (String) session.getAttribute("role");
-        if(role.equals("teacher")){
+        if(role.equals("1")){
             filterChain.doFilter(servletRequest,servletResponse);
         }
         else {
