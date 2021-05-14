@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -23,13 +24,16 @@ public class PortraitController {
     @Autowired
     private portraitService portraitService;
 
+
     //MultipartFile 后面的值 必须和表单的name属性一致
     @RequestMapping(value = "/uploadPortrait" ,method = RequestMethod.POST,consumes = "multipart/form-data",produces = "application/json;charset=utf-8")
     @ResponseBody
     public String uploadPortrait(HttpServletRequest request, @RequestParam(value="portrait") MultipartFile portrait, HttpServletResponse response) throws Exception {
-        System.out.println("dsdfwedfsdfsdfsd");
         //获取要存放的位置,request.getSession().getServletContext()  获取项目路径
-        String savePath = request.getSession().getServletContext().getRealPath("/portrait/");
+        String path = request.getSession().getServletContext().getRealPath("");
+        //C:\Users\帅\IdeaProjects\Smart_Campus_System\SCS\
+        String savePath = path.substring(0, path.indexOf("target\\response\\"))+"src\\portrait\\";
+        System.out.println(savePath);
         File file = new File(savePath);
         //判断该文件夹是否存在
         if (!file.exists()){
@@ -49,7 +53,6 @@ public class PortraitController {
         System.out.println(userid);
         String role = (String) request.getSession().getAttribute("role");
         com.scs.pojo.portrait por = portraitService.getPortraitById(userid);
-        System.out.println(por);
         JSONObject data = new JSONObject();
         //当已经存在该用户头像
         if (por!=null){
@@ -74,7 +77,9 @@ public class PortraitController {
                     data.put("p_path","");
                 }
                 //上传头像到服务器储存
+                System.out.println(1);
                 portrait.transferTo(new File(savePath+p_name));
+                System.out.println(2);
             }
         }
         //当还没有该头像信息
@@ -92,6 +97,7 @@ public class PortraitController {
                 data.put("msg","头像上传失败");
                 data.put("p_path","");
             }
+            portrait.transferTo(new File(savePath+p_name));
         }
         return data.toJSONString();
     }
