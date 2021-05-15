@@ -22,7 +22,7 @@ public class studentFilter implements Filter {
             filterChain.doFilter(servletRequest,servletResponse);
         }
         else {
-            response.sendRedirect("/user/"+role+".jsp");
+            response.sendRedirect("/user/"+"student.jsp");
         }
     }
 
