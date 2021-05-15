@@ -11,12 +11,14 @@
         <div class="main-container">
             <div class="main-container">
                 <div class="layui-form-item">
-                    <label class="layui-form-label">学号</label>
+                    <label class="layui-form-label">教师工号</label>
                     <div class="layui-input-block">
-                        <input id="userId" type="text" name="userId" value="" lay-verify="title"
+                        <input id="teacherId" type="text" name="teacherId" value="" lay-verify="title"
                                autocomplete="off"
-                               placeholder="请输入学号" class="layui-input"
-                               style="cursor:not-allowed;color: #a1a1a1;" disabled>
+                               placeholder="请输入教师工号" class="layui-input">
+                        <span class="layui-badge"
+                              id="userIdTips" style="text-align: center;display: none">该教师已存在
+                        </span>
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -27,52 +29,39 @@
                                class="layui-input" lay-reqText="请输入姓名">
                     </div>
                 </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">班级</label>
-                    <div class="layui-input-block">
-                        <input id="classes" type="text" name="classes" lay-verify="required" autocomplete="off"
-                               placeholder="班级"
-                               class="layui-input" lay-reqText="班级">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">辅导员</label>
-                    <div class="layui-input-block">
-                        <input id="counselor" type="text" name="realName" lay-verify="required" autocomplete="off"
-                               placeholder="请输入辅导员姓名"
-                               class="layui-input" lay-reqText="请输入辅导员姓名">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">院系</label>
-                    <div class="layui-input-block">
-                        <input id="department" type="text" name="department" value="" lay-verify="title"
-                               autocomplete="off" placeholder="请输入院系" class="layui-input">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">学历层次</label>
-                    <div class="layui-input-block">
-                        <select name="levels" lay-verify="">
-                            <option id="level01" value="专科">专科</option>
-                            <option id="level02" value="本科">本科</option>
-                            <option id="level03" value="硕士">硕士</option>
-                            <option id="level04" value="博士">博士</option>
-                        </select>
-                    </div>
-                </div>
+
                 <div class="layui-form-item">
                     <label class="layui-form-label">电话</label>
                     <div class="layui-input-block">
-                        <input id="phone" type="text" name="phone" value="" lay-verify="required|phone" autocomplete="off"
+                        <input id="phone" type="text" name="phone" value="" lay-verify="required|phone"
+                               autocomplete="off"
                                placeholder="请输入手机号码" class="layui-input" lay-reqText="请输入手机号码">
                     </div>
                 </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">家庭住址</label>
+                    <div class="layui-input-block">
+                        <input id="addr" type="text" name="addr" value="" lay-verify="title"
+                               autocomplete="off" placeholder="请输入家庭地址" class="layui-input">
+                    </div>
+                </div>
+
+
                 <div class="layui-form-item">
                     <label class="layui-form-label">性别</label>
                     <div class="layui-input-block">
                         <input id="man" type="radio" name="sex" value="1" title="男">
                         <input id="woman" type="radio" name="sex" value="2" title="女" checked>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">出生日期</label>
+                    <div class="layui-input-block">
+                        <input id="birthday" type="text" name="birthday" value="" lay-verify="required"
+                               autocomplete="off"
+                               placeholder="请输入出生日期" class="layui-input" lay-reqText="请输入出生日期">
                     </div>
                 </div>
             </div>
@@ -94,25 +83,36 @@
 <script src="../../../component/layui/layui.js"></script>
 <script src="../../../component/pear/pear.js"></script>
 <script>
-    layui.use(['form', 'jquery'], function () {
+    layui.use(['form', 'jquery', 'loading','laydate'], function () {
         let form = layui.form;
         let $ = layui.jquery;
-        //$("#userId").val(parent.obj.data['userId']);
-        // console.log(parent.layui.table)
+        let loading = layui.loading;
+        let laydate = layui.laydate;
+
+        laydate.render({
+            elem: '#birthday' //或 elem: document.getElementById('test')、elem: lay('#test') 等
+            ,theme: 'molv'
+            ,calendar: true
+        });
+
+
+
         form.on('submit(user-save)', function (data) {
-            var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
+            //console.log(data.field);
+            loading.Load(3, "");
             $.ajax({
-                url: '/admin/stu/updateStudent',
+                url: '/admin/tea/addTea',
                 data: data.field,
                 dataType: 'json',
                 contentType: 'application/json',
                 type: 'get',
                 success: function (result) {
-                    layer.close(index);
+                    loading.loadRemove();
+                    //console.log(JSON.stringify(result.data));
                     if (result.success) {
                         layer.msg(result.msg, {icon: 1, time: 1000}, function () {
                             parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前页
-                            //console.log(parent.layui.jquery(".layui-laypage-em").next().html());
+                            //console.log(JSON.stringify(result.data));
                             parent.layui.table.reload("user-table", {
                                 data: result.data,
                                 page: {
@@ -124,12 +124,39 @@
                             });
                         });
                     } else {
-                        layer.msg(result.msg, {icon: 2, time: 1000});
+                        layer.msg(result.msg, {icon: 2, time: 1500});
                     }
                 }
             })
             return false;
         });
+        $('#teacherId').blur(function () {
+            if ($('#userId').val() == '') {
+                return false;
+            }
+            $('#userIdTips').append('<i class="tipsLoad layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop"></i>');
+            $.ajax({
+                url: '/admin/tea/searchTea',
+                data: {
+                    teacherId: $('#teacherId').val()
+                },
+                dataType: 'json',
+                contentType: 'application/json',
+                type: 'get',
+                success: function (result) {
+                    $('.tipsLoad').remove();
+                    console.log(result);
+                    if (result.count <= 0) {
+                        $('#userIdTips').hide();
+                    } else {
+                        $('#userIdTips').show();
+                    }
+                },
+                error: function (result) {
+                    console.log(result);
+                }
+            })
+        })
     })
 </script>
 <script>

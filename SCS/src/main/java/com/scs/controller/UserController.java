@@ -78,6 +78,60 @@ public class UserController {
         return data.toJSONString();
     }
 
+    //获取全部账号信息
+    @ResponseBody
+    @RequestMapping(value = "/getAllUsers", method = RequestMethod.POST,produces = "application/json;charset=utf-8")
+    public String getAllUsers(HttpServletRequest request, HttpServletResponse response) {
+        List<User> userList = userService.getAllUsers();
+        JSONObject data =new JSONObject();
+        data.put("code", 0);
+        data.put("msg", "getAllUsers");
+        if (userList!=null){
+            if (userList.size()!=0){
+                data.put("success","1");
+                data.put("msg", "获取用户列表成功");
+                data.put("data",userList);
+            }else {
+                data.put("success","1");
+                data.put("msg", "获取用户列表失败");
+                data.put("data",null);
+            }
+        }else {
+            data.put("success","1");
+            data.put("data", null);
+        }
+        data.put("count", userList.size());
+        return data.toJSONString();
+    }
+
+    //获取不同的账号信息
+    @ResponseBody
+    @RequestMapping(value = "/getRoleAccounts", method = RequestMethod.POST,produces = "application/json;charset=utf-8")
+    public String getRoleAccounts(HttpServletRequest request, HttpServletResponse response) {
+
+        String role = request.getParameter("role");
+        List<User> userList = userService.getRoleAccounts(role);
+        JSONObject data =new JSONObject();
+        data.put("code", 0);
+        data.put("msg", "getRoleAccounts");
+        if (userList!=null){
+            if (userList.size()!=0){
+                data.put("success","1");
+                data.put("msg", "获取对应角色用户列表成功");
+                data.put("data",userList);
+            }else {
+                data.put("success","1");
+                data.put("msg", "获取对应角色用户列表失败");
+                data.put("data",null);
+            }
+        }else {
+            data.put("success","1");
+            data.put("data", null);
+        }
+        data.put("count", userList.size());
+        return data.toJSONString();
+    }
+
 
 
 

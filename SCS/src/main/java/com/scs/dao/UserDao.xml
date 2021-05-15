@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--绑定Mapper接口-->
+<mapper namespace="com.scs.dao.UserDao">
+
+    <select id="getRoleAccounts" parameterType="string" resultType="com.scs.pojo.User">
+        select * from userinfo
+        <where>
+            <if test="role != null and role != ''">
+                role = #{role}
+            </if>
+        </where>
+    </select>
+</mapper>

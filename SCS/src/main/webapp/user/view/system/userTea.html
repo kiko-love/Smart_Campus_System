@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>用户管理</title>
+    <title>教师管理</title>
     <link rel="stylesheet" href="../../component/pear/css/pear.css"/>
 </head>
 
@@ -13,9 +13,9 @@
         <form class="layui-form" action="">
             <div class="layui-form-item">
                 <div class="layui-form-item layui-inline">
-                    <label class="layui-form-label">学生ID</label>
+                    <label class="layui-form-label">教师ID</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="userId" placeholder="" class="layui-input">
+                        <input type="text" name="teacherId" placeholder="" class="layui-input">
                     </div>
                 </div>
                 <!--                <div class="layui-form-item layui-inline">-->
@@ -96,6 +96,41 @@
 <script src="https://www.layuicdn.com/layui-v2.6.4/layui.js"></script>
 <script src="../../component/pear/pear.js"></script>
 <script>
+    /**
+     * 日期格式化
+     * @param Number time 时间戳
+     * @param String format 格式
+     */
+    function dateFormat(time, format) {
+        const t = new Date(time)
+        // 日期格式
+        format = format || 'Y-m-d h:i:s'
+        let year = t.getFullYear()
+        // 由于 getMonth 返回值会比正常月份小 1
+        let month = t.getMonth() + 1
+        let day = t.getDate()
+        let hours = t.getHours()
+        let minutes = t.getMinutes()
+        let seconds = t.getSeconds()
+
+        const hash = {
+            'y': year,
+            'm': month,
+            'd': day,
+            'h': hours,
+            'i': minutes,
+            's': seconds
+        }
+        // 是否补 0
+        const isAddZero = (o) => {
+            return /M|D|H|I|S/.test(o)
+        }
+        return format.replace(/\w/g, o => {
+            let rt = hash[o.toLocaleLowerCase()]
+            return rt > 10 || !isAddZero(o) ? rt : `0${rt}`
+        })
+    }
+
     layui.use(['table', 'form', 'jquery', 'common'], function () {
         let table = layui.table;
         let form = layui.form;
@@ -109,8 +144,8 @@
                 type: 'checkbox'
             },
                 {
-                    field: 'userId',
-                    title: 'ID',
+                    title: 'Id',
+                    field: 'teacherId',
                     //width: 80,
                     sort: true,
                     //fixed: true
@@ -128,42 +163,19 @@
                     templet: '#user-sex'
                 },
                 {
-                    title: '班级',
-                    field: 'classes',
-                    align: 'center'
-                },
-                {
-                    title: '院系',
-                    field: 'department',
-                    align: 'center'
-                },
-                // {
-                //     title: '启用',
-                //     field: 'enable',
-                //     align: 'center',
-                //     templet: '#user-enable'
-                // },
-                {
                     title: '电话',
                     field: 'phone',
                     align: 'center'
                 },
                 {
-                    title: '学历层次',
-                    field: 'levels',
+                    title: 'addr',
+                    field: 'addr',
                     align: 'center'
                 },
-                // {
-                //     title: '登录',
-                //     field: 'login',
-                //     align: 'center',
-                //     templet: '#user-login'
-                // },
                 {
-                    title: '辅导员',
-                    field: 'counselor',
-                    align: 'center',
-                    //templet: '#user-createTime'
+                    title: '出生日期',
+                    field: 'birthday',
+                    align: 'center'
                 },
                 {
                     title: '操作',
@@ -176,7 +188,7 @@
 
         var tableIns = table.render({
             elem: '#user-table',
-            url: '/admin/stu/getStudents',
+            url: '/admin/tea/getTeachers',
             method: "post",
             page: {
                 layout: ['count', 'prev', 'page', 'next', 'skip']
@@ -191,14 +203,15 @@
             skin: 'line',
             toolbar: '#user-toolbar',
             defaultToolbar: [{
-                title: '重新获取数据',
+                title: '刷新教师信息列表',
                 layEvent: 'refresh',
                 icon: 'layui-icon-refresh',
             }, 'filter', 'print', 'exports'],
             //一定要加这个参数代码，否则会由于layui自身的bug导致无法分页
             parseData: function (res) { //将原始数据解析成 table 组件所规定的数据，res为从url中get到的数据
                 var result;
-                //console.log(JSON.stringify(res.data));
+                // console.log(res.data[0].birthday);
+                // res.data[0].birthday = dateFormat(res.data[0].birthday, 'Y-M-D')
                 if (this.page.curr) {
                     result = res.data.slice(this.limit * (this.page.curr - 1), this.limit * this.page.curr);
                 } else {
@@ -237,7 +250,7 @@
         form.on('submit(user-query)', function (data) {
             tableIns.reload({
                 //url: '/getData2',
-                url: '/admin/stu/search',
+                url: '/admin/tea/searchTea',
                 method: 'post',
                 page: {
                     layout: ['count', 'prev', 'page', 'next', 'skip']
@@ -257,44 +270,31 @@
         window.add = function () {
             layer.open({
                 type: 2,
-                title: '新增',
+                title: '新增教师信息',
                 shade: 0.1,
-                area: [common.isModile() ? '100%' : '500px', common.isModile() ? '100%' : '550px'],
-                content: MODULE_PATH + 'add.html'
+                area: [common.isModile() ? '100%' : '550px', common.isModile() ? '100%' : '550px'],
+                content: MODULE_PATH + 'addTea.html'
             });
         }
 
         window.edit = function (obj) {
             layer.open({
                 type: 2,
-                title: '修改:' + obj.data['userId'],
+                title: '修改教师信息:' + obj.data['teacherId'],
                 shade: 0.1,
                 area: ['500px', '550px'],
-                content: MODULE_PATH + 'edit.html',
+                content: MODULE_PATH + 'editTea.html',
                 success: function (layero, index) {
                     var body = layer.getChildFrame('body', index);
                     //得到iframe页的窗口对象，执行iframe页的方法：iframeWin.method();
+                    //console.log(obj.data);
                     var iframeWin = window[layero.find('iframe')[0]['name']]
-                    body.find('#userId').val(obj.data['userId'])
+                    body.find('#teacherId').val(obj.data['teacherId'])
                     body.find('#realName').val(obj.data['realName'])
-                    body.find('#department').val(obj.data['department'])
                     body.find('#phone').val(obj.data['phone'])
-                    body.find('#classes').val(obj.data['classes'])
-                    body.find('#counselor').val(obj.data['counselor'])
-                    //console.log(obj.data['levels']);
-                    if (obj.data['levels'] == '专科') {
-                        body.find('#level01').attr("selected", "");
-                        iframeWin.layui.form.render('select');
-                    } else if (obj.data['levels'] == '本科') {
-                        body.find('#level02').attr("selected", "");
-                        iframeWin.layui.form.render('select');
-                    } else if (obj.data['levels'] == '硕士') {
-                        body.find('#level03').attr("selected", "");
-                        iframeWin.layui.form.render('select');
-                    } else if (obj.data['levels'] == '博士') {
-                        body.find('#level04').attr("selected", "");
-                        iframeWin.layui.form.render('select');
-                    }
+                    body.find('#collegeId').val(obj.data['collegeId'])
+                    body.find('#addr').val(obj.data['addr'])
+                    body.find('#birthday').val(obj.data['birthday'])
                     if (obj.data['sex'] == '1') {
                         body.find('#man').attr("checked", "");
                         iframeWin.layui.form.render('radio');
@@ -307,7 +307,7 @@
         }
 
         window.remove = function (obj) {
-            console.log(obj.data['userId']);
+            console.log(obj.data['teacherId']);
             layer.confirm('确定要删除该用户', {
                 icon: 3,
                 title: '提示'
@@ -315,9 +315,9 @@
                 layer.close(index);
                 let loading = layer.load();
                 $.ajax({
-                    url: "/admin/stu/removeStudent",
+                    url: "/admin/tea/removeTeacher",
                     data: {
-                        userId: obj.data['userId']
+                        teacherId: obj.data['teacherId']
                     },
                     dataType: 'json',
                     type: 'post',
@@ -329,7 +329,7 @@
                                 time: 1000
                             }, function () {
                                 tableIns.reload({
-                                    url: "/admin/stu/getStudents",
+                                    url: "/admin/tea/getTeachers",
                                     page: {
                                         layout: ['count', 'prev', 'page', 'next', 'skip']
                                         , curr: $(".layui-laypage-em").next().html()
@@ -369,18 +369,18 @@
             }, function (index) {
                 layer.close(index);
                 var checkStatus = table.checkStatus('user-table');
-                let userIds = [];
+                let teacherIds = [];
                 for (let i = 0; i < checkStatus.data.length; i++) {
-                    userIds[i] = checkStatus.data[i].userId;
+                    teacherIds[i] = checkStatus.data[i].teacherId;
                     //console.log(checkStatus.data[i].userId);
                 }
-                console.log(userIds);
+                console.log(teacherIds);
                 let loading = layer.load();
                 table.reload('user-table');
                 $.ajax({
-                    url: "/admin/stu/batchRemove",
-                    data:{
-                        userIds:JSON.stringify(userIds)
+                    url: "/admin/tea/batchRemoveTea",
+                    data: {
+                        teacherIds: JSON.stringify(teacherIds)
                     },
                     dataType: 'json',
                     type: 'post',
@@ -392,7 +392,7 @@
                                 time: 1000
                             }, function () {
                                 tableIns.reload({
-                                    url: "/admin/stu/getStudents",
+                                    url: "/admin/tea/getTeachers",
                                     page: {
                                         layout: ['count', 'prev', 'page', 'next', 'skip']
                                         , curr: 1
@@ -415,7 +415,7 @@
 
         window.refresh = function (param) {
             table.reload('user-table', {
-                url: "/admin/stu/getStudents",
+                url: "/admin/tea/getTeachers",
                 method: "post"
             });
         }

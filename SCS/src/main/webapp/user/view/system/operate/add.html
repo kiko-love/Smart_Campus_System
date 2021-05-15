@@ -15,8 +15,8 @@
                     <div class="layui-input-block">
                         <input id="userId" type="text" name="userId" lay-verify="required|title" autocomplete="off"
                                placeholder="请输入学号" class="layui-input" lay-reqText="请输入学号">
-                        <span id="userIdTips" style="text-align: center;right: 0;border-radius: 1px;
-                        color: #ff5722;font-size: 16px;display: none">该学生已存在</span>
+                        <span class="layui-badge" id="userIdTips"
+                              style="text-align: center;display: none">该学生已存在</span>
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -133,6 +133,7 @@ layui.use(['form','jquery','loading'],function(){
         if ($('#userId').val()==''){
             return false;
         }
+        $('#userIdTips').append('<i class="tipsLoad layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop"></i>');
         $.ajax({
             url:'/admin/stu/search',
             data:{
@@ -142,6 +143,7 @@ layui.use(['form','jquery','loading'],function(){
             contentType:'application/json',
             type:'get',
             success:function(result){
+                $('.tipsLoad').remove();
                 console.log(result);
                 if (result.count<=0){
                     $('#userIdTips').hide();

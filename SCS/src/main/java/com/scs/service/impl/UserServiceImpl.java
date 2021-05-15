@@ -33,4 +33,14 @@ public class UserServiceImpl implements UserService {
     public String findPassword(String username) {
         return userDao.findPassword(username);
     }
+
+    @Override
+    public List<User> getAllUsers() {
+        return userDao.getAllUsers();
+    }
+
+    @Override
+    public List<User> getRoleAccounts(String role) {
+        return userDao.getRoleAccounts(role);
+    }
 }

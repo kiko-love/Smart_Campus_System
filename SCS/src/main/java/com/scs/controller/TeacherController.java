@@ -16,7 +16,7 @@ import java.util.Date;
 import java.util.List;
 
 @Controller
-@RequestMapping("/Teacher")
+@RequestMapping("/admin/tea")
 public class TeacherController {
     @Autowired
     private teacherService teaService;

@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>用户管理</title>
+    <title>学生管理</title>
     <link rel="stylesheet" href="../../component/pear/css/pear.css"/>
 </head>
 
@@ -191,7 +191,7 @@
             skin: 'line',
             toolbar: '#user-toolbar',
             defaultToolbar: [{
-                title: '重新获取数据',
+                title: '刷新学生信息列表',
                 layEvent: 'refresh',
                 icon: 'layui-icon-refresh',
             }, 'filter', 'print', 'exports'],
@@ -267,7 +267,7 @@
         window.edit = function (obj) {
             layer.open({
                 type: 2,
-                title: '修改:' + obj.data['userId'],
+                title: '修改学生信息:' + obj.data['userId'],
                 shade: 0.1,
                 area: ['500px', '550px'],
                 content: MODULE_PATH + 'edit.html',

@@ -31,4 +31,18 @@ public interface UserService {
      * @return int
      */
     String findPassword(String username);
+
+    /**
+     * 获取所有用户信息
+     * @param
+     * @return List<User>
+     */
+    List<User> getAllUsers();
+
+    /**
+     * 获取不同角色信息的用户账号
+     * @param role
+     * @return List<User>
+     */
+    List<User> getRoleAccounts(String role);
 }

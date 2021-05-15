@@ -20,6 +20,13 @@ public interface UserDao {
     @Select("select * from userinfo where userName=#{userName}")
     List<User> FindByName(String username);
 
+    //获取全部用户信息
+    @Select("select * from userinfo")
+    List<User> getAllUsers();
+
+    //获取不同角色信息的用户账号
+    List<User> getRoleAccounts(@Param(value = "role") String role);
+
 
     //修改密码
     @Update("update userinfo set md5password = #{md5password} where username = #{username}")
@@ -27,5 +34,7 @@ public interface UserDao {
     //查询用户的密码
     @Select("select md5password from userinfo where username = #{username}")
     String findPassword(String username);
+
+
 
 }

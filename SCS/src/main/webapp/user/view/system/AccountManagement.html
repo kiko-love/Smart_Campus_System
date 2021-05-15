@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>账号管理</title>
+    <link rel="stylesheet" href="../../component/pear/css/pear.css"/>
+    <link rel="stylesheet" href="../../admin/css/other/department.css"/>
+</head>
+<style>
+    .t-click {
+        user-select: none;
+    }
+
+
+</style>
+<body class="pear-container">
+<div class="layui-card">
+    <div class="layui-card-body">
+        <form class="layui-form" action="">
+            <div class="layui-form-item">
+                <div class="layui-form-item layui-inline">
+                    <label class="layui-form-label">用户名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="realName" placeholder="" class="layui-input">
+                    </div>
+                </div>
+                <!--						<div class="layui-form-item layui-inline">-->
+                <!--							<label class="layui-form-label">性别</label>-->
+                <!--							<div class="layui-input-inline">-->
+                <!--								<input type="text" name="realName" placeholder="" class="layui-input">-->
+                <!--							</div>-->
+                <!--						</div>-->
+                <!--						<div class="layui-form-item layui-inline">-->
+                <!--							<label class="layui-form-label">邮箱</label>-->
+                <!--							<div class="layui-input-inline">-->
+                <!--								<input type="text" name="realName" placeholder="" class="layui-input">-->
+                <!--							</div>-->
+                <!--						</div>-->
+                <div class="layui-form-item layui-inline">
+                    <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="user-query">
+                        <i class="layui-icon layui-icon-search"></i>
+                        查询
+                    </button>
+                    <button type="reset" class="pear-btn pear-btn-md">
+                        <i class="layui-icon layui-icon-refresh"></i>
+                        重置
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="layui-row layui-col-space15">
+    <div class="layui-col-md3">
+        <div class="layui-card">
+            <div class="layui-card-body">
+                <div id="organizationTreeContent" style="overflow: auto">
+                    <ul id="organizationTree" class="dtree organizationTree" data-id="9527"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-col-md9">
+        <div class="layui-card">
+            <div class="layui-card-body">
+                <table id="organization-table" lay-filter="organization-table"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/html" id="organization-toolbar">
+    <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
+        <i class="layui-icon layui-icon-add-1"></i>
+        新增
+    </button>
+    <button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove">
+        <i class="layui-icon layui-icon-delete"></i>
+        删除
+    </button>
+</script>
+
+<script type="text/html" id="organization-bar">
+    <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i
+            class="layui-icon layui-icon-edit"></i></button>
+    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i
+            class="layui-icon layui-icon-delete"></i></button>
+</script>
+<script src="../../component/layui/layui.js"></script>
+<script src="../../component/pear/pear.js"></script>
+<script type="text/html" id="user-status">
+    <input type="checkbox" name="enable" value="{{d.id}}"
+           lay-skin="switch" lay-text="启用|禁用" lay-filter="user-status"
+           checked="{{ d.status == 100 ? 'true' : 'false' }}">
+</script>
+
+<script>
+    layui.use(['table', 'form', 'jquery', 'dtree'], function () {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+        let dtree = layui.dtree;
+
+        let MODULE_PATH = "operate/";
+
+        let cols = [
+            [{
+                type: 'checkbox'
+            },
+                {
+                    title: '账号',
+                    field: 'userName',
+                    align: 'center'
+                },
+                {
+                    title: '密码',
+                    field: 'md5password',
+                    align: 'center'
+                },
+                {
+                    title: '账号权限',
+                    templet: function(d){
+                        if (d.role=='admin'){
+                            return '<span class="layui-badge layui-bg-green">管理员</span>'
+                        }else if (d.role=='teacher'){
+                            return '<span class="layui-badge layui-bg-blue">教师账号</span>'
+                        }else {
+                            return '<span class="layui-badge layui-bg-gray">学生账号</span>'
+                        }
+
+
+                    },
+                    field: 'role',
+                    align: 'center'
+
+                },
+                {
+                    title: '账号状态',
+                    templet: '#user-status',
+                    field: 'status',
+                    align: 'center'
+
+                },
+                {
+                    title: '操作',
+                    toolbar: '#organization-bar',
+                    align: 'center',
+                    width: 130
+                }
+            ]
+        ]
+
+        var DTree = dtree.render({
+            elem: "#organizationTree",
+            iconfont: ["layui-icon", "dtreefont", "iconfont"],
+            iconfontStyle: [{
+                fnode: {  //一级节点
+                    node: {  //非叶子节点
+                        open: "layui-icon-subtraction",  //节点展开
+                        close: "layui-icon-addition"  //节点关闭
+                    },
+                    leaf: "layui-icon-username"  //叶子节点
+                }, snode: {  //二级节点
+                    node: {  //非叶子节点
+                        open: "layui-icon-user",  //节点展开
+                        close: "layui-icon-user"  //节点关闭
+                    },
+                    leaf: ""  //叶子节点
+                }
+            }],
+            //data: data,
+            initLevel: "2", //默认展开层级为1
+            line: false, // 有线树
+            // ficon: ["1", "-1"], // 设定一级图标样式。0表示方形加减图标，8表示小圆点图标
+            // icon: ["0", "2"], // 设定二级图标样式。0表示文件夹图标，5表示叶子图标
+            method: 'get',
+            url: "../../admin/data/organizationtree.json",
+
+        });
+
+        var tableIns = table.render({
+            elem: '#organization-table',
+            url: '/User/getAllUsers',
+            initSort: {
+                field: 'role' //排序字段，对应 cols 设定的各字段名
+                ,type: 'asc' //排序方式  asc: 升序、desc: 降序、null: 默认排序
+            },
+            height: 'full-150',
+            method: "post",
+            page: {
+                layout: ['count', 'prev', 'page', 'next', 'skip']
+                , curr: 1
+                , groups: 3
+                , limit: 10
+                , last: false
+            },
+            cols: cols,
+            skin: 'line',
+            toolbar: '#organization-toolbar',
+            defaultToolbar: [{
+                title: '刷新账号列表',
+                layEvent: 'refresh',
+                icon: 'layui-icon-refresh',
+            }, 'filter', 'print', 'exports'],
+            parseData: function (res) { //将原始数据解析成 table 组件所规定的数据，res为从url中get到的数据
+                var result;
+                console.log(res);
+                // res.data[0].birthday = dateFormat(res.data[0].birthday, 'Y-M-D')
+                if (this.page.curr) {
+                    result = res.data.slice(this.limit * (this.page.curr - 1), this.limit * this.page.curr);
+                } else {
+                    result = res.data.slice(0, this.limit);
+                }
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": res.count, //解析数据长度
+                    "data": result //解析数据列表
+                };
+            }
+        });
+
+        // 绑定节点点击事件
+        dtree.on("node(organizationTree)", function (obj) {
+            console.log(obj.param.nodeId);
+            var role = '';
+            if (obj.param.nodeId=='001') {
+                role = 'admin';
+                //DTree.clickSpread($div); //调用内置函数展开节点
+            } else if (obj.param.nodeId=='002'){
+                role = 'teacher';
+                //table.reload("organization-table");
+            } else if (obj.param.nodeId=='003'){
+                role = 'student';
+            } else {
+                role = '';
+            }
+            tableIns.reload({
+                url: '/User/getRoleAccounts',
+                method: 'post',
+                page: {
+                    layout: ['count', 'prev', 'page', 'next', 'skip']
+                    , curr: 1
+                    , groups: 3
+                    , last: false
+                }
+                , where: {
+                    role:role
+                }
+            })
+        });
+
+        table.on('tool(organization-table)', function (obj) {
+            if (obj.event === 'remove') {
+                window.remove(obj);
+            } else if (obj.event === 'edit') {
+                window.edit(obj);
+            }
+        });
+
+        table.on('toolbar(organization-table)', function (obj) {
+            if (obj.event === 'add') {
+                window.add();
+            } else if (obj.event === 'refresh') {
+                window.refresh();
+            } else if (obj.event === 'batchRemove') {
+                window.batchRemove(obj);
+            }
+        });
+
+        form.on('submit(organization-query)', function (data) {
+            table.reload('organization-table', {
+                where: data.field
+            })
+            return false;
+        });
+
+        window.add = function () {
+            layer.open({
+                type: 2,
+                title: '新增',
+                shade: 0.1,
+                area: ['500px', '400px'],
+                content: MODULE_PATH + 'add.html'
+            });
+        }
+
+        window.edit = function (obj) {
+            layer.open({
+                type: 2,
+                title: '修改',
+                shade: 0.1,
+                area: ['500px', '400px'],
+                content: MODULE_PATH + 'edit.html'
+            });
+        }
+
+        window.remove = function (obj) {
+            layer.confirm('确定要删除该用户', {
+                icon: 3,
+                title: '提示'
+            }, function (index) {
+                layer.close(index);
+                let loading = layer.load();
+                $.ajax({
+                    url: MODULE_PATH + "remove/" + obj.data['organizationId'],
+                    dataType: 'json',
+                    type: 'delete',
+                    success: function (result) {
+                        layer.close(loading);
+                        if (result.success) {
+                            layer.msg(result.msg, {
+                                icon: 1,
+                                time: 1000
+                            }, function () {
+                                obj.del();
+                            });
+                        } else {
+                            layer.msg(result.msg, {
+                                icon: 2,
+                                time: 1000
+                            });
+                        }
+                    }
+                })
+            });
+        }
+
+        window.batchRemove = function (obj) {
+            let data = table.checkStatus(obj.config.id).data;
+            if (data.length === 0) {
+                layer.msg("未选中数据", {
+                    icon: 3,
+                    time: 1000
+                });
+                return false;
+            }
+            let ids = "";
+            for (let i = 0; i < data.length; i++) {
+                ids += data[i].organizationId + ",";
+            }
+            ids = ids.substr(0, ids.length - 1);
+            layer.confirm('确定要删除这些用户', {
+                icon: 3,
+                title: '提示'
+            }, function (index) {
+                layer.close(index);
+                let loading = layer.load();
+                $.ajax({
+                    url: MODULE_PATH + "batchRemove/" + ids,
+                    dataType: 'json',
+                    type: 'delete',
+                    success: function (result) {
+                        layer.close(loading);
+                        if (result.success) {
+                            layer.msg(result.msg, {
+                                icon: 1,
+                                time: 1000
+                            }, function () {
+                                table.reload('organization-table');
+                            });
+                        } else {
+                            layer.msg(result.msg, {
+                                icon: 2,
+                                time: 1000
+                            });
+                        }
+                    }
+                })
+            });
+        }
+
+        window.refresh = function (param) {
+            table.reload('organization-table');
+        }
+    })
+</script>
+</body>
+</html>
