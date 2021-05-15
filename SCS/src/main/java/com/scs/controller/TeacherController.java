@@ -75,8 +75,10 @@ public class TeacherController {
         String TeacherId = request.getParameter("teacherId");
         List<teacher> list = teaService.getTeacherById(TeacherId);
         data.put("count", list.size());
-        data.put("data", list);
-        return JSON.toJSONStringWithDateFormat(list,"yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
+        String format = JSON.toJSONStringWithDateFormat(list, "yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
+        JSONArray jsonArray = JSONArray.parseArray(format);
+        data.put("data",jsonArray);
+        return data.toJSONString();
     }
     //添加老师信息
     @ResponseBody
@@ -100,7 +102,7 @@ public class TeacherController {
             e.printStackTrace();
         }
         List<teacher> teacher = teaService.getTeacherById(teacherId);
-        if(teacher==null){
+        if(teacher.size()==0){
             teacher tea = new teacher(teacherId, realName, phone, sex, collegeId, addr,birthday);
             int addNumber = teaService.addTeacher(tea);
             if (addNumber > 0) {
@@ -117,7 +119,6 @@ public class TeacherController {
         }
         else{
             data.put("success", "0");
-            data.put("msg", "添加失败");
             data.put("msg","该用户已存在");
             return data.toJSONString();
         }

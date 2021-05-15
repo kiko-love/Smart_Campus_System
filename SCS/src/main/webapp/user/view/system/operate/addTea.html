@@ -108,8 +108,8 @@
                 type: 'get',
                 success: function (result) {
                     loading.loadRemove();
-                    //console.log(JSON.stringify(result.data));
-                    if (result.success) {
+                    console.log(result);
+                    if (result.success=='1') {
                         layer.msg(result.msg, {icon: 1, time: 1000}, function () {
                             parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前页
                             //console.log(JSON.stringify(result.data));
@@ -124,12 +124,17 @@
                             });
                         });
                     } else {
-                        layer.msg(result.msg, {icon: 2, time: 1500});
+                        layer.open({
+                            title: '提示'
+                            , icon: 2
+                            , content: result.msg
+                        });
                     }
                 }
             })
             return false;
         });
+        //前端实时检测用户是否存在
         $('#teacherId').blur(function () {
             if ($('#userId').val() == '') {
                 return false;
