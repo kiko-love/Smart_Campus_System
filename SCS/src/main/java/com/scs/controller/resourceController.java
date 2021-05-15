@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,9 +33,13 @@ public class resourceController {
     @RequestMapping(value = "/uploadResource",method = RequestMethod.POST,produces = "application/json;charset=utf-8")
     //MultipartFile 后面的值 必须和表单的name属性一致
     @ResponseBody
-    public String uploadResource(HttpServletRequest request, @RequestParam(value="resource") CommonsMultipartFile files[] ,String profession) throws Exception {
+    public String uploadResource(HttpServletRequest request, @RequestParam(value="resource") MultipartFile files[] , String profession) throws Exception {
         //获取要存放的位置,request.getSession().getServletContext()  获取项目路径,不同种类的学科的资料存放在相应的文件夹
-        String savePath = request.getSession().getServletContext().getRealPath("/resource/"+profession+"/");
+        HttpSession session = request.getSession();
+        //获取上传该文件的老师
+        String teacherId = (String) session.getAttribute("userInformation");
+        String path = request.getSession().getServletContext().getRealPath("");
+        String savePath = path.substring(0, path.indexOf("target\\response\\"))+"src\\resource\\"+profession+"\\"+teacherId+"\\";
         File file = new File(savePath);
         //判断该文件夹是否存在
         if (!file.exists()){
@@ -44,18 +49,30 @@ public class resourceController {
         List<String> filenameArray = new ArrayList<>();
         List<String> filepathArray = new ArrayList<>();
         int []count = new int[files.length];
+        int length=0;
+        System.out.println(files.length);
         for(int i=0;i<files.length;i++){
+            if(!files[i].getOriginalFilename().equals("")){
+                length++;
+            }
+        }
+        System.out.println(length);
+        for(int i=0;i<length;i++){
             //获取要上传的文件名
+            System.out.println(files[i]);
             String filename = files[i].getOriginalFilename();
+            System.out.println(savePath+filename);
             //获取可访问该文件的地址
-            String filepath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/resource/"+profession+"/"+filename;
-            HttpSession session = request.getSession();
-            //获取上传该文件的老师
-            String teacherId = (String) session.getAttribute("userInformation");
+            String filepath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+"/resource/"+profession+"/"+teacherId+"/"+filename;
             //查看该文件是否已经存在
-            resource resInfo = resourceService.getResInfoById(filename,profession);
+            resource resInfo = resourceService.getResInfoById(filename,profession,teacherId);
+            System.out.println(resInfo);
             //如果该文件已经存在，覆盖原来的文件
             if(resInfo!=null){
+                //删除已经存在服务器的同名文件
+                File fileExist = new File(savePath + filename);
+                boolean delete = fileExist.delete();
+                System.out.println(delete);
                 count[i]= resourceService.updateRes(filepath, filename,profession);
                 files[i].transferTo(new File(savePath+filename));
             }
@@ -88,10 +105,10 @@ public class resourceController {
 
     @RequestMapping(value = "/downloadResource",produces = "application/json;charset=utf-8")
     //MultipartFile 后面的值 必须和表单的name属性一致
-    public void downloadFile(HttpServletRequest request, HttpServletResponse response,  String filename,String profession) throws Exception {
+    public void downloadFile(HttpServletRequest request, HttpServletResponse response,  String filename,String profession,String teacherId) throws Exception {
 
-        String fileName = resourceService.getResInfoById(filename,profession).getFileName();
-        String filepath = request.getSession().getServletContext().getRealPath("/resource/"+profession+"/")+fileName;
+        String fileName = resourceService.getResInfoById(filename,profession,teacherId).getFileName();
+        String filepath = request.getSession().getServletContext().getRealPath("/resource/"+profession+"/")+teacherId+"/"+fileName;
         File file = new File(filepath);
         //获取输入流
         InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
@@ -135,9 +152,13 @@ public class resourceController {
         ArrayList<String> teaName = new ArrayList<>();
         //查询当前的资料的所有老师
         List<String> teacherIds = resourceService.getTeacherId(profession);
+        System.out.println(teacherIds);
+        System.out.println(teacherIds.size());
+        System.out.println(teacherIds.get(0));
         if(teacherIds.size()>0){
             for(int i=0;i<teacherIds.size();i++) {
                 List<teacher> teacher = teacherService.getTeacherById(teacherIds.get(i));
+                System.out.println(teacher);
                 String realName = teacher.get(0).getRealName();
                 teaName.add(realName);
             }
@@ -146,8 +167,8 @@ public class resourceController {
             data.put("success",1);
         }
         else {
-            data.put("teacherName","");
             data.put("teacherId","");
+            data.put("teacherName","");
             data.put("success",0);
         }
         return data.toJSONString();

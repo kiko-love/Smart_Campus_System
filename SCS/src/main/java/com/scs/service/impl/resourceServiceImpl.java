@@ -20,8 +20,8 @@ public class resourceServiceImpl implements resourceService {
     }
 
     @Override
-    public resource getResInfoById(String fileName, String profession) {
-        return resMapper.getResInfoById(fileName,profession);
+    public resource getResInfoById(String fileName, String profession, String teacherId) {
+        return resMapper.getResInfoById(fileName,profession,teacherId);
     }
 
     @Override

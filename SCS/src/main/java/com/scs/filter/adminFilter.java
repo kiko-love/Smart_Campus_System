@@ -18,11 +18,11 @@ public class adminFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         HttpSession session = request.getSession();
         String role = (String) session.getAttribute("role");
-        if(role.equals("admin")){
+        if(role.equals("0")){
             filterChain.doFilter(servletRequest,servletResponse);
         }
         else {
-            response.sendRedirect("/user/"+role+".jsp");
+            response.sendRedirect("/user/"+"admin.jsp");
         }
     }
 
