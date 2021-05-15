@@ -1,7 +1,9 @@
 package com.scs.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.scs.pojo.student;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.scs.pojo.teacher;
 import com.scs.service.teacherService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -46,14 +49,16 @@ public class TeacherController {
     //获取全部老师信息
     @ResponseBody
     @RequestMapping(value = "/getTeachers", produces = "application/json;charset=utf-8")
-    public String getTeachers(HttpServletRequest request) {
+    public String getTeachers(HttpServletRequest request) throws ParseException {
         JSONObject data = new JSONObject();
         data.put("code", 0);
         data.put("msg", "getData");
         List<teacher> list = teaService.getTeachers();
+        System.out.println(list);
+        System.out.println();
         data.put("count", list.size());
-        data.put("data", list);
-        return data.toJSONString();
+        return JSON.toJSONStringWithDateFormat(list,"yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
+
     }
     //根据teacherId查询老师信息
     @ResponseBody
@@ -66,7 +71,7 @@ public class TeacherController {
         List<teacher> list = teaService.getTeacherById(TeacherId);
         data.put("count", list.size());
         data.put("data", list);
-        return data.toJSONString();
+        return JSON.toJSONStringWithDateFormat(list,"yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
     }
     //添加老师信息
     @ResponseBody
@@ -89,19 +94,28 @@ public class TeacherController {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        teacher tea = new teacher(teacherId, realName, phone, sex, collegeId, addr,birthday);
-        int addNumber = teaService.addTeacher(tea);
-        if (addNumber > 0) {
-            data.put("success", "1");
-            data.put("msg", "添加成功");
-        } else {
+        List<teacher> teacher = teaService.getTeacherById(teacherId);
+        if(teacher==null){
+            teacher tea = new teacher(teacherId, realName, phone, sex, collegeId, addr,birthday);
+            int addNumber = teaService.addTeacher(tea);
+            if (addNumber > 0) {
+                data.put("success", "1");
+                data.put("msg", "添加成功");
+            } else {
+                data.put("success", "0");
+                data.put("msg", "添加失败");
+            }
+            data.put("code", 0);
+            data.put("count", addNumber);
+            data.put("data", null);
+            return data.toJSONString();
+        }
+        else{
             data.put("success", "0");
             data.put("msg", "添加失败");
+            data.put("msg","该用户已存在");
+            return data.toJSONString();
         }
-        data.put("code", 0);
-        data.put("count", addNumber);
-        data.put("data", null);
-        return data.toJSONString();
     }
     //根据teacherId删除老师信息
     @ResponseBody
