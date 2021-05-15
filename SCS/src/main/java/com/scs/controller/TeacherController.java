@@ -1,6 +1,7 @@
 package com.scs.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -9,6 +10,7 @@ import com.scs.service.teacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -48,7 +50,7 @@ public class TeacherController {
 
     //获取全部老师信息
     @ResponseBody
-    @RequestMapping(value = "/getTeachers", produces = "application/json;charset=utf-8")
+    @RequestMapping(value = "/getTeachers", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public String getTeachers(HttpServletRequest request) throws ParseException {
         JSONObject data = new JSONObject();
         data.put("code", 0);
@@ -57,7 +59,10 @@ public class TeacherController {
         System.out.println(list);
         System.out.println();
         data.put("count", list.size());
-        return JSON.toJSONStringWithDateFormat(list,"yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
+        String format = JSON.toJSONStringWithDateFormat(list, "yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
+        JSONArray jsonArray = JSONArray.parseArray(format);
+        data.put("data",jsonArray);
+        return data.toJSONString();
 
     }
     //根据teacherId查询老师信息

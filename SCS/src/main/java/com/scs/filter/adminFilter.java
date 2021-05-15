@@ -29,7 +29,7 @@ public class adminFilter implements Filter {
         if(role.equals("0")){
             character="admin";
         }
-        if(character.equals("0")){
+        if(character.equals("admin")){
             filterChain.doFilter(servletRequest,servletResponse);
         }
         else {
