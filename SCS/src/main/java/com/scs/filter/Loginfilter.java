@@ -1,6 +1,5 @@
 package com.scs.filter;
 
-import javax.imageio.spi.ServiceRegistry;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,9 +17,9 @@ public class Loginfilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) servletRequest;
         HttpServletResponse res = (HttpServletResponse) servletResponse;
         HttpSession session = req.getSession();
-
         String username = (String) session.getAttribute("userInformation");
-        if (username!=null) {
+        System.out.println(username);
+         if (username!=null) {
             filterChain.doFilter(servletRequest, servletResponse);
         }
         else {
