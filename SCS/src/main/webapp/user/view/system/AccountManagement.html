@@ -88,11 +88,6 @@
 </script>
 <script src="../../component/layui/layui.js"></script>
 <script src="../../component/pear/pear.js"></script>
-<script type="text/html" id="user-status">
-    <input type="checkbox" name="enable" value="{{d.id}}"
-           lay-skin="switch" lay-text="启用|禁用" lay-filter="user-status"
-           checked="{{ d.status == 100 ? 'true' : 'false' }}">
-</script>
 
 <script>
     layui.use(['table', 'form', 'jquery', 'dtree'], function () {
@@ -119,12 +114,12 @@
                 },
                 {
                     title: '账号权限',
-                    templet: function(d){
-                        if (d.role=='admin'){
+                    templet: function (d) {
+                        if (d.role == '0') {
                             return '<span class="layui-badge layui-bg-green">管理员</span>'
-                        }else if (d.role=='teacher'){
+                        } else if (d.role == '1') {
                             return '<span class="layui-badge layui-bg-blue">教师账号</span>'
-                        }else {
+                        } else {
                             return '<span class="layui-badge layui-bg-gray">学生账号</span>'
                         }
 
@@ -136,7 +131,17 @@
                 },
                 {
                     title: '账号状态',
-                    templet: '#user-status',
+                    templet: function (d) {
+                        if (d.status == '100') {
+                            return '<input type="checkbox" " name="status" value="' + d.userName + '"\n' +
+                                ' lay-skin="switch" lay-text="启用|禁用" lay-filter="user-status"\n' +
+                                ' checked lay-event="changeStatus">'
+                        } else if (d.status == '110') {
+                            return '<input type="checkbox" " name="status" value="' + d.userName + '"\n' +
+                                ' lay-skin="switch" lay-text="启用|禁用" lay-filter="user-status"\n' +
+                                ' lay-event="changeStatus">'
+                        }
+                    },
                     field: 'status',
                     align: 'center'
 
@@ -183,7 +188,7 @@
             url: '/User/getAllUsers',
             initSort: {
                 field: 'role' //排序字段，对应 cols 设定的各字段名
-                ,type: 'asc' //排序方式  asc: 升序、desc: 降序、null: 默认排序
+                , type: 'asc' //排序方式  asc: 升序、desc: 降序、null: 默认排序
             },
             height: 'full-150',
             method: "post",
@@ -224,14 +229,14 @@
         dtree.on("node(organizationTree)", function (obj) {
             console.log(obj.param.nodeId);
             var role = '';
-            if (obj.param.nodeId=='001') {
-                role = 'admin';
+            if (obj.param.nodeId == '001') {
+                role = '0';
                 //DTree.clickSpread($div); //调用内置函数展开节点
-            } else if (obj.param.nodeId=='002'){
-                role = 'teacher';
+            } else if (obj.param.nodeId == '002') {
+                role = '1';
                 //table.reload("organization-table");
-            } else if (obj.param.nodeId=='003'){
-                role = 'student';
+            } else if (obj.param.nodeId == '003') {
+                role = '2';
             } else {
                 role = '';
             }
@@ -245,7 +250,47 @@
                     , last: false
                 }
                 , where: {
-                    role:role
+                    role: role
+                }
+            })
+        });
+
+        form.on('switch(user-status)', function (obj) {
+            let status = '';
+            // console.log(obj.elem.value);
+            // return false;
+            if (obj.elem.checked == false) {
+                status = '110'
+            } else {
+                status = '100'
+            }
+
+            //layer.tips(this.value + ' ' + this.name + '：' + status, obj.othis);
+            var index = layer.load(2, {
+                shade: [0.2, '#323232'] //0.1透明度的白色背景
+            });
+            $.ajax({
+                type: "post",
+                url: "/User/updateStatus",
+                data: {
+                    username: obj.elem.value,
+                    status: status
+                },
+                dataType: 'json',
+                success: function (result) {
+                    layer.close(index);
+                },
+                error: function (res) {
+                    layer.close(index);
+                    layer.open({
+                        title: '服务器处理异常'
+                        , icon: 2
+                        , content: '修改账号状态失败'
+                        ,end:function (){
+                            obj.elem.checked = !obj.elem.checked;
+                            form.render('checkbox');
+                        }
+                    });
                 }
             })
         });
@@ -259,6 +304,7 @@
         });
 
         table.on('toolbar(organization-table)', function (obj) {
+            console.log(obj.event);
             if (obj.event === 'add') {
                 window.add();
             } else if (obj.event === 'refresh') {
@@ -274,6 +320,7 @@
             })
             return false;
         });
+
 
         window.add = function () {
             layer.open({

@@ -1,6 +1,7 @@
 package com.scs.service;
 
 import com.scs.pojo.User;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -45,4 +46,13 @@ public interface UserService {
      * @return List<User>
      */
     List<User> getRoleAccounts(String role);
+
+    /**
+     * 更改账号状态
+     *
+     * @param username
+     * @param status
+     * @return List<User>
+     */
+    int updateStatus(String username, @Param(value = "status") String status);
 }

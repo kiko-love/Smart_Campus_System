@@ -1,7 +1,7 @@
-layui.use(['carousel', 'form','jquery'], function () {
+layui.use(['carousel', 'form', 'jquery'], function () {
     var carousel = layui.carousel
         , form = layui.form
-        ,$ = layui.jquery;
+        , $ = layui.jquery;
     //Login轮播主体
     carousel.render({
         elem: '#login'//指向容器选择器
@@ -17,49 +17,57 @@ layui.use(['carousel', 'form','jquery'], function () {
     form.on('submit(formLogin)', function (data) {
         //console.log(data.field); // 得到checkbox原始DOM对象
         var index = layer.load(2, {
-            shade: [0.2,'#323232'] //0.1透明度的白色背景
+            shade: [0.2, '#323232'] //0.1透明度的白色背景
         });
         $.ajax({
-            type : "post",
-            url : "/User/Login",
-            data : data.field,
-            dataType:'json',
-            success : function(result) {
-               // console.log(result)
+            type: "post",
+            url: "/User/Login",
+            data: data.field,
+            dataType: 'json',
+            success: function (result) {
+                console.log(result)
                 layer.close(index);
-                if (result.code=='-1'){
+                if (result.code == '-1') {
                     layer.open({
                         title: '提示'
-                        ,icon:2
-                        ,content: '用户名不存在'
+                        , icon: 2
+                        , content: '用户名不存在'
                     });
                     // $('#username').val('');
                     // $('#password').val('');
                     // $('#vercode').val('');
                     zyVerCode();
-                }else if (result.code=='-2'){
+                } else if (result.code == '-2') {
                     layer.open({
                         title: '提示'
-                        ,icon:2
-                        ,content: '密码错误'
+                        , icon: 2
+                        , content: '密码错误'
                     });
                     // $('#username').val('');
                     // $('#password').val('');
                     // $('#vercode').val('');
                     zyVerCode();
-                }else if (result.code=='110'){
+                } else if (result.code == '110') {
                     layer.open({
                         title: '提示'
-                        ,icon:2
-                        ,content: '请求数据异常，请重新尝试'
+                        , icon: 2
+                        , content: '请求数据异常，请重新尝试'
                     });
                     // $('#username').val('');
                     // $('#password').val('');
                     // $('#vercode').val('');
                     zyVerCode();
-            }else if (result.code=='0'){
-                    console.log(data.field.userName);
-                    sessionStorage.setItem("username",data.field.userName);
+                } else if (result.code == '0') {
+                   //console.log(result.status);
+                    if (result.status == '110') {
+                        layer.open({
+                            title: '帐号状态异常'
+                            , icon: 5
+                            , content: '该账号处于停用状态，请联系管理员进行解封'
+                        });
+                        return false;
+                    }
+                    sessionStorage.setItem("username", data.field.userName);
                     //获取完整路径
                     let curWwwPath = window.document.location.href;
                     //获取主机地址之后的目录，如： index.jsp
@@ -68,21 +76,21 @@ layui.use(['carousel', 'form','jquery'], function () {
                     //获取主机地址，如： http://localhost:8080
                     let localhostPaht = curWwwPath.substring(0, pos);
                     console.log(result.role);
-                    if (result.role=='admin') {
-                        window.location.replace(localhostPaht+"/user/admin.jsp");
-                    }else if (result.role=='teacher') {
-                        window.location.replace(localhostPaht+"/user/teacher.jsp");
-                    }else {
-                        window.location.replace(localhostPaht+"/user/student.jsp");
+                    if (result.role == '0') {
+                        window.location.replace(localhostPaht + "/user/admin.jsp");
+                    } else if (result.role == '1') {
+                        window.location.replace(localhostPaht + "/user/teacher.jsp");
+                    } else {
+                        window.location.replace(localhostPaht + "/user/student.jsp");
                     }
                 }
-                },
-            error:function(){
+            },
+            error: function () {
                 layer.close(index);
                 layer.open({
                     title: '提示'
-                    ,icon:2
-                    ,content: '请求服务器出错，请稍后再试'
+                    , icon: 2
+                    , content: '请求服务器出错，请稍后再试'
                 });
             }
         });
@@ -122,6 +130,7 @@ layui.use(['carousel', 'form','jquery'], function () {
     $(".veriCode").click(function () {
         zyVerCode();
     });
+
     //生成随机数
     function zyVerCode(len) {
         len = len || 4;
@@ -133,6 +142,7 @@ layui.use(['carousel', 'form','jquery'], function () {
         }
         $(".zyVerCode").html(zyCode);
     }
+
     zyVerCode();//初始化生成随机数
     $("#LoginGo").click(function () {
         $("#md5password").val(md5($("#password").val()));

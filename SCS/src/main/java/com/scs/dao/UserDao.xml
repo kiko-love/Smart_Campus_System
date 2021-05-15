@@ -13,4 +13,14 @@
             </if>
         </where>
     </select>
+
+    <update id="updateStatus" parameterType="string">
+        update userInfo
+        <set>
+            <if test="status !=null and status!=''">
+                status = #{status},
+            </if>
+        </set>
+        where username = #{username}
+    </update>
 </mapper>

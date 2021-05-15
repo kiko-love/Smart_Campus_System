@@ -27,6 +27,9 @@ public interface UserDao {
     //获取不同角色信息的用户账号
     List<User> getRoleAccounts(@Param(value = "role") String role);
 
+    //更改账号状态
+    int updateStatus(@Param(value = "username")String username,@Param(value = "status") String status);
+
 
     //修改密码
     @Update("update userinfo set md5password = #{md5password} where username = #{username}")

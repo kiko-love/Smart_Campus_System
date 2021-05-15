@@ -4,7 +4,6 @@ import com.scs.dao.UserDao;
 import com.scs.pojo.User;
 import com.scs.service.UserService;
 
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,5 +41,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getRoleAccounts(String role) {
         return userDao.getRoleAccounts(role);
+    }
+
+    @Override
+    public int updateStatus(String username, String status) {
+        return userDao.updateStatus(username,status);
     }
 }
