@@ -55,4 +55,21 @@ public interface UserService {
      * @return List<User>
      */
     int updateStatus(String username, @Param(value = "status") String status);
+
+
+    /**
+     * 更改账号状态
+     *
+     * @param user
+     * @return List<User>
+     */
+    int updateAccount(User user);
+
+    /**
+     * 删除指定账号信息
+     *
+     * @param userName
+     * @return List<User>
+     */
+    int removeAccount(String userName);
 }

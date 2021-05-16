@@ -38,7 +38,7 @@
                 <dl class="layui-nav-child">
                     <dd style="cursor: pointer"><a id="changePassword">修改密码</a>
                     </dd>
-                    <dd><a href="javascript:void(0);" class="logout">注销登录</a></dd>
+                    <dd><a href="javascript:void(0);" class="logout">退出登录</a></dd>
                 </dl>
             </li>
             <!-- 主 题 配 置 -->

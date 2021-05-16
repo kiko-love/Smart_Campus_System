@@ -27,6 +27,16 @@ public interface UserDao {
     //获取不同角色信息的用户账号
     List<User> getRoleAccounts(@Param(value = "role") String role);
 
+
+    //更改账号角色
+    int updateAccount(User user);
+
+    //删除指定账号信息
+    int removeAccount(String userName);
+
+    //批量删除账号信息
+    int batchRemoveAccount(List<String> List);
+
     //更改账号状态
     int updateStatus(@Param(value = "username")String username,@Param(value = "status") String status);
 

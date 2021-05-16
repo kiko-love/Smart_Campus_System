@@ -13,6 +13,37 @@
             </if>
         </where>
     </select>
+    <delete id="batchRemoveAccount" parameterType="java.util.List">
+        delete
+        from userInfo
+        where username in (
+        <foreach collection="list" item="id" separator=",">
+            #{id}
+        </foreach>
+        )
+    </delete>
+    <delete id="removeAccount" parameterType="string">
+        delete
+        from userInfo
+        where username = #{userName}
+    </delete>
+
+    <update id="updateAccount" parameterType="com.scs.pojo.User">
+        update userInfo
+        <set>
+            <if test="md5password !=null and md5password!=''">
+                md5password = #{md5password},
+            </if>
+            <if test="role !=null and role!=''">
+                role = #{role},
+            </if>
+
+            <if test="status !=null and status!=''">
+                status = #{status},
+            </if>
+        </set>
+        where userName = #{userName}
+    </update>
 
     <update id="updateStatus" parameterType="string">
         update userInfo

@@ -133,11 +133,13 @@
                     title: '账号状态',
                     templet: function (d) {
                         if (d.status == '100') {
-                            return '<input type="checkbox" " name="status" value="' + d.userName + '"\n' +
+                            return '<input class="statusSwitch" type="checkbox" data-role="' + d.role + '" name="status" value="'
+                                + d.userName + '"\n' +
                                 ' lay-skin="switch" lay-text="启用|禁用" lay-filter="user-status"\n' +
                                 ' checked lay-event="changeStatus">'
                         } else if (d.status == '110') {
-                            return '<input type="checkbox" " name="status" value="' + d.userName + '"\n' +
+                            return '<input class="statusSwitch" type="checkbox" data-role="' + d.role + '" name="status" value="'
+                                + d.userName + '"\n' +
                                 ' lay-skin="switch" lay-text="启用|禁用" lay-filter="user-status"\n' +
                                 ' lay-event="changeStatus">'
                         }
@@ -257,16 +259,28 @@
 
         form.on('switch(user-status)', function (obj) {
             let status = '';
-            // console.log(obj.elem.value);
-            // return false;
+            let statusSwitch = document.querySelector(".statusSwitch");
+            console.log(obj.elem.dataset["role"]);
+            if (obj.elem.dataset["role"]=='0') {
+                layer.open({
+                    title: '提示'
+                    , icon: 2
+                    , content: '您无权修改该账号状态'
+                    , end: function () {
+                        obj.elem.checked = !obj.elem.checked;
+                        form.render('checkbox');
+                    }
+                });
+                return false;
+            }
+
             if (obj.elem.checked == false) {
                 status = '110'
             } else {
                 status = '100'
             }
-
             //layer.tips(this.value + ' ' + this.name + '：' + status, obj.othis);
-            var index = layer.load(2, {
+            let index = layer.load(2, {
                 shade: [0.2, '#323232'] //0.1透明度的白色背景
             });
             $.ajax({
@@ -274,11 +288,23 @@
                 url: "/User/updateStatus",
                 data: {
                     username: obj.elem.value,
-                    status: status
+                    status: status,
+                    role: obj.elem.dataset["role"]
                 },
                 dataType: 'json',
                 success: function (result) {
                     layer.close(index);
+                    if (result.success!='1') {
+                        layer.open({
+                            title: '提示'
+                            , icon: 2
+                            , content: result.msg
+                            , end: function () {
+                                obj.elem.checked = !obj.elem.checked;
+                                form.render('checkbox');
+                            }
+                        });
+                    }
                 },
                 error: function (res) {
                     layer.close(index);
@@ -286,7 +312,7 @@
                         title: '服务器处理异常'
                         , icon: 2
                         , content: '修改账号状态失败'
-                        ,end:function (){
+                        , end: function () {
                             obj.elem.checked = !obj.elem.checked;
                             form.render('checkbox');
                         }
@@ -325,49 +351,85 @@
         window.add = function () {
             layer.open({
                 type: 2,
-                title: '新增',
+                title: '新增账号',
                 shade: 0.1,
-                area: ['500px', '400px'],
-                content: MODULE_PATH + 'add.html'
+                area: ['500px', '500px'],
+                content: MODULE_PATH + 'addAccount.html'
             });
         }
 
         window.edit = function (obj) {
             layer.open({
                 type: 2,
-                title: '修改',
+                title: '修改：'+obj.data['userName'],
                 shade: 0.1,
                 area: ['500px', '400px'],
-                content: MODULE_PATH + 'edit.html'
+                content: MODULE_PATH + 'editAccount.html',
+                success: function (layero, index) {
+                    var body = layer.getChildFrame('body', index);
+                    //得到iframe页的窗口对象，执行iframe页的方法：iframeWin.method();
+                    console.log(obj.data);
+                    var iframeWin = window[layero.find('iframe')[0]['name']]
+                    body.find('#username').val(obj.data['userName'])
+                    //body.find('#password').val(obj.data['md5password'])
+                    if (obj.data['role'] == '0') {
+                        body.find('#role1').attr("selected", "");
+                        iframeWin.layui.form.render('select');
+                    } else if (obj.data['role'] == '1') {
+                        body.find('#role2').attr("selected", "");
+                        iframeWin.layui.form.render('select');
+                    } else if (obj.data['role'] == '2') {
+                        body.find('#role3').attr("selected", "");
+                        iframeWin.layui.form.render('select');
+                    }
+                }
             });
         }
 
         window.remove = function (obj) {
+            console.log(obj.data.userName);
             layer.confirm('确定要删除该用户', {
                 icon: 3,
                 title: '提示'
-            }, function (index) {
-                layer.close(index);
-                let loading = layer.load();
+            }, function (ind) {
+                layer.close(ind);
+                let index = layer.load(2, {time: 10 * 1000});
                 $.ajax({
-                    url: MODULE_PATH + "remove/" + obj.data['organizationId'],
+                    url: '/User/removeAccount',
+                    data: {
+                        username:obj.data.userName
+                    },
                     dataType: 'json',
-                    type: 'delete',
+                    type: 'post',
                     success: function (result) {
-                        layer.close(loading);
-                        if (result.success) {
-                            layer.msg(result.msg, {
-                                icon: 1,
-                                time: 1000
-                            }, function () {
-                                obj.del();
+                        layer.close(index);
+                        if (result.success == '1') {
+                            layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                                tableIns.reload({
+                                    url: '/User/getAllUsers',
+                                    page: {
+                                        layout: ['count', 'prev', 'page', 'next', 'skip']
+                                        , curr: $(".layui-laypage-em").next().html()
+                                        , groups: 3
+                                        , last: false
+                                    }
+                                });
                             });
                         } else {
-                            layer.msg(result.msg, {
-                                icon: 2,
-                                time: 1000
+                            layer.open({
+                                title: '提示'
+                                , icon: 2
+                                , content: result.msg
                             });
                         }
+                    },
+                    error: function () {
+                        layer.close(index);
+                        layer.open({
+                            title: '服务器处理异常'
+                            , icon: 2
+                            , content: '删除账号失败'
+                        });
                     }
                 })
             });

@@ -27,15 +27,19 @@ layui.use(['carousel', 'form', 'jquery'], function () {
             success: function (result) {
                 console.log(result)
                 layer.close(index);
+                if (result.code == '250') {
+                    layer.open({
+                        title: '风险提示'
+                        , icon: 0
+                        , content: '请先退出已登录账号，再登录其他账号'
+                    });
+                }
                 if (result.code == '-1') {
                     layer.open({
                         title: '提示'
                         , icon: 2
-                        , content: '用户名不存在'
+                        , content: '用户名不存在，请确认是否已在系统中注册'
                     });
-                    // $('#username').val('');
-                    // $('#password').val('');
-                    // $('#vercode').val('');
                     zyVerCode();
                 } else if (result.code == '-2') {
                     layer.open({
@@ -53,16 +57,13 @@ layui.use(['carousel', 'form', 'jquery'], function () {
                         , icon: 2
                         , content: '请求数据异常，请重新尝试'
                     });
-                    // $('#username').val('');
-                    // $('#password').val('');
-                    // $('#vercode').val('');
                     zyVerCode();
                 } else if (result.code == '0') {
                    //console.log(result.status);
                     if (result.status == '110') {
                         layer.open({
                             title: '帐号状态异常'
-                            , icon: 5
+                            , icon: 4
                             , content: '该账号处于停用状态，请联系管理员进行解封'
                         });
                         return false;

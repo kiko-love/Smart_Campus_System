@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>修改账号信息</title>
+    <link rel="stylesheet" href="../../../component/pear/css/pear.css"/>
+</head>
+<style>
+    .layui-btn-disabled,
+    .layui-btn-disabled:active,
+    .layui-btn-disabled:hover {
+        color: #999 !important;
+    }
+</style>
+<body>
+<form class="layui-form" action="">
+    <div class="mainBox">
+        <div class="main-container">
+            <div class="main-container">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">账号</label>
+                    <div class="layui-input-block">
+                        <input id="username" type="text" name="username" value="" lay-verify="title"
+                               autocomplete="off"
+                               placeholder="" class="layui-input"
+                               style="cursor:not-allowed;color: #a1a1a1;" disabled>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">密码</label>
+                    <div class="layui-input-block">
+                        <input id="password" type="text" name="password"
+                               lay-verify="required" autocomplete="off"
+                               placeholder="若需要修改密码，请直接填写新密码"
+                               class="layui-input" lay-reqText="请输入密码">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">管理员密码</label>
+                    <div class="layui-input-block">
+                        <input id="adminPwd" type="password" name="adminPwd"
+                               lay-verify="required" autocomplete="off"
+                               placeholder="请输入管理员密钥"
+                               class="layui-input" lay-reqText="请输入验证码"
+                               title="等同于管理员账号密码">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">账号权限</label>
+                    <div class="layui-input-block">
+                        <select name="role" lay-verify="required" lay-reqText="请选择学历层次">
+                            <option id="role" value="" selected>请选择账号权限</option>
+                            <option id="role1" value="0">管理员</option>
+                            <option id="role2" value="1">教师账号</option>
+                            <option id="role3" value="2">学生账号</option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="bottom">
+        <div class="button-container">
+            <button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit="" lay-filter="user-save">
+                <i class="layui-icon layui-icon-ok"></i>
+                提交
+            </button>
+            <button type="reset" class="pear-btn pear-btn-sm">
+                <i class="layui-icon layui-icon-refresh"></i>
+                重置
+            </button>
+        </div>
+    </div>
+</form>
+<script src="../../../component/layui/layui.js"></script>
+<script src="../../../component/pear/pear.js"></script>
+<script src="../../../../static/js/md5.js"></script>
+<script>
+    layui.use(['form', 'jquery'], function () {
+        let form = layui.form;
+        let $ = layui.jquery;
+        //$("#userId").val(parent.obj.data['userId']);
+        // console.log(parent.layui.table)
+        form.on('submit(user-save)', function (data) {
+
+            // return false;
+            let index = layer.load(2, {time: 10 * 1000}); //又换了种风格，并且设定最长等待10秒
+            data.field.adminPwd = md5(data.field.adminPwd);
+            data.field.password = md5(data.field.password);
+            console.log(data.field);
+            $.ajax({
+                url: '/User/updateAccount',
+                data: data.field,
+                dataType: 'json',
+                type: 'post',
+                success: function (result) {
+                    layer.close(index);
+                    if (result.success == '1') {
+                        layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                            parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前页
+                            //console.log(parent.layui.jquery(".layui-laypage-em").next().html());
+                            parent.layui.table.reload("organization-table", {
+                                data: result.data,
+                                page: {
+                                    layout: ['count', 'prev', 'page', 'next', 'skip']
+                                    , curr: parent.layui.jquery(".layui-laypage-em").next().html()
+                                    , groups: 3
+                                    , last: false
+                                }
+                            });
+                        });
+                    } else {
+                        layer.open({
+                            title: '提示'
+                            , icon: 2
+                            , content: result.msg
+                        });
+                    }
+                },
+                error: function () {
+                    layer.close(index);
+                    layer.open({
+                        title: '服务器处理异常'
+                        , icon: 2
+                        , content: '修改账号信息失败'
+                    });
+                }
+            })
+            return false;
+        });
+    })
+</script>
+<script>
+</script>
+</body>
+</html>

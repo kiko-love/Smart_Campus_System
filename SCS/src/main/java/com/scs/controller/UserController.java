@@ -33,8 +33,16 @@ public class UserController {
     InformToFront Login(User user, HttpServletRequest request, HttpServletResponse response) throws Exception {
         String userName = user.getUserName();
         String password = user.getMd5password();
+
+        String user_exist = (String) request.getSession().getAttribute("userInformation");
+//        if (user_exist != null) {
+//            InformToFront status_err =
+//                    new InformToFront("Prohibit login to multiple accounts", "250", null, null, null);     //没有该用户
+//            return status_err;
+//        }
+
         List<User> users = userService.FindByName(userName);
-        String role = users.get(0).getRole();
+
         if (users.size() == 0) {
             InformToFront status_err =
                     new InformToFront("Username does not exist", "-1", null, null, null);     //没有该用户
@@ -43,14 +51,17 @@ public class UserController {
         if (users.size() == 1 && users.get(0).getUserName().equals(userName)) {
             //查到一条记录，并且用户名对应
             System.out.println(users);
+            String role = users.get(0).getRole();
             String md5password = users.get(0).getMd5password();
             String accountStatus = users.get(0).getStatus();
             if (md5password != null) {
                 if (md5password.equals(password)) {        //密码正确
                     InformToFront status_success =
                             new InformToFront("Success", "0", role, accountStatus, null);
-                    request.getSession().setAttribute("userInformation", userName);
-                    request.getSession().setAttribute("role", role);
+                    if (accountStatus.equals("100")) {
+                        request.getSession().setAttribute("userInformation", userName);
+                        request.getSession().setAttribute("role", role);
+                    }
                     return status_success;
                 } else {
                     InformToFront status_err =
@@ -205,6 +216,80 @@ public class UserController {
     }
 
 
+    //管理员端删除账号接口
+    @ResponseBody
+    @RequestMapping(value = "/removeAccount", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public String removeAccount(HttpServletRequest request, HttpServletResponse response) {
+        String userName = request.getParameter("username");
+        List<User> list = userService.FindByName(userName);
+        JSONObject data = new JSONObject();
+        if (list.size() != 0) {
+            String role = list.get(0).getRole();
+            if (role.equals("0")) {
+                data.put("success", "0");
+                data.put("msg", "您无权删除该账号");
+                data.put("data", null);
+            } else {
+                int removeNumber = userService.removeAccount(userName);
+                if (removeNumber > 0) {
+                    data.put("success", "1");
+                    data.put("msg", "删除账号成功");
+                    data.put("data", removeNumber);
+                } else {
+                    data.put("success", "0");
+                    data.put("msg", "删除账号失败");
+                    data.put("data", removeNumber);
+                }
+            }
+        } else {
+            data.put("success", "0");
+            data.put("msg", "账号信息不存在，删除失败");
+            data.put("data", null);
+        }
+
+        return data.toJSONString();
+    }
+
+    //管理员端更改账号信息接口
+    @ResponseBody
+    @RequestMapping(value = "/updateAccount", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public String updateAccount(HttpServletRequest request, HttpServletResponse response) {
+        String adminPwd = request.getParameter("adminPwd");
+        String userName = request.getParameter("username");
+        String password = request.getParameter("password");
+        String role = request.getParameter("role");
+
+        JSONObject data = new JSONObject();
+        List<User> userList = userService.FindByName(userName);
+        if (userList.size() != 0) {
+            if (userList.get(0).getMd5password().equals(adminPwd)) {
+                User user = new User(userName, password, role, null);
+                int updateNumber = userService.updateAccount(user);
+                if (updateNumber > 0) {
+                    data.put("success", "1");
+                    data.put("msg", "账号信息修改成功（管理员操作）");
+                    data.put("data", updateNumber);
+                } else {
+                    data.put("success", "0");
+                    data.put("msg", "账号信息修改失败（管理员操作）");
+                    data.put("data", updateNumber);
+                }
+
+            } else {
+                data.put("success", "0");
+                data.put("msg", "管理员密码错误");
+                data.put("data", null);
+            }
+        } else {
+            data.put("success", "0");
+            data.put("msg", "管理员身份识别错误");
+            data.put("data", null);
+        }
+
+        return data.toJSONString();
+    }
+
+
     //更改账号状态
     @ResponseBody
     @RequestMapping(value = "/updateStatus", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
@@ -212,18 +297,26 @@ public class UserController {
 
         String status = request.getParameter("status");
         String username = request.getParameter("username");
+        String role = request.getParameter("role");
         JSONObject data = new JSONObject();
-        int i = userService.updateStatus(username, status);
-        data.put("code", 0);
-        data.put("msg", "updateStatus");
-        if (i > 0) {
-            data.put("success", "1");
-            data.put("msg", "账号权限修改成功");
-            data.put("data", i);
-        } else {
+        List<User> userList = userService.FindByName(username);
+        if (userList.get(0).getRole().equals("0") || role.equals("0")) {
             data.put("success", "0");
-            data.put("msg", "账号权限修改失败");
+            data.put("msg", "您无权修改该账号状态");
             data.put("data", null);
+        } else {
+            int i = userService.updateStatus(username, status);
+            data.put("code", 0);
+            data.put("msg", "updateStatus");
+            if (i > 0) {
+                data.put("success", "1");
+                data.put("msg", "账号权限修改成功");
+                data.put("data", i);
+            } else {
+                data.put("success", "0");
+                data.put("msg", "账号权限修改失败");
+                data.put("data", null);
+            }
         }
         return data.toJSONString();
     }

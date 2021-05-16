@@ -32,6 +32,8 @@
             </foreach>
             )
     </delete>
+
+
     <delete id="removeStudent" parameterType="java.lang.String">
         delete
         from students
