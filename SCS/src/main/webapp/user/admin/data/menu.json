@@ -3,13 +3,13 @@
     "id": 1,
     "title": "主菜单",
     "type": 0,
-    "icon": "layui-icon layui-icon-console",
+    "icon": "layui-icon layui-icon-home",
     "href": "",
     "children": [
       {
         "id": 10,
         "title": "首页",
-        "icon": "layui-icon layui-icon-console",
+        "icon": "layui-icon layui-icon-home",
         "type": 1,
         "openType": "_iframe",
         "href": "view/console/console1.html"
@@ -17,7 +17,7 @@
       {
         "id": 11,
         "title": "控制后台",
-        "icon": "layui-icon layui-icon-console",
+        "icon": "layui-icon layui-icon-home",
         "type": 1,
         "openType": "_iframe",
         "href": "view/console/console2.html"
