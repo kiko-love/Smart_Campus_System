@@ -1,6 +1,7 @@
 package com.scs.dao;
 
 import com.scs.pojo.User;
+import com.scs.pojo.student;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
@@ -28,11 +29,18 @@ public interface UserDao {
     List<User> getRoleAccounts(@Param(value = "role") String role);
 
 
-    //更改账号角色
+    //更改账号信息
     int updateAccount(User user);
 
     //删除指定账号信息
     int removeAccount(String userName);
+
+    //添加账号信息
+    int addAccount(User user);
+
+
+    //查询账号信息
+    List<User> searchAccount(@Param(value = "username")String username);
 
     //批量删除账号信息
     int batchRemoveAccount(List<String> List);

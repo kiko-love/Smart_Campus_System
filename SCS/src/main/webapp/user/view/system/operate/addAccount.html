@@ -13,7 +13,7 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">账号</label>
                     <div class="layui-input-block">
-                        <input id="teacherId" type="text" name="teacherId"
+                        <input id="username" type="text" name="username"
                                lay-verify="required" value="" lay-verify="title"
                                autocomplete="off" lay-reqText="请输入账号"
                                placeholder="请输入学号或工号作为账号" class="layui-input">
@@ -79,6 +79,7 @@
 </form>
 <script src="../../../component/layui/layui.js"></script>
 <script src="../../../component/pear/pear.js"></script>
+<script src="../../../../static/js/md5.js"></script>
 <script>
     layui.use(['form', 'jquery', 'loading','laydate'], function () {
         let form = layui.form;
@@ -95,23 +96,41 @@
 
 
         form.on('submit(user-save)', function (data) {
-            //console.log(data.field);
+            console.log(data.field);
+            let accountStatus = '';
+            if (data.field.password_1!==data.field.password_2) {
+                layer.open({
+                    title: '提示'
+                    , icon: 5
+                    , content: "两次输入密码不一致"
+                });
+                return false;
+            }
+            if (data.field.accountStatus=="on"){
+                accountStatus = '100';
+            }else {
+                accountStatus = '110';
+            }
             loading.Load(3, "");
             $.ajax({
-                url: '/admin/tea/addTea',
-                data: data.field,
+                url: '/User/addAccount',
+                data: {
+                    username:data.field.username,
+                    md5password:md5(data.field.password_1),
+                    role:data.field.role,
+                    status:accountStatus
+                },
                 dataType: 'json',
-                contentType: 'application/json',
-                type: 'get',
+                type: 'post',
                 success: function (result) {
                     loading.loadRemove();
                     console.log(result);
-                    if (result.success=='1') {
+                    if (result.success) {
                         layer.msg(result.msg, {icon: 1, time: 1000}, function () {
                             parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前页
                             //console.log(JSON.stringify(result.data));
-                            parent.layui.table.reload("user-table", {
-                                data: result.data,
+                            parent.layui.table.reload("organization-table", {
+                                url:'/User/getAllUsers',
                                 page: {
                                     layout: ['count', 'prev', 'page', 'next', 'skip']
                                     , curr: parent.layui.jquery(".layui-laypage-em").next().html()
@@ -132,19 +151,18 @@
             return false;
         });
         //前端实时检测用户是否存在
-        $('#teacherId').blur(function () {
-            if ($('#userId').val() == '') {
+        $('#username').blur(function () {
+            if ($('#username').val() == '') {
                 return false;
             }
             $('#userIdTips').append('<i class="tipsLoad layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop"></i>');
             $.ajax({
-                url: '/admin/tea/searchTea',
+                url: '/User/searchAccount',
                 data: {
-                    teacherId: $('#teacherId').val()
+                    username: $('#username').val()
                 },
                 dataType: 'json',
-                contentType: 'application/json',
-                type: 'get',
+                type: 'post',
                 success: function (result) {
                     $('.tipsLoad').remove();
                     console.log(result);

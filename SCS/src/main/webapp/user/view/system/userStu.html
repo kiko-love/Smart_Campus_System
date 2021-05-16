@@ -368,14 +368,16 @@
                 title: '提示'
             }, function (index) {
                 layer.close(index);
-                var checkStatus = table.checkStatus('user-table');
+                let checkStatus = table.checkStatus('user-table');
                 let userIds = [];
                 for (let i = 0; i < checkStatus.data.length; i++) {
                     userIds[i] = checkStatus.data[i].userId;
                     //console.log(checkStatus.data[i].userId);
                 }
                 console.log(userIds);
-                let loading = layer.load();
+                let loading = layer.load(2, {
+                    shade: [0.2, '#323232'] //0.1透明度的白色背景
+                });
                 table.reload('user-table');
                 $.ajax({
                     url: "/admin/stu/batchRemove",

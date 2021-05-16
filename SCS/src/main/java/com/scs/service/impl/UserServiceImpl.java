@@ -57,4 +57,19 @@ public class UserServiceImpl implements UserService {
     public int removeAccount(String userName) {
         return userDao.removeAccount(userName);
     }
+
+    @Override
+    public int addAccount(User user) {
+        return userDao.addAccount(user);
+    }
+
+    @Override
+    public int batchRemoveAccount(List<String> List) {
+        return userDao.batchRemoveAccount(List);
+    }
+
+    @Override
+    public List<User> searchAccount(String username) {
+        return userDao.searchAccount(username);
+    }
 }

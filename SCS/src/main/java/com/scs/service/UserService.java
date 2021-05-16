@@ -52,7 +52,7 @@ public interface UserService {
      *
      * @param username
      * @param status
-     * @return List<User>
+     * @return int
      */
     int updateStatus(String username, @Param(value = "status") String status);
 
@@ -61,7 +61,7 @@ public interface UserService {
      * 更改账号状态
      *
      * @param user
-     * @return List<User>
+     * @return int
      */
     int updateAccount(User user);
 
@@ -69,7 +69,32 @@ public interface UserService {
      * 删除指定账号信息
      *
      * @param userName
-     * @return List<User>
+     * @return int
      */
     int removeAccount(String userName);
+
+
+    /**
+     * 增加账号信息
+     *
+     * @param user
+     * @return int
+     */
+    int addAccount(User user);
+
+    /**
+     * 批量删除账号
+     *
+     * @param List
+     * @return int
+     */
+    int batchRemoveAccount(List<String> List);
+
+    /**
+     * 查询账号信息
+     *
+     * @param username
+     * @return List<User>
+     */
+    List<User> searchAccount(@Param(value = "username")String username);
 }

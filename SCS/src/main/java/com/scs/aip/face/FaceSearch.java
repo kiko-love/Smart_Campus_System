@@ -14,7 +14,6 @@ public class FaceSearch {
         options.put("match_threshold", "70");
         options.put("quality_control", "NORMAL");
         options.put("liveness_control", "LOW");
-
         String image = img;
         String imageType = "BASE64";
         String groupIdList = "face_group";

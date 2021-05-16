@@ -13,6 +13,23 @@
             </if>
         </where>
     </select>
+
+    <select id="searchAccount" parameterType="string" resultType="com.scs.pojo.User">
+        select * from userinfo
+        <where>
+            <if test="username != null and username != ''">
+                username = #{username}
+            </if>
+        </where>
+    </select>
+
+    <insert id="addAccount" parameterType="com.scs.pojo.User">
+        insert into userInfo (username, md5password, `role`, status)
+        values (#{userName}, #{md5password}, #{role}, #{status})
+    </insert>
+
+
+
     <delete id="batchRemoveAccount" parameterType="java.util.List">
         delete
         from userInfo
