@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>账号管理</title>
+    <link rel="stylesheet" href="../../component/pear/css/pear.css"/>
+    <link rel="stylesheet" href="../../admin/css/other/department.css"/>
+</head>
+<style>
+    .t-click {
+        user-select: none;
+    }
+
+
+</style>
+<body class="pear-container">
+<div class="layui-card">
+    <div class="layui-card-body">
+        <form class="layui-form" action="">
+            <div class="layui-form-item">
+                <div class="layui-form-item layui-inline">
+                    <label class="layui-form-label">课程名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="coursename" placeholder="" class="layui-input">
+                    </div>
+                </div>
+                <!--						<div class="layui-form-item layui-inline">-->
+                <!--							<label class="layui-form-label">性别</label>-->
+                <!--							<div class="layui-input-inline">-->
+                <!--								<input type="text" name="realName" placeholder="" class="layui-input">-->
+                <!--							</div>-->
+                <!--						</div>-->
+                <!--						<div class="layui-form-item layui-inline">-->
+                <!--							<label class="layui-form-label">邮箱</label>-->
+                <!--							<div class="layui-input-inline">-->
+                <!--								<input type="text" name="realName" placeholder="" class="layui-input">-->
+                <!--							</div>-->
+                <!--						</div>-->
+                <div class="layui-form-item layui-inline">
+                    <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="user-query">
+                        <i class="layui-icon layui-icon-search"></i>
+                        查询
+                    </button>
+                    <button type="reset" class="pear-btn pear-btn-md">
+                        <i class="layui-icon layui-icon-refresh"></i>
+                        重置
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+        <div class="layui-card">
+            <div class="layui-card-body">
+                <div id="organizationTreeContent" style="overflow: auto">
+                    <ul id="organizationTree" class="dtree organizationTree" data-id="9526"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../../component/layui/layui.js"></script>
+<script src="../../component/pear/pear.js"></script>
+
+<script>
+    layui.use(['table', 'form', 'jquery', 'dtree'], function () {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+        let dtree = layui.dtree;
+        let DTree = dtree.render({
+            elem: "#organizationTree",
+            iconfont: ["layui-icon", "dtreefont", "iconfont"],
+            iconfontStyle: [{
+                fnode: {  //一级节点
+                    node: {  //非叶子节点
+                        open: "layui-icon-subtraction",  //节点展开
+                        close: "layui-icon-addition"  //节点关闭
+                    },
+                    leaf: "layui-icon-file-b"  //叶子节点
+                }, snode: {  //二级节点
+                    leaf: ""  //叶子节点
+                }
+            }],
+            formatter: {
+                title: function(data) {  // 示例给有子集的节点返回节点统计
+                    let s = data.title;
+                    if (data.children){
+                        s += ' <span style=\'color:#ce0690\'>files(' + data.children.length + ')</span>';
+                    }
+                    return s;
+                }
+            },
+            toolbar: true,
+            // toolbarWay:"fixed",
+            //data: data,
+            initLevel: "2", //默认展开层级为1
+            line: false, // 有线树
+            // ficon: ["1", "-1"], // 设定一级图标样式。0表示方形加减图标，8表示小圆点图标
+            // icon: ["0", "2"], // 设定二级图标样式。0表示文件夹图标，5表示叶子图标
+            method: 'get',
+            url: "../../admin/data/organizationtree.json",
+
+        });
+
+        // 绑定节点点击事件
+        dtree.on("node(organizationTree)", function (obj) {
+            console.log(obj.param.nodeId);
+            let role = '';
+            if (obj.param.nodeId == '001') {
+                role = '0';
+                //DTree.clickSpread($div); //调用内置函数展开节点
+            } else if (obj.param.nodeId == '002') {
+                role = '1';
+                //table.reload("organization-table");
+            } else if (obj.param.nodeId == '003') {
+                role = '2';
+            } else {
+                role = '';
+            }
+        });
+
+
+
+    })
+</script>
+</body>
+</html>
