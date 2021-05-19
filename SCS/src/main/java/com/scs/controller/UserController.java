@@ -344,6 +344,7 @@ public class UserController {
         return  data.toJSONString();
     }
 
+
     //批量删除账号信息
     @ResponseBody
     @RequestMapping(value = "/batchRemoveAccount", method = RequestMethod.POST, produces = "application/json;charset=utf-8")

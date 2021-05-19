@@ -42,6 +42,7 @@ public interface UserDao {
     //查询账号信息
     List<User> searchAccount(@Param(value = "username")String username);
 
+
     //批量删除账号信息
     int batchRemoveAccount(List<String> List);
 
