@@ -4,6 +4,7 @@ import com.scs.pojo.resource;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -12,17 +13,23 @@ public interface resourceService {
 
     int saveRes(resource res);
 
-    //查询资源信息
-    resource getResInfoById(String fileName,String profession,String teacherId);
+    //根据文件名和所属科目查询资源信息
+
+    resource getResInfoById(String fileName,String course,String teacherId);
 
     //删除信息
-    int deleteRes(String fileName,String profession);
 
-    int updateRes(String filepath,String filename,String profession);
+    int deleteRes(String fileName,String course);
 
-    List<String> getTeacherId(String profession);
 
-    List<String> selectProfession();
+    int updateRes(String filepath ,String filename,String course);
 
-    List<resource> getResInfo(String teacherId, String profession);
+
+    List<String> getTeacherId(String course);
+
+
+    List<String> selectCourse();
+
+
+    List<resource> getResInfo(String teacherId, String course);
 }

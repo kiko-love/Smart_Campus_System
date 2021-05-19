@@ -20,32 +20,32 @@ public class resourceServiceImpl implements resourceService {
     }
 
     @Override
-    public resource getResInfoById(String fileName, String profession, String teacherId) {
-        return resMapper.getResInfoById(fileName,profession,teacherId);
+    public resource getResInfoById(String fileName, String course, String teacherId) {
+        return resMapper.getResInfoById(fileName,course,teacherId);
     }
 
     @Override
-    public int deleteRes(String fileName, String profession) {
-        return resMapper.deleteRes(fileName,profession);
+    public int deleteRes(String fileName, String course) {
+        return resMapper.deleteRes(fileName,course);
     }
 
     @Override
-    public int updateRes(String filepath, String filename,String profession) {
-        return resMapper.updateRes(filepath,filename,profession);
+    public int updateRes(String filepath, String filename,String course) {
+        return resMapper.updateRes(filepath,filename,course);
     }
 
     @Override
-    public List<String> getTeacherId(String profession) {
-        return resMapper.getTeacherId(profession);
+    public List<String> getTeacherId(String course) {
+        return resMapper.getTeacherId(course);
     }
 
     @Override
-    public List<String> selectProfession() {
-        return resMapper.selectProfession();
+    public List<String> selectCourse() {
+        return resMapper.selectCourse();
     }
 
     @Override
-    public List<resource> getResInfo(String teacherId, String profession) {
-        return resMapper.getResInfo(teacherId,profession);
+    public List<resource> getResInfo(String teacherId, String course) {
+        return resMapper.getResInfo(teacherId,course);
     }
 }
