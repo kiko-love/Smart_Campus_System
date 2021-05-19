@@ -114,7 +114,7 @@ public class resourceController {
     public void downloadFiles(HttpServletRequest request, HttpServletResponse response){
         String course = request.getParameter("course");
         String teacherId = request.getParameter("teacherId");
-        List<String> filenames = Arrays.asList(request.getParameter("filenames"));
+        List<String> filenames = Arrays.asList(request.getParameter("contexts"));
         //响应头的设置
         response.reset();
         response.setCharacterEncoding("utf-8");
