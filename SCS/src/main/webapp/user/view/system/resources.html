@@ -12,29 +12,21 @@
         font-weight: 500;
     }
 
-    .dtree-zdy--theme-item cite {
-        font-size: 14px !important;
-    }
-
-    .dtree-zdy--theme-item:hover cite {
-        user-select: none;
-        font-weight: 500;
-        color: #11824b !important;
-    }
-
-
-    .dtree-zdy--theme-dtreefont {
-        font-size: 35px !important;
-        display: flex;
-        top: 100px !important;
-    }
-
-    .dtree-icon-xiangyou {
-        font-size: 15px !important;
-    }
-
-    .dtree-icon-xiangxia1 {
-        font-size: 15px !important;
+    /* zdy主题风格*/
+    .dtree-zdy-item-this{background-color: rgba(224, 222, 222, 0.86) !important;} /* 当前选中行样式*/
+    .dtree-zdy-item:hover{background-color: #f2f2f2!important;} /* 行悬停样式*/
+    .dtree-zdy-item cite{font-size:14px!important;} /* 行文字样式*/
+    .dtree-zdy-item:hover cite{color: #096a3b !important;text-decoration-line: underline} /* 行悬停文字样式*/
+    .dtree-zdy-dtreefont{font-size: 30px!important;} /* 一级图标、二级图标、复选框样式*/
+    .dtree-zdy-ficon{color:#2F4056!important;}  /*一级图标特定样式*/
+    .dtree-zdy-icon{color:#2F4056!important;}  /*二级图标特定样式*/
+    .dtree-zdy-checkbox:hover{color:#11824b!important;}  /*复选框悬停样式*/
+    .dtree-zdy-choose{color:#11824b!important;} /* 复选框选中样式*/
+    .dtree-icon-xiangyou{font-size: 18px!important;}
+    .dtree-icon-xiangxia1{font-size: 18px!important;}
+    .dtree-zdy-checkbox{font-size: 18px!important;}
+    .dtree-zdy-item{
+        line-height: 50px;
     }
 
 </style>
@@ -84,7 +76,7 @@
         <div class="layui-card">
             <div class="layui-card-body">
                 <div class="layui-form-item layui-inline">
-                    <button class="layui-btn layui-btn-md" lay-submit lay-filter="user-query">
+                    <button id="files_load" class="layui-btn layui-btn-sm" lay-submit lay-filter="files_load">
                         <i class="layui-icon layui-icon-download-circle"></i>
                         批量下载
                     </button>
@@ -111,12 +103,20 @@
         let course = '124124';
         let teacherId = '124124';
 
+        $("#files_load").click(function(){
+            var params = dtree.getCheckbarNodesParam("organizationTree");
+            layer.msg(JSON.stringify(params));
+        });
+
         //文件上传组件
         let uploadInst = upload.render({
             elem: '#uploadFiles' //绑定元素
-            , url: '' //上传接口
+            , url: '/Resource/uploadResource' //上传接口
             , size: 1024 * 5
             , accept: 'file'
+            , data:{
+                course:'计算机操作系统原理'
+            }
             , multiple: true
             , done: function (res) {
                 console.log(res);
