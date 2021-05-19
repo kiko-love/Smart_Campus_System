@@ -1,5 +1,4 @@
 package com.scs.controller;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.scs.pojo.resource;
 import com.scs.pojo.teacher;
@@ -17,10 +16,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import static com.scs.utils.charset.charset;
 
@@ -34,7 +32,6 @@ public class resourceController {
 
     /**
      * 上传文件
-     *
      * @param request
      * @param files
      * @param
@@ -107,41 +104,78 @@ public class resourceController {
 
     /**
      * 下载文件
-     *
      * @param request
      * @param response
      * @throws Exception
      */
     @RequestMapping(value = "/downloadResource", produces = "application/json;charset=utf-8")
     //MultipartFile 后面的值 必须和表单的name属性一致
-    public void downloadFile(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        //通过
-        String filename = request.getParameter("filename");
+    @ResponseBody
+    public void downloadFiles(HttpServletRequest request, HttpServletResponse response){
         String course = request.getParameter("course");
         String teacherId = request.getParameter("teacherId");
-        String fileName = resourceService.getResInfoById(filename, course, teacherId).getFileName();
-        String path = request.getSession().getServletContext().getRealPath("");
-        String filepath = path.substring(0, path.indexOf("target\\response\\")) + "src\\resource\\" + course + "\\" + teacherId + "\\" + fileName;
-
-        File file = new File(filepath);
-        //获取输入流
-        InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
-        //处理中文文件名乱码，charset为自定义方法
-        String downloadFilename = charset(request, fileName);
-        //设置文件下载头
-        response.addHeader("Content-Disposition", "attachment;filename=" + downloadFilename);
-        //1.设置文件ContentType类型，这样设置，会自动判断下载文件类型
+        List<String> filenames = Arrays.asList(request.getParameter("filenames"));
+        //响应头的设置
+        response.reset();
+        response.setCharacterEncoding("utf-8");
         response.setContentType("multipart/form-data");
-        //获取输出流
-        OutputStream out = response.getOutputStream();
-        //设置缓冲区
-        byte buffer[] = new byte[1024];
-        int len = 0;
-        while ((len = inputStream.read(buffer)) != -1) {
-            out.write(buffer, 0, len);
+        //设置压缩包的名字
+        //解决不同浏览器压缩包名字含有中文时乱码的问题
+        String uuid = UUID.randomUUID().toString().replaceAll("-","");
+        String downloadName = uuid+".zip";
+        String agent = request.getHeader("USER-AGENT");
+        try {
+            if (agent.contains("MSIE")||agent.contains("Trident")) {
+                downloadName = java.net.URLEncoder.encode(downloadName, "UTF-8");
+            } else {
+                downloadName = new String(downloadName.getBytes("UTF-8"),"ISO-8859-1");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        out.close();
-        inputStream.close();
+        response.setHeader("Content-Disposition", "attachment;fileName=\"" + downloadName + "\"");
+        //设置压缩流：直接写入response，实现边压缩边下载
+        ZipOutputStream zipos = null;
+        try {
+            zipos = new ZipOutputStream(new BufferedOutputStream(response.getOutputStream()));
+            zipos.setMethod(ZipOutputStream.DEFLATED); //设置压缩方法
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //循环将文件写入压缩流
+        DataOutputStream os = null;
+        for(int i = 0; i < filenames.size(); i++ ){
+            String fileName = resourceService.getResInfoById(filenames.get(i), course, teacherId).getFileName();
+            String path = request.getSession().getServletContext().getRealPath("");
+            String filepath = path.substring(0, path.indexOf("target\\response\\")) + "src\\resource\\" + course + "\\" + teacherId + "\\" + fileName;
+
+            File file = new File(filepath);
+            try {
+                //添加ZipEntry，并ZipEntry中写入文件流
+                //这里，加上i是防止要下载的文件有重名的导致下载失败
+                zipos.putNextEntry(new ZipEntry(i + fileName));
+                os = new DataOutputStream(zipos);
+                InputStream is = new FileInputStream(file);
+                byte[] b = new byte[1024];
+                int length = 0;
+                while((length = is.read(b))!= -1){
+                    os.write(b, 0, length);
+                }
+                is.close();
+                zipos.closeEntry();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        //关闭流
+        try {
+            os.flush();
+            os.close();
+            zipos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @RequestMapping(value = "/getInfo", produces = "application/json;charset=utf-8")
