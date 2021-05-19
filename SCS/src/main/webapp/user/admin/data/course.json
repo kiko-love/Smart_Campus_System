@@ -1,0 +1,37 @@
+{
+  "status": {
+    "code": 200,
+    "message": "操作成功"
+  },
+  "data": [
+        {
+          "id": "1",
+          "title": "javaWeb",
+          "last": false,
+          "parentId": "2014",
+          "children": [
+            {
+              "id": "100",
+              "title": "文件1",
+              "last": true,
+              "parentId": "1"
+            }
+          ]
+        },
+        {
+          "id": "2",
+          "title": "数据结构",
+          "last": false,
+          "parentId": "2014",
+          "children": []
+        },
+        {
+          "id": "3",
+          "title": "概率论",
+          "last": false,
+          "parentId": "2014",
+          "children": []
+        }
+      ]
+
+}

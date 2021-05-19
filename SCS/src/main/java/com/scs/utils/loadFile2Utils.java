@@ -12,9 +12,10 @@ import java.util.List;
 @NoArgsConstructor
 public class loadFile2Utils {
     private String id;
-    private String tittle;
+    private String title;
     private boolean last;
     private String parentId;
+    private checkArrUtils checkArr;
     private List<loadFile2Utils> children;
     private basicDataUtils basicData;
 }
