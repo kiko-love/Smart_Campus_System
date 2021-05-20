@@ -16,7 +16,7 @@
     .dtree-zdy-item-this{background-color: rgba(224, 222, 222, 0.86) !important;} /* 当前选中行样式*/
     .dtree-zdy-item:hover{background-color: #f2f2f2!important;} /* 行悬停样式*/
     .dtree-zdy-item cite{font-size:14px!important;} /* 行文字样式*/
-    .dtree-zdy-item:hover cite{color: #096a3b !important;text-decoration-line: underline} /* 行悬停文字样式*/
+    .dtree-zdy-item:hover cite{color: #096a3b !important} /* 行悬停文字样式*/
     .dtree-zdy-dtreefont{font-size: 30px!important;} /* 一级图标、二级图标、复选框样式*/
     .dtree-zdy-ficon{color:#2F4056!important;}  /*一级图标特定样式*/
     .dtree-zdy-icon{color:#2F4056!important;}  /*二级图标特定样式*/
@@ -33,20 +33,20 @@
 <body class="pear-container">
 <div class="layui-card">
     <div class="layui-card-body">
+        <div class="layui-form-item layui-inline">
+            <label class="layui-form-label">文件上传</label>
+            <div class="layui-input-inline">
+                <button type="button" class="pear-btn pear-btn-md pear-btn-primary" id="uploadFiles">
+                    <i class="layui-icon">&#xe67c;</i>上传文件
+                </button>
+            </div>
+        </div>
         <form class="layui-form" action="">
             <div class="layui-form-item">
                 <div class="layui-form-item layui-inline">
-                    <label class="layui-form-label">文件上传</label>
+                    <label class="layui-form-label">学科名称</label>
                     <div class="layui-input-inline">
-                        <button type="button" class="pear-btn pear-btn-md pear-btn-primary" id="uploadFiles">
-                            <i class="layui-icon">&#xe67c;</i>上传文件
-                        </button>
-                    </div>
-                </div>
-                <div class="layui-form-item layui-inline">
-                    <label class="layui-form-label">资源名</label>
-                    <div class="layui-input-inline">
-                        <input type="text" name="resourceName" placeholder="" class="layui-input">
+                        <input type="text" name="courseName" placeholder="请输入学科名称" class="layui-input">
                     </div>
                 </div>
                 <!--						<div class="layui-form-item layui-inline">-->
@@ -56,7 +56,7 @@
                 <!--							</div>-->
                 <!--						</div>-->
                 <div class="layui-form-item layui-inline">
-                    <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="user-query">
+                    <button class="pear-btn pear-btn-md pear-btn-success" lay-submit lay-filter="resource-query">
                         <i class="layui-icon layui-icon-search"></i>
                         查询
                     </button>
@@ -107,6 +107,35 @@
             var params = dtree.getCheckbarNodesParam("organizationTree");
             layer.msg(JSON.stringify(params));
         });
+
+        form.on('submit(resource-query)',function (data){
+            console.log(data.field);
+            $.ajax({
+                url:'http://localhost:8080/Resource/selectByCourseName',
+                dataType:'json',
+                data:data.field,
+                type:'post',
+                success:function (res){
+                    console.log(res.data);
+                    if (res.data===''){
+                        DTree.reload({
+                            url:'/Resource/uploadResource'
+                        })
+                    }else {
+                        DTree.reload({
+                            data:res.data
+                        })
+                    }
+
+                },
+                error:function (res){
+                    console.log(res);
+                }
+            })
+
+            return false;
+        })
+
 
         //文件上传组件
         let uploadInst = upload.render({
@@ -160,10 +189,12 @@
             },
             formatter: {
                 title: function (data) {  // 示例给有子集的节点返回节点统计
-                    // console.log(data);
+                    console.log(data);
                     let s = data.title;
-                    if (data.children) {
-                        s += ' <span style=\'color:#ce0690\'>files(' + data.children.length + ')</span>';
+                    if (data.last) {
+                        s += ' <span style=\'color:#ce0690\'>' +
+                            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;创建日期:' +
+                            data.basicData.createTime + '</span>';
                     }
                     return s;
                 }

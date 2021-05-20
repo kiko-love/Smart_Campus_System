@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class loadFile1Utils {
+public class JsonStatusUtils {
     private String code;
     private String message;
 }

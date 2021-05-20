@@ -1,13 +1,16 @@
 package com.scs.controller;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.scs.pojo.resource;
 import com.scs.pojo.teacher;
 import com.scs.service.resourceService;
 import com.scs.service.teacherService;
 import com.scs.utils.basicDataUtils;
 import com.scs.utils.checkArrUtils;
-import com.scs.utils.loadFile1Utils;
-import com.scs.utils.loadFile2Utils;
+import com.scs.utils.JsonStatusUtils;
+import com.scs.utils.JsonDataUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +22,6 @@ import java.io.*;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
-import static com.scs.utils.charset.charset;
 
 @Controller
 @RequestMapping("/Resource")
@@ -41,7 +42,7 @@ public class resourceController {
     @RequestMapping(value = "/uploadResource", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     //MultipartFile 后面的值 必须和表单的name属性一致
     @ResponseBody
-    public String uploadResource(HttpServletRequest request, @RequestParam(value = "resource") MultipartFile files[]) throws Exception {
+    public String uploadResource(HttpServletRequest request, @RequestParam(value = "file") MultipartFile files[]) throws Exception {
         //获取要存放的位置,request.getSession().getServletContext()  获取项目路径,不同种类的学科的资料存放在相应的文件夹
         HttpSession session = request.getSession();
         String course = request.getParameter("course");
@@ -64,9 +65,11 @@ public class resourceController {
                 length++;
             }
         }
+        System.out.println(length);
         for (int i = 0; i < length; i++) {
             //获取要上传的文件名
             String filename = files[i].getOriginalFilename();
+            System.out.println(filename);
             //获取可访问该文件的地址
             String filepath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/resource/" + course + "/" + teacherId + "/" + filename;
             //查看该文件是否已经存在
@@ -81,13 +84,13 @@ public class resourceController {
             }
             //文件不存在，将资料存在服务器，信息存到数据库
             else {
-                count[i] = resourceService.saveRes(new resource(null, filename, teacherId, filepath, course));
+                Date createTime = new Date();
+                count[i] = resourceService.saveRes(new resource(null, filename, teacherId, filepath, course,createTime));
                 files[i].transferTo(new File(savePath + filename));
             }
             fileData.put(filename, filepath);
 
         }
-
         if (count.length == files.length) {
             data.put("status", 200);
             data.put("success", 1);
@@ -183,24 +186,24 @@ public class resourceController {
     @CrossOrigin
     public String getInfo(HttpServletRequest request) {
         JSONObject jsonData = new JSONObject();
-        ArrayList<loadFile2Utils> data = new ArrayList<>();
-        loadFile1Utils status = null;
+        ArrayList<JsonDataUtils> data = new ArrayList<>();
+        JsonStatusUtils status = null;
         String level = request.getParameter("level");
 
         if (level == null) {
             //查询当前的资料的所有种类
-            List<String> courses = resourceService.selectCourse();
+            List<String> courses = resourceService.selectcourseName();
             if (courses.size() > 0) {
-                status = new loadFile1Utils("200", "获取第一层成功");
+                status = new JsonStatusUtils("200", "获取第一层成功");
                 jsonData.put("status", status);
                 for (int i = 0; i < courses.size(); i++) {
                     String id = String.valueOf(i + 1);
-                    data.add(new loadFile2Utils(id, courses.get(i), false, "2014",
+                    data.add(new JsonDataUtils(id, courses.get(i), false, "2014",
                             new checkArrUtils("0","0"), null,new basicDataUtils()));
                 }
                 jsonData.put("data", data);
             } else {
-                status = new loadFile1Utils("110", "获取第一层失败");
+                status = new JsonStatusUtils("110", "获取第一层失败");
                 jsonData.put("status", status);
                 jsonData.put("data", "");
             }
@@ -213,20 +216,23 @@ public class resourceController {
             String nodeId = request.getParameter("nodeId");
             //查询当前的科目资料的所有老师
             List<String> teacherIds = resourceService.getTeacherId(course);
+            System.out.println(teacherIds);
             if (teacherIds.size() > 0) {
-                status = new loadFile1Utils("200", "获取第二层成功");
+                status = new JsonStatusUtils("200", "获取第二层成功");
                 jsonData.put("status", status);
                 for (int i = 0; i < teacherIds.size(); i++) {
                     String id = String.valueOf((1 * 100 + i));
                     List<teacher> teacherName = teacherService.getTeacherById(teacherIds.get(i));
-                    data.add(new loadFile2Utils(id, teacherName.get(0).getRealName(),
+                    System.out.println(teacherName);
+                    System.out.println(teacherName.get(0).getRealName());
+                    data.add(new JsonDataUtils(id, teacherName.get(0).getRealName(),
                             false, nodeId,new checkArrUtils("0","0")
-                            , null, new basicDataUtils(teacherIds.get(i),course)));
+                            , null, new basicDataUtils(teacherIds.get(i),course,null)));
                 }
                 jsonData.put("data", data);
 
             } else {
-                status = new loadFile1Utils("110", "获取第二层失败");
+                status = new JsonStatusUtils("110", "获取第二层失败");
                 jsonData.put("status", status);
                 jsonData.put("data", "");
             }
@@ -243,19 +249,24 @@ public class resourceController {
             System.out.println(nodeId);
             List<resource> resInfo = resourceService.getResInfo(teacherId, course);
             System.out.println(resInfo);
+            JSONArray jsonArray = null;
             if (resInfo.size() > 0) {
-                status = new loadFile1Utils("200", "获取第三层成功");
+                status = new JsonStatusUtils("200", "获取第三层成功");
                 jsonData.put("status", status);
 
                 for (int i = 0; i < resInfo.size(); i++) {
+                    Date createTime = resInfo.get(i).getCreateTime();
+
                     String id = String.valueOf(1 * 1000 + i);
-                    data.add(new loadFile2Utils(id, resInfo.get(i).getFileName(), true, nodeId,
-                            new checkArrUtils("0","0"),null, null));
+                    data.add(new JsonDataUtils(id, resInfo.get(i).getFileName(), true, nodeId,
+                            new checkArrUtils("0","0"),null, new basicDataUtils(null,null,createTime)));
+                    String format = JSON.toJSONStringWithDateFormat(data, "yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
+                    jsonArray = JSONArray.parseArray(format);
                 }
-                jsonData.put("data", data);
+                jsonData.put("data", jsonArray);
 
             } else {
-                status = new loadFile1Utils("110", "获取第三层失败");
+                status = new JsonStatusUtils("110", "获取第三层失败");
                 jsonData.put("status", status);
                 jsonData.put("data", "");
             }
@@ -264,5 +275,101 @@ public class resourceController {
 
         return null;
     }
+    /**
+     * 通过学科名查找该学科的资源
+     * @param request
+     * @return
+     */
 
+    @ResponseBody
+    @RequestMapping(value = "/selectByCourseName",produces = "application/json;charset=utf-8")
+    @CrossOrigin
+    public String selectByCourseName(HttpServletRequest request){
+        JsonStatusUtils status = null;
+        JSONObject jsonData = new JSONObject();
+        ArrayList<JsonDataUtils> data = new ArrayList<>();
+        String course = request.getParameter("courseName");
+        String nodeId = request.getParameter("nodeId");
+        String teacherId = (String) request.getSession().getAttribute("userInformation");
+        System.out.println(course);
+        //查询当前的资料的所有种类
+        List<resource> resInfo = resourceService.getResInfo(teacherId, course);
+        if (resInfo.size() > 0) {
+            status = new JsonStatusUtils("200", "查询成功");
+            jsonData.put("status", status);
+            data.add(new JsonDataUtils("1", resInfo.get(0).getCourseName(), false, "2014",
+                    new checkArrUtils("0","0"), null,new basicDataUtils()));
+            jsonData.put("data", data);
+        } else {
+            status = new JsonStatusUtils("110", "查询失败");
+            jsonData.put("status", status);
+            jsonData.put("data", "");
+        }
+        return jsonData.toJSONString();
+    }
+
+    /**
+     *获取所有资源
+     * @param request
+     * @return
+     */
+
+    @RequestMapping(value = "/getInfoByTeacherId", produces = "application/json;charset=utf-8")
+    @ResponseBody
+    @CrossOrigin
+    public String getInfoByTeacherId(HttpServletRequest request) {
+        JSONObject jsonData = new JSONObject();
+        ArrayList<JsonDataUtils> data = new ArrayList<>();
+        JsonStatusUtils status = null;
+        String level = request.getParameter("level");
+        String teacherId = (String) request.getSession().getAttribute("userInformation");
+
+        if (level == null) {
+            //查询当前的资料的所有种类
+            List<String> courses = resourceService.getCourseByTeacherId(teacherId);
+            if (courses.size() > 0) {
+                status = new JsonStatusUtils("200", "获取第一层成功");
+                jsonData.put("status", status);
+                for (int i = 0; i < courses.size(); i++) {
+                    String id = String.valueOf(i + 1);
+                    data.add(new JsonDataUtils(id, courses.get(i), false, "2014",
+                            new checkArrUtils("0", "0"), null, new basicDataUtils()));
+                }
+                jsonData.put("data", data);
+            } else {
+                status = new JsonStatusUtils("110", "获取第一层失败");
+                jsonData.put("status", status);
+                jsonData.put("data", "");
+            }
+            return jsonData.toJSONString();
+        }
+        if (level.equals("1")){
+            //获取点击的科目
+            String course = request.getParameter("course");
+            String nodeId = request.getParameter("nodeId");
+            List<resource> resInfo = resourceService.getResInfo(teacherId, course);
+            JSONArray jsonArray = null;
+            if (resInfo.size() > 0) {
+                status = new JsonStatusUtils("200", "第二层获取成功");
+                jsonData.put("status", status);
+                for (int i = 0; i < resInfo.size(); i++) {
+                    Date createTime = resInfo.get(i).getCreateTime();
+                    String id = String.valueOf(1 * 1000 + i);
+                    data.add(new JsonDataUtils(id, resInfo.get(i).getFileName(), true, nodeId,
+                            new checkArrUtils("0","0"),null, new basicDataUtils(null,null,createTime)));
+                    String format = JSON.toJSONStringWithDateFormat(data, "yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
+                    jsonArray = JSONArray.parseArray(format);
+                }
+                jsonData.put("data", jsonArray);
+
+            } else {
+                status = new JsonStatusUtils("110", "获取第二层失败");
+                jsonData.put("status", status);
+                jsonData.put("data", "");
+            }
+            return jsonData.toJSONString();
+
+        }
+        return null;
+    }
 }

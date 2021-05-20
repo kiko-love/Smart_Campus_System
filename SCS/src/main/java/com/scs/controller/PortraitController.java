@@ -31,7 +31,6 @@ public class PortraitController {
     public String uploadPortrait(HttpServletRequest request, @RequestParam(value="portrait") MultipartFile portrait, HttpServletResponse response) throws Exception {
         //获取要存放的位置,request.getSession().getServletContext()  获取项目路径
         String path = request.getSession().getServletContext().getRealPath("");
-        //C:\Users\帅\IdeaProjects\Smart_Campus_System\SCS\
         String savePath = path.substring(0, path.indexOf("target\\response\\"))+"src\\portrait\\";
         System.out.println(savePath);
         File file = new File(savePath);

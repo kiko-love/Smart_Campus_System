@@ -9,27 +9,63 @@ import org.apache.ibatis.annotations.Update;
 import java.util.List;
 
 public interface resourceService {
-    //增加资源信息
-
+    /**
+     * 增加资源信息
+     * @param res
+     * @return
+     */
     int saveRes(resource res);
 
-    //根据文件名和所属科目查询资源信息
+    /**
+     * 根据文件名和所属科目查询资源信息
+     * @param fileName
+     * @param courseName
+     * @param teacherId
+     * @return
+     */
+    resource getResInfoById(String fileName,String courseName,String teacherId);
 
-    resource getResInfoById(String fileName,String course,String teacherId);
+    /**
+     * 删除某个资源信息
+     * @param fileName
+     * @param courseName
+     * @return
+     */
+    int deleteRes(String fileName,String courseName);
 
-    //删除信息
+    /**
+     * 更新资料信息，用于覆盖某个资源
+     * @param filepath
+     * @param filename
+     * @param courseName
+     * @return
+     */
+    int updateRes(String filepath ,String filename,String courseName);
 
-    int deleteRes(String fileName,String course);
+    /**
+     * 查询某个科目下的所有老师
+     * @param courseName
+     * @return
+     */
+    List<String> getTeacherId(String courseName);
 
+    /**
+     * 查询表中的资源的所有课程
+     * @return
+     */
+    List<String> selectcourseName();
 
-    int updateRes(String filepath ,String filename,String course);
+    /**
+     * 根据老师和学科查找对应的资源信息
+     * @param teacherId
+     * @param courseName
+     * @return
+     */
+    List<resource> getResInfo(String teacherId, String courseName);
 
-
-    List<String> getTeacherId(String course);
-
-
-    List<String> selectCourse();
-
-
-    List<resource> getResInfo(String teacherId, String course);
+    /**
+     *查询所有资料信息
+     * @return
+     */
+    List<String> getCourseByTeacherId(String teacherId);
 }
