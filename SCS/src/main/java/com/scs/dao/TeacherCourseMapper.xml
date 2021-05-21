@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.scs.dao.TeacherCourseMapper">
+        <insert id="InsertTeacherCourse" parameterType="com.scs.pojo.RelationTeacherCourse">
+            insert into relation_teacher_course(teacherId,courseId)
+            values(#{teacherId},#{courseId})
+        </insert>
+        <select id="SeclectTeacherCourse" resultType="String">
+            select courseId
+            from relation_teacher_course
+            where teacherId = #{teacherid}
+        </select>
+</mapper>
