@@ -42,6 +42,7 @@ public class resourceController {
     @RequestMapping(value = "/uploadResource", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     //MultipartFile 后面的值 必须和表单的name属性一致
     @ResponseBody
+    @CrossOrigin
     public String uploadResource(HttpServletRequest request, @RequestParam(value = "file") MultipartFile files[]) throws Exception {
         //获取要存放的位置,request.getSession().getServletContext()  获取项目路径,不同种类的学科的资料存放在相应的文件夹
         HttpSession session = request.getSession();
@@ -199,7 +200,7 @@ public class resourceController {
                 for (int i = 0; i < courses.size(); i++) {
                     String id = String.valueOf(i + 1);
                     data.add(new JsonDataUtils(id, courses.get(i), false, "2014",
-                            new checkArrUtils("0","0"), null,new basicDataUtils()));
+                            null, null,new basicDataUtils()));
                 }
                 jsonData.put("data", data);
             } else {
@@ -224,10 +225,17 @@ public class resourceController {
                     String id = String.valueOf((1 * 100 + i));
                     List<teacher> teacherName = teacherService.getTeacherById(teacherIds.get(i));
                     System.out.println(teacherName);
-                    System.out.println(teacherName.get(0).getRealName());
-                    data.add(new JsonDataUtils(id, teacherName.get(0).getRealName(),
-                            false, nodeId,new checkArrUtils("0","0")
-                            , null, new basicDataUtils(teacherIds.get(i),course,null)));
+                    if (teacherName.size()>0){
+                        System.out.println(teacherName.get(0).getRealName());
+                        data.add(new JsonDataUtils(id, teacherName.get(0).getRealName(),
+                                false, nodeId,null
+                                , null, new basicDataUtils(teacherIds.get(i),course,null)));
+                    }else {
+                        data.add(new JsonDataUtils(id, "[匿名教师]",
+                                false, nodeId,null
+                                , null, new basicDataUtils(teacherIds.get(i),course,null)));
+                    }
+
                 }
                 jsonData.put("data", data);
 
@@ -289,9 +297,9 @@ public class resourceController {
         JSONObject jsonData = new JSONObject();
         ArrayList<JsonDataUtils> data = new ArrayList<>();
         String course = request.getParameter("courseName");
-        String nodeId = request.getParameter("nodeId");
         String teacherId = (String) request.getSession().getAttribute("userInformation");
         System.out.println(course);
+        System.out.println(teacherId);
         //查询当前的资料的所有种类
         List<resource> resInfo = resourceService.getResInfo(teacherId, course);
         if (resInfo.size() > 0) {

@@ -104,6 +104,13 @@
         "icon": "layui-icon layui-icon-chart",
         "type": 1,
         "href": "view/system/resources.html"
+      },
+      {
+        "id": 312,
+        "title": "资源上传",
+        "icon": "layui-icon layui-icon-chart",
+        "type": 1,
+        "href": "view/system/uploadResources.html"
       }
     ]
   },

@@ -13,19 +13,64 @@
     }
 
     /* zdy主题风格*/
-    .dtree-zdy-item-this{background-color: rgba(224, 222, 222, 0.86) !important;} /* 当前选中行样式*/
-    .dtree-zdy-item:hover{background-color: #f2f2f2!important;} /* 行悬停样式*/
-    .dtree-zdy-item cite{font-size:14px!important;} /* 行文字样式*/
-    .dtree-zdy-item:hover cite{color: #096a3b !important} /* 行悬停文字样式*/
-    .dtree-zdy-dtreefont{font-size: 30px!important;} /* 一级图标、二级图标、复选框样式*/
-    .dtree-zdy-ficon{color:#2F4056!important;}  /*一级图标特定样式*/
-    .dtree-zdy-icon{color:#2F4056!important;}  /*二级图标特定样式*/
-    .dtree-zdy-checkbox:hover{color:#11824b!important;}  /*复选框悬停样式*/
-    .dtree-zdy-choose{color:#11824b!important;} /* 复选框选中样式*/
-    .dtree-icon-xiangyou{font-size: 18px!important;}
-    .dtree-icon-xiangxia1{font-size: 18px!important;}
-    .dtree-zdy-checkbox{font-size: 18px!important;}
-    .dtree-zdy-item{
+    .dtree-zdy-item-this {
+        background-color: rgba(224, 222, 222, 0.86) !important;
+    }
+
+    /* 当前选中行样式*/
+    .dtree-zdy-item:hover {
+        background-color: #f2f2f2 !important;
+    }
+
+    /* 行悬停样式*/
+    .dtree-zdy-item cite {
+        font-size: 14px !important;
+    }
+
+    /* 行文字样式*/
+    .dtree-zdy-item:hover cite {
+        color: #096a3b !important
+    }
+
+    /* 行悬停文字样式*/
+    .dtree-zdy-dtreefont {
+        font-size: 30px !important;
+    }
+
+    /* 一级图标、二级图标、复选框样式*/
+    .dtree-zdy-ficon {
+        color: #2F4056 !important;
+    }
+
+    /*一级图标特定样式*/
+    .dtree-zdy-icon {
+        color: #2F4056 !important;
+    }
+
+    /*二级图标特定样式*/
+    .dtree-zdy-checkbox:hover {
+        color: #11824b !important;
+    }
+
+    /*复选框悬停样式*/
+    .dtree-zdy-choose {
+        color: #11824b !important;
+    }
+
+    /* 复选框选中样式*/
+    .dtree-icon-xiangyou {
+        font-size: 18px !important;
+    }
+
+    .dtree-icon-xiangxia1 {
+        font-size: 18px !important;
+    }
+
+    .dtree-zdy-checkbox {
+        font-size: 18px !important;
+    }
+
+    .dtree-zdy-item {
         line-height: 50px;
     }
 
@@ -33,14 +78,6 @@
 <body class="pear-container">
 <div class="layui-card">
     <div class="layui-card-body">
-        <div class="layui-form-item layui-inline">
-            <label class="layui-form-label">文件上传</label>
-            <div class="layui-input-inline">
-                <button type="button" class="pear-btn pear-btn-md pear-btn-primary" id="uploadFiles">
-                    <i class="layui-icon">&#xe67c;</i>上传文件
-                </button>
-            </div>
-        </div>
         <form class="layui-form" action="">
             <div class="layui-form-item">
                 <div class="layui-form-item layui-inline">
@@ -103,32 +140,31 @@
         let course = '124124';
         let teacherId = '124124';
 
-        $("#files_load").click(function(){
+        $("#files_load").click(function () {
             var params = dtree.getCheckbarNodesParam("organizationTree");
             layer.msg(JSON.stringify(params));
         });
 
-        form.on('submit(resource-query)',function (data){
+        form.on('submit(resource-query)', function (data) {
             console.log(data.field);
             $.ajax({
-                url:'http://localhost:8080/Resource/selectByCourseName',
-                dataType:'json',
-                data:data.field,
-                type:'post',
-                success:function (res){
+                url: 'http://localhost:8080/Resource/selectByCourseName',
+                dataType: 'json',
+                data: data.field,
+                type: 'post',
+                success: function (res) {
+                    console.log('res.data');
                     console.log(res.data);
-                    if (res.data===''){
+                    if (res.data === '') {
+                        dtree.getCheckbarNodesParam("organizationTree");
+                    } else {
                         DTree.reload({
-                            url:'/Resource/uploadResource'
-                        })
-                    }else {
-                        DTree.reload({
-                            data:res.data
+                            data: res.data
                         })
                     }
 
                 },
-                error:function (res){
+                error: function (res) {
                     console.log(res);
                 }
             })
@@ -143,12 +179,14 @@
             , url: '/Resource/uploadResource' //上传接口
             , size: 1024 * 5
             , accept: 'file'
-            , data:{
-                course:'计算机操作系统原理'
+            , data: {
+                course: '计算机操作系统原理'
             }
             , multiple: true
-            , done: function (res) {
-                console.log(res);
+            , allDone: function (obj) { //当文件全部被提交后，才触发
+                console.log(obj.total); //得到总文件数
+                console.log(obj.successful); //请求成功的文件数
+                console.log(obj.aborted); //请求失败的文件数
             }
             , error: function () {
                 //请求异常回调
@@ -165,7 +203,7 @@
             method: 'post',
             checkbar: true,
             checkbarType: "all",
-            record:true,
+            record: true,
             skin: "zdy",
             url: "http://localhost:8080/Resource/getInfo",
             beforeSend(ajax, self) {
