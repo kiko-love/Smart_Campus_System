@@ -90,13 +90,14 @@
 <script src="../../component/pear/pear.js"></script>
 
 <script>
-    layui.use(['table', 'form', 'jquery', 'dtree'], function () {
+    layui.use(['upload','table', 'form', 'jquery', 'dtree'], function () {
         let table = layui.table;
         let form = layui.form;
         let $ = layui.jquery;
         let dtree = layui.dtree;
-
         let MODULE_PATH = "operate/";
+
+
 
         let cols = [
             [{
@@ -157,7 +158,7 @@
             ]
         ]
 
-        var DTree = dtree.render({
+        let DTree = dtree.render({
             elem: "#organizationTree",
             iconfont: ["layui-icon", "dtreefont", "iconfont"],
             iconfontStyle: [{
@@ -185,7 +186,7 @@
 
         });
 
-        var tableIns = table.render({
+        let tableIns = table.render({
             elem: '#organization-table',
             url: '/User/getAllUsers',
             initSort: {
@@ -210,7 +211,7 @@
                 icon: 'layui-icon-refresh',
             }, 'filter', 'print', 'exports'],
             parseData: function (res) { //将原始数据解析成 table 组件所规定的数据，res为从url中get到的数据
-                var result;
+                let result;
                 console.log(res);
                 // res.data[0].birthday = dateFormat(res.data[0].birthday, 'Y-M-D')
                 if (this.page.curr) {
@@ -230,7 +231,7 @@
         // 绑定节点点击事件
         dtree.on("node(organizationTree)", function (obj) {
             console.log(obj.param.nodeId);
-            var role = '';
+            let role = '';
             if (obj.param.nodeId == '001') {
                 role = '0';
                 //DTree.clickSpread($div); //调用内置函数展开节点
@@ -322,6 +323,14 @@
         });
 
 
+        table.on('tool(organization-table)', function (obj) {
+            if (obj.event === 'remove') {
+                window.remove(obj);
+            } else if (obj.event === 'edit') {
+                window.edit(obj);
+            }
+        });
+
         table.on('toolbar(organization-table)', function (obj) {
             console.log(obj.event);
             if (obj.event === 'add') {
@@ -330,6 +339,8 @@
                 window.refresh();
             } else if (obj.event === 'batchRemove') {
                 window.batchRemove(obj);
+            }else if (obj.event === 'edit') {
+                window.edit(obj);
             }
         });
 
@@ -366,10 +377,10 @@
                 area: ['500px', '400px'],
                 content: MODULE_PATH + 'editAccount.html',
                 success: function (layero, index) {
-                    var body = layer.getChildFrame('body', index);
+                    let body = layer.getChildFrame('body', index);
                     //得到iframe页的窗口对象，执行iframe页的方法：iframeWin.method();
                     console.log(obj.data);
-                    var iframeWin = window[layero.find('iframe')[0]['name']]
+                    let iframeWin = window[layero.find('iframe')[0]['name']]
                     body.find('#username').val(obj.data['userName'])
                     //body.find('#password').val(obj.data['md5password'])
                     if (obj.data['role'] == '0') {

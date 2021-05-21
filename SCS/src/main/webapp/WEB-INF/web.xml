@@ -35,7 +35,7 @@
     </filter>
     <filter-mapping>
         <filter-name>studentFilter</filter-name>
-        <url-pattern>/user/student.jsp</url-pattern>
+        <url-pattern>/user/student.html</url-pattern>
     </filter-mapping>
 
     <filter>
@@ -44,7 +44,7 @@
     </filter>
     <filter-mapping>
         <filter-name>teacherFilter</filter-name>
-        <url-pattern>/user/teacher.jsp</url-pattern>
+        <url-pattern>/user/teacher.html</url-pattern>
     </filter-mapping>
 
     <filter>
@@ -53,7 +53,7 @@
     </filter>
     <filter-mapping>
         <filter-name>adminFilter</filter-name>
-        <url-pattern>/user/admin.jsp</url-pattern>
+        <url-pattern>/user/admin.html</url-pattern>
     </filter-mapping>
 
 

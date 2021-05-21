@@ -1,4 +1,4 @@
-package com.scs.pojo;
+package com.scs.utils;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,14 +7,10 @@ import lombok.NoArgsConstructor;
 import java.util.Date;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class resource {
-    private String fileId;
-    private String fileName;
+@NoArgsConstructor
+public class basicDataUtils {
     private String teacherId;
-    private String filePath;
-    private String courseName;
+    private String course;
     private Date createTime;
-
 }

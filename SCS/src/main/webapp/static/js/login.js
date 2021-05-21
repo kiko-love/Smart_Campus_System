@@ -78,11 +78,11 @@ layui.use(['carousel', 'form', 'jquery'], function () {
                     let localhostPaht = curWwwPath.substring(0, pos);
                     console.log(result.role);
                     if (result.role == '0') {
-                        window.location.replace(localhostPaht + "/user/admin.jsp");
+                        window.location.replace(localhostPaht + "/user/admin.html");
                     } else if (result.role == '1') {
-                        window.location.replace(localhostPaht + "/user/teacher.jsp");
+                        window.location.replace(localhostPaht + "/user/teacher.html");
                     } else {
-                        window.location.replace(localhostPaht + "/user/student.jsp");
+                        window.location.replace(localhostPaht + "/user/student.html");
                     }
                 }
             },

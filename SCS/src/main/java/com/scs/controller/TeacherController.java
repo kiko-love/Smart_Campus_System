@@ -76,6 +76,7 @@ public class TeacherController {
         List<teacher> list = teaService.getTeacherById(TeacherId);
         data.put("count", list.size());
         String format = JSON.toJSONStringWithDateFormat(list, "yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
+        //将json字符串变为json数组格式
         JSONArray jsonArray = JSONArray.parseArray(format);
         data.put("data",jsonArray);
         return data.toJSONString();

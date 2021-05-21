@@ -34,7 +34,7 @@ public class teacherFilter implements Filter {
             filterChain.doFilter(servletRequest,servletResponse);
         }
         else {
-            response.sendRedirect("/user/"+character+".jsp");
+            response.sendRedirect("/user/"+character+".html");
         }
     }
     @Override

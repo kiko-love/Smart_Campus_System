@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>教师上传资源文件</title>
+    <link rel="stylesheet" href="../../component/pear/css/pear.css"/>
+    <link rel="stylesheet" href="../../admin/css/other/department.css"/>
+</head>
+<style>
+    .t-click {
+        user-select: none;
+        font-weight: 500;
+    }
+
+    /* zdy主题风格*/
+    .dtree-zdy-item-this {
+        background-color: rgba(224, 222, 222, 0.86) !important;
+    }
+
+    /* 当前选中行样式*/
+    .dtree-zdy-item:hover {
+        background-color: #f2f2f2 !important;
+    }
+
+    /* 行悬停样式*/
+    .dtree-zdy-item cite {
+        font-size: 14px !important;
+    }
+
+    /* 行文字样式*/
+    .dtree-zdy-item:hover cite {
+        color: #096a3b !important
+    }
+
+    /* 行悬停文字样式*/
+    .dtree-zdy-dtreefont {
+        font-size: 30px !important;
+    }
+
+    /* 一级图标、二级图标、复选框样式*/
+    .dtree-zdy-ficon {
+        color: #2F4056 !important;
+    }
+
+    /*一级图标特定样式*/
+    .dtree-zdy-icon {
+        color: #2F4056 !important;
+    }
+
+    /*二级图标特定样式*/
+    .dtree-zdy-checkbox:hover {
+        color: #11824b !important;
+    }
+
+    /*复选框悬停样式*/
+    .dtree-zdy-choose {
+        color: #11824b !important;
+    }
+
+    /* 复选框选中样式*/
+    .dtree-icon-xiangyou {
+        font-size: 18px !important;
+    }
+
+    .dtree-icon-xiangxia1 {
+        font-size: 18px !important;
+    }
+
+    .dtree-zdy-checkbox {
+        font-size: 18px !important;
+    }
+
+    .dtree-zdy-item {
+        line-height: 50px;
+    }
+
+</style>
+<body class="pear-container">
+
+<div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+        <div class="layui-card">
+            <div class="layui-card-body">
+                <form class="layui-form" action="">
+                    <div class="layui-form-item layui-inline">
+                        <label class="layui-form-label">文件上传</label>
+                        <div class="layui-input-inline">
+                            <button type="button" class="pear-btn pear-btn-md pear-btn-primary" id="uploadFiles">
+                                <i class="layui-icon">&#xe67c;</i>选择文件
+                            </button>
+                            <br>
+                            <br>
+                            <div class="layui-progress" lay-filter="upload">
+                                <div class="layui-progress-bar layui-bg-green" lay-percent="0%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">文件列表</label>
+                        <div id="fileList">
+
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-form-item layui-inline">
+                            <label class="layui-form-label">学科名称</label>
+                            <div class="layui-input-inline">
+                                <select name="course" lay-verify="">
+                                    <option value="">请选择学科</option>
+                                    <option value="数据结构">数据结构</option>
+                                    <option value="JavaWeb">JavaWeb</option>
+                                    <option value="概率论">概率论</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="layui-form-item layui-inline">
+                            <button id="resourceSubmit" class="pear-btn pear-btn-md pear-btn-success" lay-submit
+                                    lay-filter="resource-query">
+                                <i class="layui-icon layui-icon-search"></i>
+                                提交
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../../component/layui/layui.js"></script>
+<script src="../../component/pear/pear.js"></script>
+
+<script>
+
+    layui.use(['upload', 'table', 'form', 'jquery', 'element'], function () {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+        let upload = layui.upload;
+        let element = layui.element;
+        let course = '';
+
+        $('#uploadFiles').click(function () {
+            $('#fileList').empty();
+            element.progress('upload', '0%');
+        })
+
+        form.on('submit(resource-query)', function (data) {
+            console.log(data.field);
+            course = data.field.course
+            return false;
+        })
+
+        //文件上传组件
+        let uploadInst = upload.render({
+            elem: '#uploadFiles' //绑定元素
+            , url: 'http://localhost:8080/Resource/uploadResource' //上传接口
+            , size: 1024 * 5
+            , accept: 'file'
+            , data: {
+                course: function () {
+                    console.log('course的值如下');
+                    course = $("form").serializeArray()[0].value;
+                    console.log(course);
+                    return course;
+                }
+            }
+            , number: 5
+            , bindAction: '#resourceSubmit'
+            , auto: false
+            , multiple: true
+            , allDone: function (obj) { //当文件全部被提交后，才触发
+                console.log(obj.total); //得到总文件数
+                console.log(obj.successful); //请求成功的文件数
+                console.log(obj.aborted); //请求失败的文件数
+            }, choose: function (obj) {
+                //将每次选择的文件追加到文件队列
+                let files = obj.pushFile();
+
+                //预读本地文件，如果是多文件，则会遍历。(不支持ie8/9)
+                obj.preview(function (index, file, result) {
+                    console.log(index); //得到文件索引
+                    console.log(file); //得到文件对象
+
+                    $('#fileList').append('<div class="layui-input-block">\n' +
+                        '    <span class="layui-badge layui-bg-black">' + file.name + '</span>\n' +
+                        '                     </div>');
+                    //console.log(result); //得到文件base64编码，比如图片
+
+                    //obj.resetFile(index, file, '123.jpg'); //重命名文件名，layui 2.3.0 开始新增
+
+                    //这里还可以做一些 append 文件列表 DOM 的操作
+
+                    //obj.upload(index, file); //对上传失败的单个文件重新上传，一般在某个事件中使用
+                    //delete files[index]; //删除列表中对应的文件，一般在某个事件中使用
+                });
+            }
+            , progress: function (n, elem, res, index) {
+                let percent = n + '%' //获取进度百分比
+                element.progress('upload', percent); //可配合 layui 进度条元素使用
+
+                console.log(elem); //得到当前触发的元素 DOM 对象。可通过该元素定义的属性值匹配到对应的进度条。
+                console.log(res); //得到 progress 响应信息
+                console.log(index); //得到当前上传文件的索引，多文件上传时的进度条控制，如：
+                element.progress('upload-' + index, n + '%'); //进度条
+            }
+            , error: function () {
+                //请求异常回调
+            }
+        });
+
+    })
+</script>
+</body>
+</html>

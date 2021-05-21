@@ -14,7 +14,7 @@ import java.util.List;
 public interface UserDao {
 
     //插入新用户
-    @Insert("insert into userinfo (username,password) values (#{username},#{password})")
+    @Insert("insert into userinfo (username,password) values (#{userName},#{md5password})")
     int Save(User user);
 
     //获取指定用户信息

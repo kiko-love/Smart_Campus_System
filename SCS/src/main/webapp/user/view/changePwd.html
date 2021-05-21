@@ -12,17 +12,36 @@
 
 
 <style>
-    .layui-card{
+    .layui-card {
         position: relative;
         top: 50px;
     }
+
+    .tips {
+        width: 300px!important;
+        height: 50px;
+        box-shadow: 1px 1px 2px 2px rgba(0, 0, 0, 0.1);
+        font-size: 13px;
+        line-height:50px;
+        text-align: center;
+        cursor: pointer;
+        user-select: none;
+        border-radius: 2px;
+        font-size: 15px;
+        color: white;
+        background-color: #d09709;
+    }
+    .tips:hover {
+        box-shadow: 1px 1px 4px 4px rgba(0, 0, 0, 0.1);
+    }
+
 </style>
 <script>
     function getCookie(cookieName) {
         const strCookie = document.cookie
         const cookieList = strCookie.split(';')
 
-        for(let i = 0; i < cookieList.length; i++) {
+        for (let i = 0; i < cookieList.length; i++) {
             const arr = cookieList[i].split('=')
             if (cookieName === arr[0]) {
                 return arr[1]
@@ -31,12 +50,13 @@
 
         return ''
     }
+
     layui.use('form', function () {
         let form = layui.form; //只有执行了这一步，部分表单元素才会自动修饰成功
         let $ = layui.$;
         let myform = $('#pwdForm');
 
-        $('#changeDo').click(function (){
+        $('#changeDo').click(function () {
             $('#md5_old').val(md5($('#oldpassword').val()));
             $('#md5_new').val(md5($('#repassword_1').val()));
             $('#username').val(sessionStorage.getItem("username"));
@@ -110,21 +130,21 @@
                 return false;
             }
             $.ajax({
-                url:'/User/updatePwd',
-                type:'post',
-                data:data.field,
-                datatype:"json",
-                success:function(res){
-                    if(res.success==1){
+                url: '/User/updatePwd',
+                type: 'post',
+                data: data.field,
+                datatype: "json",
+                success: function (res) {
+                    if (res.success == 1) {
                         $.ajax({
                             url: '../../User/SignOut',
                             type: 'post',
-                            success:function (res){
+                            success: function (res) {
                                 layer.open({
                                     title: '提示'
                                     , icon: 1
                                     , content: '密码修改成功！'
-                                    ,end:function (){
+                                    , end: function () {
                                         let curWwwPath = window.document.location.href;
                                         //获取主机地址之后的目录，如： index.jsp
                                         let pathName = window.document.location.pathname;
@@ -136,12 +156,12 @@
                                 });
 
                             },
-                            err: function (){
+                            err: function () {
                                 layer.open({
                                     title: '提示'
                                     , icon: 1
                                     , content: '密码修改成功！'
-                                    ,end:function (){
+                                    , end: function () {
                                         let curWwwPath = window.document.location.href;
                                         //获取主机地址之后的目录，如： index.jsp
                                         let pathName = window.document.location.pathname;
@@ -154,7 +174,7 @@
                             }
                         })
                     }
-                    if(res.success==0){
+                    if (res.success == 0) {
                         layer.open({
                             title: '提示'
                             , icon: 5
@@ -163,7 +183,7 @@
                     }
 
                 },
-                error:function(){
+                error: function () {
                     layer.open({
                         title: '服务器异常提示'
                         , icon: 2
@@ -180,61 +200,73 @@
 
 <body layui-layout-body pear-admin dark-theme>
 
-    <div class="layui-fluid">
-        <div class="layui-row layui-col-space30">
-            <div class="layui-col-md12">
-                <div class="layui-card">
-                    <div class="layui-card-header">
-                        <h2>修改密码</h2>
-                    </div>
-                    <div class="layui-card-body" pad15>
-
-                        <form class="layui-form" id="pwdForm" lay-verify='cForm'>
-                            <!-- 当前密码 -->
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">当前密码</label>
-                                <div class="layui-input-inline">
-                                    <input id="oldpassword" type="password" required lay-reqText="请输入当前密码"
-                                        lay-verify="required" placeholder="当前密码" autocomplete="off" class="layui-input">
-                                    <input type="hidden" name="oldpassword" id="md5_old">
-                                    <input type="hidden" name="userName" id="username">
-                                </div>
-                                <div class="layui-form-mid layui-word-aux">输入你当前的账号密码</div>
-                            </div>
-                            <!-- 新密码 -->
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">新密码</label>
-                                <div class="layui-input-inline">
-                                    <input id="repassword_1" type="password" required
-                                        lay-reqText="请输入新密码" lay-verify="required" placeholder="新密码" autocomplete="off"
-                                        class="layui-input">
-                                    <input type="hidden" name="repassword" id="md5_new">
-                                </div>
-                                <div class="layui-form-mid layui-word-aux">输入新密码 6-12位</div>
-                            </div>
-                            <!-- 确认新密码 -->
-                            <div class="layui-form-item">
-                                <label class="layui-form-label">确认密码</label>
-                                <div class="layui-input-inline">
-                                    <input id="repassword_2" type="password" required lay-reqText="请确认新密码"
-                                        lay-verify="required" placeholder="确认密码" autocomplete="off" class="layui-input">
-                                </div>
-                                <div class="layui-form-mid layui-word-aux">确认新密码</div>
-                            </div>
-
-                            <div class="layui-form-item">
-                                <div class="layui-input-block">
-                                    <button id="changeDo" class="layui-btn" lay-submit lay-filter="changePwd">修改</button>
-                                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-                                </div>
-                            </div>
-                        </form>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space30">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    <div class="layui-input-inline">
+                        <i class="layui-icon layui-icon-password" style="font-size: 20px">
+                           <span style="font-size: 20px">修改密码</span>
+                        </i>
 
                     </div>
+                </div>
+
+                <div class="layui-card-body" pad15>
+                    <form class="layui-form" id="pwdForm" lay-verify='cForm'>
+                        <div class="layui-form-item">
+                            <label class="layui-form-label"></label>
+                            <div class="layui-input-inline tips">
+                                <i class="layui-icon layui-icon-rate-solid"></i>
+                                温馨提示：你正在尝试修改密码
+                            </div>
+                        </div>
+                        <!-- 当前密码 -->
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">当前密码</label>
+                            <div class="layui-input-inline">
+                                <input id="oldpassword" type="password" required lay-reqText="请输入当前密码"
+                                       lay-verify="required" placeholder="当前密码" autocomplete="off" class="layui-input">
+                                <input type="hidden" name="oldpassword" id="md5_old">
+                                <input type="hidden" name="userName" id="username">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux">输入你当前的账号密码</div>
+                        </div>
+                        <!-- 新密码 -->
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">新密码</label>
+                            <div class="layui-input-inline">
+                                <input id="repassword_1" type="password" required
+                                       lay-reqText="请输入新密码" lay-verify="required" placeholder="新密码" autocomplete="off"
+                                       class="layui-input">
+                                <input type="hidden" name="repassword" id="md5_new">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux">输入新密码 6-12位</div>
+                        </div>
+                        <!-- 确认新密码 -->
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">确认密码</label>
+                            <div class="layui-input-inline">
+                                <input id="repassword_2" type="password" required lay-reqText="请确认新密码"
+                                       lay-verify="required" placeholder="确认密码" autocomplete="off" class="layui-input">
+                            </div>
+                            <div class="layui-form-mid layui-word-aux">确认新密码</div>
+                        </div>
+
+                        <div class="layui-form-item">
+                            <div class="layui-input-block">
+                                <button id="changeDo" class="layui-btn" lay-submit lay-filter="changePwd">修改</button>
+                                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                            </div>
+                        </div>
+                    </form>
+
                 </div>
             </div>
         </div>
     </div>
+</div>
 </body>
 
 </html>

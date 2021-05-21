@@ -4,25 +4,68 @@ import com.scs.pojo.resource;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
 public interface resourceService {
-    //增加资源信息
-
+    /**
+     * 增加资源信息
+     * @param res
+     * @return
+     */
     int saveRes(resource res);
 
-    //查询资源信息
-    resource getResInfoById(String fileName,String profession,String teacherId);
+    /**
+     * 根据文件名和所属科目查询资源信息
+     * @param fileName
+     * @param courseName
+     * @param teacherId
+     * @return
+     */
+    resource getResInfoById(String fileName,String courseName,String teacherId);
 
-    //删除信息
-    int deleteRes(String fileName,String profession);
+    /**
+     * 删除某个资源信息
+     * @param fileName
+     * @param courseName
+     * @return
+     */
+    int deleteRes(String fileName,String courseName);
 
-    int updateRes(String filepath,String filename,String profession);
+    /**
+     * 更新资料信息，用于覆盖某个资源
+     * @param filepath
+     * @param filename
+     * @param courseName
+     * @return
+     */
+    int updateRes(String filepath ,String filename,String courseName);
 
-    List<String> getTeacherId(String profession);
+    /**
+     * 查询某个科目下的所有老师
+     * @param courseName
+     * @return
+     */
+    List<String> getTeacherId(String courseName);
 
-    List<String> selectProfession();
+    /**
+     * 查询表中的资源的所有课程
+     * @return
+     */
+    List<String> selectcourseName();
 
-    List<resource> getResInfo(String teacherId, String profession);
+    /**
+     * 根据老师和学科查找对应的资源信息
+     * @param teacherId
+     * @param courseName
+     * @return
+     */
+    List<resource> getResInfo(String teacherId, String courseName);
+
+    /**
+     *查询所有资料信息
+     * @return
+     */
+    List<String> getCourseByTeacherId(String teacherId);
 }
