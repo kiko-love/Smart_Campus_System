@@ -16,5 +16,6 @@ public class resource {
     private String filePath;
     private String courseName;
     private Date createTime;
+    private String filesize;
 
 }

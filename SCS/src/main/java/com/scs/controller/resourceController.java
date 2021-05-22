@@ -7,10 +7,7 @@ import com.scs.pojo.resource;
 import com.scs.pojo.teacher;
 import com.scs.service.resourceService;
 import com.scs.service.teacherService;
-import com.scs.utils.basicDataUtils;
-import com.scs.utils.checkArrUtils;
-import com.scs.utils.JsonStatusUtils;
-import com.scs.utils.JsonDataUtils;
+import com.scs.utils.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -66,15 +63,16 @@ public class resourceController {
                 length++;
             }
         }
-        System.out.println(length);
         for (int i = 0; i < length; i++) {
-            //获取要上传的文件名
+            //获取要上传的文件名scs
             String filename = files[i].getOriginalFilename();
-            System.out.println(filename);
             //获取可访问该文件的地址
             String filepath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/resource/" + course + "/" + teacherId + "/" + filename;
             //查看该文件是否已经存在
             resource resInfo = resourceService.getResInfoById(filename, course, teacherId);
+            //获取文件大小
+            Long size = files[i].getSize();
+            String fileSize = DetermineFileSizeUtils.getFileSize(size);
             //如果该文件已经存在，覆盖原来的文件
             if (resInfo != null) {
                 //删除已经存在服务器的同名文件
@@ -86,7 +84,7 @@ public class resourceController {
             //文件不存在，将资料存在服务器，信息存到数据库
             else {
                 Date createTime = new Date();
-                count[i] = resourceService.saveRes(new resource(null, filename, teacherId, filepath, course,createTime));
+                count[i] = resourceService.saveRes(new resource(null, filename, teacherId, filepath, course,createTime,fileSize));
                 files[i].transferTo(new File(savePath + filename));
             }
             fileData.put(filename, filepath);
@@ -224,21 +222,18 @@ public class resourceController {
                 for (int i = 0; i < teacherIds.size(); i++) {
                     String id = String.valueOf((1 * 100 + i));
                     List<teacher> teacherName = teacherService.getTeacherById(teacherIds.get(i));
-                    System.out.println(teacherName);
                     if (teacherName.size()>0){
-                        System.out.println(teacherName.get(0).getRealName());
                         data.add(new JsonDataUtils(id, teacherName.get(0).getRealName(),
                                 false, nodeId,null
-                                , null, new basicDataUtils(teacherIds.get(i),course,null)));
+                                , null, new basicDataUtils(teacherIds.get(i),course,null,null)));
                     }else {
                         data.add(new JsonDataUtils(id, "[匿名教师]",
                                 false, nodeId,null
-                                , null, new basicDataUtils(teacherIds.get(i),course,null)));
+                                , null, new basicDataUtils(teacherIds.get(i),course,null,null)));
                     }
 
                 }
                 jsonData.put("data", data);
-
             } else {
                 status = new JsonStatusUtils("110", "获取第二层失败");
                 jsonData.put("status", status);
@@ -263,11 +258,14 @@ public class resourceController {
                 jsonData.put("status", status);
 
                 for (int i = 0; i < resInfo.size(); i++) {
+                    //获取上传时间
                     Date createTime = resInfo.get(i).getCreateTime();
+                    //获取上传文件大小
+                    String filesize = resInfo.get(i).getFilesize();
 
                     String id = String.valueOf(1 * 1000 + i);
                     data.add(new JsonDataUtils(id, resInfo.get(i).getFileName(), true, nodeId,
-                            new checkArrUtils("0","0"),null, new basicDataUtils(null,null,createTime)));
+                            new checkArrUtils("0","0"),null, new basicDataUtils(null,null,createTime,filesize)));
                     String format = JSON.toJSONStringWithDateFormat(data, "yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
                     jsonArray = JSONArray.parseArray(format);
                 }
@@ -360,9 +358,10 @@ public class resourceController {
                 jsonData.put("status", status);
                 for (int i = 0; i < resInfo.size(); i++) {
                     Date createTime = resInfo.get(i).getCreateTime();
+                    String filesize = resInfo.get(i).getFilesize();
                     String id = String.valueOf(1 * 1000 + i);
                     data.add(new JsonDataUtils(id, resInfo.get(i).getFileName(), true, nodeId,
-                            new checkArrUtils("0","0"),null, new basicDataUtils(null,null,createTime)));
+                            new checkArrUtils("0","0"),null, new basicDataUtils(null,null,createTime,filesize)));
                     String format = JSON.toJSONStringWithDateFormat(data, "yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
                     jsonArray = JSONArray.parseArray(format);
                 }
