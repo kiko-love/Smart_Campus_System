@@ -98,18 +98,15 @@
                     <div class="layui-form-item">
                         <label class="layui-form-label">文件列表</label>
                         <div id="fileList">
-
+                            <span class="layui-badge layui-bg-black">（空）</span>
                         </div>
                     </div>
                     <div class="layui-form-item">
                         <div class="layui-form-item layui-inline">
                             <label class="layui-form-label">学科名称</label>
                             <div class="layui-input-inline">
-                                <select name="course" lay-verify="">
-                                    <option value="">请选择学科</option>
-                                    <option value="数据结构">数据结构</option>
-                                    <option value="JavaWeb">JavaWeb</option>
-                                    <option value="概率论">概率论</option>
+                                <select id="courseList" name="course" lay-verify="">
+
                                 </select>
                             </div>
                         </div>
@@ -140,6 +137,13 @@
         let element = layui.element;
         let course = '';
 
+        $('#courseList').append('<option value="">请选择学科</option>\n' +
+            '                                    <option value="数据结构">数据结构</option>\n' +
+            '                                    <option value="JavaWeb">JavaWeb</option>\n' +
+            '                                    <option value="概率论">概率论</option>');
+        form.render('select'); //刷新select选择框渲染
+
+
         $('#uploadFiles').click(function () {
             $('#fileList').empty();
             element.progress('upload', '0%');
@@ -148,13 +152,27 @@
         form.on('submit(resource-query)', function (data) {
             console.log(data.field);
             course = data.field.course
+            if (data.field.file === '') {
+                layer.open({
+                    title: '提示'
+                    , icon: 5
+                    , content: '请先选择您要上传的文件'
+                });
+            } else if (data.field.course === '') {
+                layer.open({
+                    title: '提示'
+                    , icon: 5
+                    , content: '请选择您要上传的科目'
+                });
+            }
+
             return false;
         })
 
         //文件上传组件
         let uploadInst = upload.render({
             elem: '#uploadFiles' //绑定元素
-            , url: 'http://localhost:8080/Resource/uploadResource' //上传接口
+            , url: '/Resource/uploadResource' //上传接口
             , size: 1024 * 5
             , accept: 'file'
             , data: {
@@ -169,11 +187,34 @@
             , bindAction: '#resourceSubmit'
             , auto: false
             , multiple: true
+            ,done: function(res, index, upload){
+                if(res.success){
+                    //do something （比如将res返回的图片链接保存到表单的隐藏域）
+                    layer.open({
+                        title: '提示'
+                        , icon: 1
+                        , content: '文件上传成功完成'
+                    });
+                }else {
+                    layer.open({
+                        title: '提示'
+                        , icon: 5
+                        , content: '文件上传失败，请重新尝试'
+                    });
+                }
+
+                //获取当前触发上传的元素，一般用于 elem 绑定 class 的情况，注意：此乃 layui 2.1.0 新增
+                let item = this.item;
+                console.log(item);
+                //文件保存失败
+                //do something
+            }
             , allDone: function (obj) { //当文件全部被提交后，才触发
                 console.log(obj.total); //得到总文件数
                 console.log(obj.successful); //请求成功的文件数
                 console.log(obj.aborted); //请求失败的文件数
             }, choose: function (obj) {
+                $('#fileList').empty();
                 //将每次选择的文件追加到文件队列
                 let files = obj.pushFile();
 

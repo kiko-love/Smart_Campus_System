@@ -78,7 +78,7 @@
 <body class="pear-container">
 <div class="layui-card">
     <div class="layui-card-body">
-        <form class="layui-form" action="">
+        <form id="queryForm" class="layui-form" action="">
             <div class="layui-form-item">
                 <div class="layui-form-item layui-inline">
                     <label class="layui-form-label">学科名称</label>
@@ -131,36 +131,47 @@
 
 <script>
 
-    layui.use(['upload', 'table', 'form', 'jquery', 'dtree'], function () {
+    layui.use(['table', 'form', 'jquery', 'dtree'], function () {
         let table = layui.table;
         let form = layui.form;
         let $ = layui.jquery;
         let dtree = layui.dtree;
-        let upload = layui.upload;
-        let course = '124124';
-        let teacherId = '124124';
 
         $("#files_load").click(function () {
-            var params = dtree.getCheckbarNodesParam("organizationTree");
-            layer.msg(JSON.stringify(params));
+            let params = dtree.getCheckbarNodesParam("organizationTree");
+            let contexts = new Array()
+            for (let i = 0; i < params.length; i++) {
+                contexts[i] = params[i].context
+            }
+            layer.msg('开始下载文件');
+            let secParentId = dtree.getParam('organizationTree', params[0].parentId).parentId;
+            let fileForm = $("<form action='/Resource/downloadResource' method='post'></form>")
+            fileForm.append("<input type='hidden' name='contexts' value='" + JSON.stringify(contexts) + "'/>")
+            fileForm.append("<input type='hidden' name='teacherId' value='" +
+                dtree.getParam('organizationTree', params[0].parentId).basicData.teacherId + "'/>")
+            fileForm.append("<input type='hidden' name='course' value='" +
+                dtree.getParam('organizationTree', secParentId).context + "'/>")
+            $(document.body).append(fileForm);
+            fileForm.submit();
+            fileForm.remove();
         });
 
         form.on('submit(resource-query)', function (data) {
             console.log(data.field);
             $.ajax({
-                url: 'http://localhost:8080/Resource/selectByCourseName',
+                url: '/Resource/selectByCourseName',
                 dataType: 'json',
                 data: data.field,
                 type: 'post',
                 success: function (res) {
                     console.log('res.data');
                     console.log(res.data);
-                    if (res.data === '') {
-                        dtree.getCheckbarNodesParam("organizationTree");
-                    } else {
+                    if (res.data !== '') {
                         DTree.reload({
                             data: res.data
                         })
+                    } else {
+
                     }
 
                 },
@@ -173,25 +184,6 @@
         })
 
 
-        //文件上传组件
-        let uploadInst = upload.render({
-            elem: '#uploadFiles' //绑定元素
-            , url: '/Resource/uploadResource' //上传接口
-            , size: 1024 * 5
-            , accept: 'file'
-            , data: {
-                course: '计算机操作系统原理'
-            }
-            , multiple: true
-            , allDone: function (obj) { //当文件全部被提交后，才触发
-                console.log(obj.total); //得到总文件数
-                console.log(obj.successful); //请求成功的文件数
-                console.log(obj.aborted); //请求失败的文件数
-            }
-            , error: function () {
-                //请求异常回调
-            }
-        });
         let DTree = dtree.render({
             elem: "#organizationTree",
             iconfont: ["layui-icon", "dtreefont", "iconfont"],
@@ -205,11 +197,10 @@
             checkbarType: "all",
             record: true,
             skin: "zdy",
-            url: "http://localhost:8080/Resource/getInfo",
+            url: "/Resource/getInfo",
             beforeSend(ajax, self) {
                 return true;
             },
-            request: {teacherId: teacherId, course: course},
             iconfontStyle: [{
                 fnode: {  //一级节点
                     node: {  //非叶子节点
@@ -227,7 +218,7 @@
             },
             formatter: {
                 title: function (data) {  // 示例给有子集的节点返回节点统计
-                    console.log(data);
+                    //console.log(data);
                     let s = data.title;
                     if (data.last) {
                         s += ' <span style=\'color:#ce0690\'>' +
