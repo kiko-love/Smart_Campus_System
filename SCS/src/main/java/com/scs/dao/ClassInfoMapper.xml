@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.scs.dao.ClassInfoMapper">
+    <select id="getClassInfo" resultType="com.scs.pojo.classInfo">
+        select * from classinfo
+    </select>
+    <insert id="insertClassInfo" parameterType="com.scs.pojo.classInfo">
+        insert into classinfo(classes,classid,Major,counselor)
+        values (#{classes},#{classId},#{Major},#{counselor})
+    </insert>
+    <update id="updateClassInfo" parameterType="com.scs.pojo.classInfo">
+        update classinfo
+        <set>
+            <if test="classes !=null and classes !=''">
+                classes=#{classes},
+            </if>
+            <if test="classId !=null and classId !=''">
+                classId=#{classId},
+            </if>
+            <if test="Major !=null and Major !=''">
+                Major=#{Major},
+            </if>
+            <if test="counselor !=null and counselor !=''">
+                counselor=#{counselor}
+            </if>
+        </set>
+        where classes=#{classes}
+    </update>
+    <delete id="deleteClassInfo" parameterType="String">
+        delete from
+        classinfo
+        where classes=#{classname}
+    </delete>
+    <delete id="batchDeleteClassInfo" parameterType="java.util.List">
+        delete from
+        classinfo
+        where classId in(
+            <foreach collection="list" item="classId" separator=",">
+                #{classId}
+            </foreach>
+            )
+    </delete>
+
+</mapper>
