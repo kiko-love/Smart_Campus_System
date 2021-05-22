@@ -293,15 +293,12 @@ public class resourceController {
     @RequestMapping(value = "/selectByCourseName",produces = "application/json;charset=utf-8")
     @CrossOrigin
     public String selectByCourseName(HttpServletRequest request){
-        JsonStatusUtils status = null;
+        JsonStatusUtils status ;
         JSONObject jsonData = new JSONObject();
         ArrayList<JsonDataUtils> data = new ArrayList<>();
         String course = request.getParameter("courseName");
-        String teacherId = (String) request.getSession().getAttribute("userInformation");
-        System.out.println(course);
-        System.out.println(teacherId);
         //查询当前的资料的所有种类
-        List<resource> resInfo = resourceService.getResInfo(teacherId, course);
+        List<resource> resInfo = resourceService.getResourceByCourse(course);
         if (resInfo.size() > 0) {
             status = new JsonStatusUtils("200", "查询成功");
             jsonData.put("status", status);
@@ -317,7 +314,7 @@ public class resourceController {
     }
 
     /**
-     *获取所有资源
+     *获取老师本人上传的资源
      * @param request
      * @return
      */
@@ -328,10 +325,10 @@ public class resourceController {
     public String getInfoByTeacherId(HttpServletRequest request) {
         JSONObject jsonData = new JSONObject();
         ArrayList<JsonDataUtils> data = new ArrayList<>();
-        JsonStatusUtils status = null;
+        JsonStatusUtils status;
         String level = request.getParameter("level");
         String teacherId = (String) request.getSession().getAttribute("userInformation");
-
+        //获取第一层
         if (level == null) {
             //查询当前的资料的所有种类
             List<String> courses = resourceService.getCourseByTeacherId(teacherId);
@@ -351,9 +348,10 @@ public class resourceController {
             }
             return jsonData.toJSONString();
         }
+        //获取第二层
         if (level.equals("1")){
             //获取点击的科目
-            String course = request.getParameter("course");
+            String course = request.getParameter("context");
             String nodeId = request.getParameter("nodeId");
             List<resource> resInfo = resourceService.getResInfo(teacherId, course);
             JSONArray jsonArray = null;
@@ -369,14 +367,12 @@ public class resourceController {
                     jsonArray = JSONArray.parseArray(format);
                 }
                 jsonData.put("data", jsonArray);
-
             } else {
                 status = new JsonStatusUtils("110", "获取第二层失败");
                 jsonData.put("status", status);
                 jsonData.put("data", "");
             }
             return jsonData.toJSONString();
-
         }
         return null;
     }

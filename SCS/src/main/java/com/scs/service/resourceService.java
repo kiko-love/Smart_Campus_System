@@ -68,4 +68,11 @@ public interface resourceService {
      * @return
      */
     List<String> getCourseByTeacherId(String teacherId);
+
+    /**
+     * 根据课程名查资源
+     * @param courseName
+     * @return
+     */
+    List<resource> getResourceByCourse(String courseName);
 }

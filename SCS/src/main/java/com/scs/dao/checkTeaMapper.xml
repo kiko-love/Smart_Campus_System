@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--绑定Mapper接口-->
+<mapper namespace="com.scs.dao.checkTeaMapper">
+    <insert id="insertCheck" parameterType="com.scs.pojo.checkTeacher">
+        insert into teacher_check (teacherId,checkDate)
+        values (#{teacherId},#{checkDate})
+    </insert>
+
+    <update id="updateType" parameterType="com.scs.pojo.checkTeacher">
+        update teacher_check
+        <set>
+            <if test="checkType != null and checkType != ''">
+                checkType=#{checkType},
+            </if>
+        </set>
+        where checkDate=#{checkDate} and teacherId=#{teacherId}
+    </update>
+
+    <select id="selectById" parameterType="String" resultType="com.scs.pojo.checkTeacher">
+        select *
+        from teacher_check
+        where teacherId=#{teacherId}
+    </select>
+
+    <select id="selectAll" resultType="java.util.List">
+        select *
+        from teacher_check
+    </select>
+</mapper>

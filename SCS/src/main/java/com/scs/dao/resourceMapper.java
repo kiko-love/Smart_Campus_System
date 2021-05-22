@@ -78,4 +78,12 @@ public interface resourceMapper {
      */
     @Select("select courseName from resource where teacherId=#{teacherId} group by courseName;")
     List<String> getCourseByTeacherId(String teacherId);
+
+    /**
+     * 根据课程名查资源
+     * @param courseName
+     * @return
+     */
+    @Select("select * from resource where courseName=#{courseName}")
+    List<resource> getResourceByCourse(String courseName);
 }
