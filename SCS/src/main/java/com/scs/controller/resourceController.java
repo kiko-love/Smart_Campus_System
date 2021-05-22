@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.*;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -80,7 +81,8 @@ public class resourceController {
             resource resInfo = resourceService.getResInfoById(filename, course, teacherId);
             //获取文件大小
 
-            float size=(float)(Math.round(files[i].getSize()*100)/100);
+            DecimalFormat formater = new DecimalFormat(".##");
+            float size=Float.valueOf(formater.format(files[i].getSize()));
             String fileSize = DetermineFileSizeUtils.getFileSize(size);
             //如果该文件已经存在，覆盖原来的文件
             if (resInfo != null) {
