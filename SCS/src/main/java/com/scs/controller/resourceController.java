@@ -79,7 +79,8 @@ public class resourceController {
             //查看该文件是否已经存在
             resource resInfo = resourceService.getResInfoById(filename, course, teacherId);
             //获取文件大小
-            float size = files[i].getSize();
+
+            float size=(float)(Math.round(files[i].getSize()*100)/100);
             String fileSize = DetermineFileSizeUtils.getFileSize(size);
             //如果该文件已经存在，覆盖原来的文件
             if (resInfo != null) {
