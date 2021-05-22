@@ -94,6 +94,9 @@
                     <button type="button" class="pear-btn pear-btn-md pear-btn-primary" id="uploadFiles">
                         选择文件
                     </button>
+                    <button type="button" class="pear-btn pear-btn-md pear-btn-danger" id="emptyList">
+                        清空上传列表
+                    </button>
                 </form>
                 <div class="layui-upload">
                     <div class="layui-upload-list" style="max-width: 1000px;">
@@ -141,21 +144,33 @@
             , form = layui.form;
 
 
+
+
         $.ajax({
             url: '/TeacherCourseController/SelectCourseByTeacherId',
             dataType: 'json',
             type: 'post',
             success: function (res) {
                 console.log(res.data.length);
-                for (let i = 0; i < res.data.length; i++) {
-                    $('#courseList').append('<option value="' + res.data[i].courseName + '">' +
-                        res.data[i].courseName + '</option>\n');
+                if (res.success) {
+                    for (let i = 0; i < res.data.length; i++) {
+                        $('#courseList').append('<option value="' + res.data[i].courseName + '">' +
+                            res.data[i].courseName + '</option>\n');
+                    }
+                    form.render('select'); //刷新select选择框渲染
+                } else {
+                    layer.msg(res.msg, {icon: 5, anim: 6});
                 }
-                form.render('select'); //刷新select选择框渲染
+            },
+            error: function (res) {
+                layer.open({
+                    title: '提示'
+                    , icon: 2
+                    , content: '服务器处理异常，获取教师课程列表失败'
+                });
+
             }
         })
-
-
 
 
         form.on('submit(resource-query)', function (data) {
@@ -202,6 +217,7 @@
             , choose: function (obj) {
                 let that = this;
                 let files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列
+                console.log(files)
                 //读取本地文件
                 obj.preview(function (index, file, result) {
                     let tr = $(['<tr id="upload-' + index + '">'
@@ -225,7 +241,13 @@
                         tr.remove();
                         uploadInst.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
                     });
-
+                    $('#emptyList').click(function (){
+                        for (let x in files) {
+                            delete files[x];
+                        }
+                        $('#fileList').html('');
+                        layer.msg('已清空上传列表', {icon: 1});
+                    })
                     that.elemList.append(tr);
                     element.render('progress'); //渲染新加的进度条组件
                 });

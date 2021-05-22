@@ -14,12 +14,12 @@
 
     /* zdy主题风格*/
     .dtree-zdy-item-this {
-        background-color: rgba(224, 222, 222, 0.86) !important;
+        background-color: rgba(232, 230, 230, 0.86) !important;
     }
 
     /* 当前选中行样式*/
     .dtree-zdy-item:hover {
-        background-color: #f2f2f2 !important;
+        background-color: rgba(242, 242, 242, 0.84) !important;
     }
 
     /* 行悬停样式*/
@@ -113,6 +113,10 @@
         <div class="layui-card">
             <div class="layui-card-body">
                 <div class="layui-form-item layui-inline">
+                    <button id="files_refresh" class="layui-btn  layui-btn-normal layui-btn-sm" lay-submit lay-filter="files_load">
+                        <i class="layui-icon layui-icon-refresh"></i>
+                        刷新列表
+                    </button>
                     <button id="files_load" class="layui-btn layui-btn-sm" lay-submit lay-filter="files_load">
                         <i class="layui-icon layui-icon-download-circle"></i>
                         批量下载
@@ -137,8 +141,22 @@
         let $ = layui.jquery;
         let dtree = layui.dtree;
 
+        $('#files_refresh').click(function (){
+            dtree.reload('organizationTree',{
+                url:'/Resource/getInfo'
+            })
+        })
+
         $("#files_load").click(function () {
             let params = dtree.getCheckbarNodesParam("organizationTree");
+            if (params.length===0) {
+                layer.open({
+                    title: '提示'
+                    , icon: 0
+                    , content: '请先选择您要下载的文件'
+                });
+                return false;
+            }
             let contexts = new Array()
             for (let i = 0; i < params.length; i++) {
                 contexts[i] = params[i].context
@@ -221,9 +239,11 @@
                     //console.log(data);
                     let s = data.title;
                     if (data.last) {
-                        s += ' <span style=\'color:#ce0690\'>' +
+                        s += ' <span class="layui-badge layui-bg-gray">' +
                             '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;创建日期:' +
-                            data.basicData.createTime + '</span>';
+                            data.basicData.createTime +
+                            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;文件大小:'+data.basicData.filesize
+                            +'</span>';
                     }
                     return s;
                 }
