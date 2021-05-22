@@ -90,13 +90,12 @@
 <script src="../../component/pear/pear.js"></script>
 
 <script>
-    layui.use(['upload','table', 'form', 'jquery', 'dtree'], function () {
+    layui.use(['upload', 'table', 'form', 'jquery', 'dtree'], function () {
         let table = layui.table;
         let form = layui.form;
         let $ = layui.jquery;
         let dtree = layui.dtree;
         let MODULE_PATH = "operate/";
-
 
 
         let cols = [
@@ -339,14 +338,14 @@
                 window.refresh();
             } else if (obj.event === 'batchRemove') {
                 window.batchRemove(obj);
-            }else if (obj.event === 'edit') {
+            } else if (obj.event === 'edit') {
                 window.edit(obj);
             }
         });
 
         form.on('submit(user-query)', function (data) {
             table.reload('organization-table', {
-                url:'/User/searchAccount',
+                url: '/User/searchAccount',
                 page: {
                     layout: ['count', 'prev', 'page', 'next', 'skip']
                     , curr: parent.layui.jquery(".layui-laypage-em").next().html()
@@ -414,7 +413,7 @@
                     type: 'post',
                     success: function (result) {
                         layer.close(index);
-                        if (result.success == '1') {
+                        if (result.success === '1') {
                             layer.msg(result.msg, {icon: 1, time: 1000}, function () {
                                 tableIns.reload({
                                     url: '/User/getAllUsers',
@@ -447,7 +446,19 @@
         }
 
         window.batchRemove = function (obj) {
+
             let data = table.checkStatus(obj.config.id).data;
+            console.log(data);
+            for (let i = 0; i < data.length; i++) {
+                if (data[i].role === '0') {
+                    layer.open({
+                        title: '权限不足'
+                        , icon: 0
+                        , content: '所选账号中包含管理员账号，请将其移出后再尝试'
+                    })
+                    return false;
+                }
+            }
             if (data.length === 0) {
                 layer.msg("未选中数据", {
                     icon: 3,
@@ -474,8 +485,8 @@
                 });
                 $.ajax({
                     url: "/User/batchRemoveAccount",
-                    data:{
-                        userNames:JSON.stringify(userNames)
+                    data: {
+                        userNames: JSON.stringify(userNames)
                     },
                     dataType: 'json',
                     type: 'post',

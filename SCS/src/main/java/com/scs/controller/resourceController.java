@@ -44,6 +44,14 @@ public class resourceController {
         //获取要存放的位置,request.getSession().getServletContext()  获取项目路径,不同种类的学科的资料存放在相应的文件夹
         HttpSession session = request.getSession();
         String course = request.getParameter("course");
+        JSONObject data = new JSONObject();
+        if (course.equals("")){
+            data.put("status", 200);
+            data.put("success", 0);
+            data.put("msg", "课程参数错误，请重新上传");
+            data.put("data", null);
+            return data.toJSONString();
+        }
         //获取上传该文件的老师
         String teacherId = (String) session.getAttribute("userInformation");
         String path = request.getSession().getServletContext().getRealPath("");
@@ -53,7 +61,7 @@ public class resourceController {
         if (!file.exists()) {
             file.mkdirs();
         }
-        JSONObject data = new JSONObject();
+
         int[] count = new int[files.length];
         Map<String, String> fileData = new HashMap<String, String>();
         int length = 0;
@@ -71,7 +79,7 @@ public class resourceController {
             //查看该文件是否已经存在
             resource resInfo = resourceService.getResInfoById(filename, course, teacherId);
             //获取文件大小
-            Long size = files[i].getSize();
+            float size = files[i].getSize();
             String fileSize = DetermineFileSizeUtils.getFileSize(size);
             //如果该文件已经存在，覆盖原来的文件
             if (resInfo != null) {
@@ -227,11 +235,11 @@ public class resourceController {
                     List<teacher> teacherName = teacherService.getTeacherById(teacherIds.get(i));
                     if (teacherName.size()>0){
                         data.add(new JsonDataUtils(id, teacherName.get(0).getRealName(),
-                                false, nodeId,null
+                                false, nodeId,new checkArrUtils("0","0")
                                 , null, new basicDataUtils(teacherIds.get(i),course,null,null)));
                     }else {
                         data.add(new JsonDataUtils(id, "[匿名教师]",
-                                false, nodeId,null
+                                false, nodeId,new checkArrUtils("0","0")
                                 , null, new basicDataUtils(teacherIds.get(i),course,null,null)));
                     }
 
