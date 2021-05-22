@@ -16,7 +16,7 @@ public interface resourceMapper {
      * @param res
      * @return
      */
-    @Insert("insert into resource(fileId,fileName,teacherId,filePath,courseName,createTime) values(#{fileId},#{fileName},#{teacherId},#{filePath},#{courseName},#{createTime})")
+    @Insert("insert into resource(fileId,fileName,teacherId,filePath,courseName,createTime,filesize) values(#{fileId},#{fileName},#{teacherId},#{filePath},#{courseName},#{createTime},#{filesize})")
     int saveRes(resource res);
 
     /**
