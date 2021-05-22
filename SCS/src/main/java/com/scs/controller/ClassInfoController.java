@@ -2,7 +2,6 @@ package com.scs.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.scs.pojo.classInfo;
-import com.scs.pojo.major;
 import com.scs.service.ClassInfoService;
 import com.scs.service.impl.ClassInfoServiceimpl;
 import org.springframework.beans.factory.annotation.Autowired;

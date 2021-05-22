@@ -513,6 +513,7 @@ layui.define(['jquery','layer','form'], function(exports) {
         this.defaultRequest = $.extend(this.defaultRequest, this.options.defaultRequest || OPTIONS.defaultRequest) || this.defaultRequest; //默认请求参数
         this.filterRequest = this.options.filterRequest || OPTIONS.filterRequest || [];	//过滤请求参数
         this.request = this.options.request || OPTIONS.request || {}; //用户自定义请求参数
+        //console.log(this.options.request);
         this.response = $.extend(this.response, this.options.response || OPTIONS.response) || this.response; //返回json格式
         this.data = this.options.data || OPTIONS.data || null; //初始化指定该参数，则不会访问异步接口
         this.dataFormat = this.options.dataFormat || OPTIONS.dataFormat || "levelRelationship"; //用于用户配置的data数据格式，list：列表，  levelRelationship：层级关系，默认
@@ -1642,10 +1643,8 @@ layui.define(['jquery','layer','form'], function(exports) {
             layer.msg("数据请求异常，url参数未指定", {icon:5});
             return ;
         }
-
         //先将ul中的元素清空
         $ul.html("");
-
         var index = "";
 
         AjaxHelper.request({

@@ -118,8 +118,11 @@ public class resourceController {
     public void downloadFiles(HttpServletRequest request, HttpServletResponse response){
         String course = request.getParameter("course");
         String teacherId = request.getParameter("teacherId");
-        List<String> filenames = Arrays.asList(request.getParameter("contexts"));
+        List<String> filenames = JSONObject.parseArray(request.getParameter("contexts"),String.class);
         //响应头的设置
+        System.out.println(course);
+        System.out.println(teacherId);
+        System.out.println(filenames);
         response.reset();
         response.setCharacterEncoding("utf-8");
         response.setContentType("multipart/form-data");
@@ -303,7 +306,7 @@ public class resourceController {
             status = new JsonStatusUtils("200", "查询成功");
             jsonData.put("status", status);
             data.add(new JsonDataUtils("1", resInfo.get(0).getCourseName(), false, "2014",
-                    new checkArrUtils("0","0"), null,new basicDataUtils()));
+                    null, null,new basicDataUtils()));
             jsonData.put("data", data);
         } else {
             status = new JsonStatusUtils("110", "查询失败");

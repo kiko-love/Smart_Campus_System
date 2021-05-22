@@ -22,39 +22,47 @@ public class TeacherCourseController {
     private TeacherCourseService teacherCourseService;
 
     @ResponseBody
-    @RequestMapping(value = "/SelectCourseByTeacherId",produces = "application/json;charset=utf-8")
-    public String SelectCourseByTeacherId(HttpServletRequest request){
+    @RequestMapping(value = "/SelectCourseByTeacherId", produces = "application/json;charset=utf-8")
+    public String SelectCourseByTeacherId(HttpServletRequest request) {
         JSONObject data = new JSONObject();
-        String teacherid = request.getParameter("teacherid");
-        List<String> list = teacherCourseService.SeclectTeacherCourse(teacherid);//查询courseid by teacherId
+        String teacherId = (String) request.getSession().getAttribute("userInformation");
+        List<String> list = teacherCourseService.SeclectTeacherCourse(teacherId);//查询courseid by teacherId
         System.out.println(list);
-        List<course> courselist = courseService.batchSelectCourse(list);
-        if(courselist.size()==0){
-            data.put("success",0);
-            data.put("msg","未查找到该教师对应教学科目");
-            data.put("count",0);
+        if (list.size() > 0) {
+            List<course> courselist = courseService.batchSelectCourse(list);
+            if (courselist.size() == 0) {
+                data.put("success", 0);
+                data.put("msg", "未查找到该教师对应教学科目");
+                data.put("count", 0);
+                return data.toJSONString();
+            }
+            data.put("success", 1);
+            data.put("msg", "查找到该教师对应教学科目");
+            data.put("data", courselist);
+            return data.toJSONString();
+        } else {
+            data.put("success", 0);
+            data.put("msg", "未查找到该教师对应教学科目");
+            data.put("count", 0);
             return data.toJSONString();
         }
-        data.put("success",1);
-        data.put("msg","查找到该教师对应教学科目");
-        data.put("data",courselist);
-        return data.toJSONString();
+
     }
 
     @ResponseBody
     @RequestMapping(value = "/InsertTeacherCourse")
-    public String InsertTeacherCourse(HttpServletRequest request){
+    public String InsertTeacherCourse(HttpServletRequest request) {
         JSONObject data = new JSONObject();
         String courseid = request.getParameter("courseid");
         String teacherid = request.getParameter("teacherid");
-        RelationTeacherCourse item = new RelationTeacherCourse(teacherid,courseid);
+        RelationTeacherCourse item = new RelationTeacherCourse(teacherid, courseid);
         int count = teacherCourseService.InsertTeacherCourse(item);
-        if(count>0){
-            data.put("success","1");
-            data.put("msg","数据插入成功");
-        }else{
-            data.put("success","0");
-            data.put("msg","数据插入失败");
+        if (count > 0) {
+            data.put("success", "1");
+            data.put("msg", "数据插入成功");
+        } else {
+            data.put("success", "0");
+            data.put("msg", "数据插入失败");
         }
         return data.toJSONString();
     }

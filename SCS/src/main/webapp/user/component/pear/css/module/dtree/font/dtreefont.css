@@ -12,7 +12,7 @@
 [class^="dtree-icon-"], [class*=" dtree-icon-"] {
   /* use !important to prevent issues with browser extensions that change font */
   font-family: 'dtreefont' !important;
-  font-size: 16px;
+  font-size: 25px;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
 }

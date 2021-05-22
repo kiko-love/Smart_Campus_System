@@ -6,10 +6,10 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>登陆</title>
-    <link rel="stylesheet" href="static/layui/css/layui.css" media="all" charset="utf-8">
+    <link rel="stylesheet" href="/static/layui/css/layui.css" media="all" charset="utf-8">
     <link rel="stylesheet" href="static/css/login.css" media="all" charset="utf-8">
     <link rel="shortcut icon" href="static/images/favicon.ico" type="image/x-icon">
-    <script src="static/layui/layui.js" charset="UTF-8"></script>
+    <script src="/static/layui/layui.js" charset="UTF-8"></script>
     <script src="static/js/md5.js" charset="utf-8"></script>
     <script src="static/js/login.js" charset="UTF-8"></script>
 

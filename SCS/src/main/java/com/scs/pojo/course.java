@@ -12,8 +12,9 @@ public class course {
     private String courseId;
     private String courseName;
     private String courseScore;
+    //学时
     private String courseTime;
-    //所属专业
+    //开设学院
     private String courseMajor;
     @Override
     public String toString() {
