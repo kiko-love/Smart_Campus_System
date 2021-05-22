@@ -55,10 +55,10 @@ colors:
 - id: "5"
   color: "#3963bc"
 ## 主题面板的链接列表配置
-links: 
-- icon: "layui-icon layui-icon-website"
-  title: "关于本项目"
-  href: "http://www.pearadmin.com"
+#links:
+#- icon: "layui-icon layui-icon-website"
+#  title: "关于本项目"
+#  href: "http://www.pearadmin.com"
 ## 其他配置
 other: 
   ## 主页动画时长

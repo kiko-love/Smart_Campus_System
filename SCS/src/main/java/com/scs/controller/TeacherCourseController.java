@@ -2,8 +2,10 @@ package com.scs.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.scs.pojo.course;
+import com.scs.pojo.teacher;
 import com.scs.service.TeacherCourseService;
 import com.scs.service.courseService;
+import com.scs.service.teacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +22,8 @@ public class TeacherCourseController {
     private courseService courseService;
     @Autowired
     private TeacherCourseService teacherCourseService;
+    @Autowired
+    private teacherService teaService;
 
     @ResponseBody
     @RequestMapping(value = "/SelectCourseByTeacherId", produces = "application/json;charset=utf-8")
@@ -28,21 +32,29 @@ public class TeacherCourseController {
         String teacherId = (String) request.getSession().getAttribute("userInformation");
         List<String> list = teacherCourseService.SeclectTeacherCourse(teacherId);//查询courseid by teacherId
         System.out.println(list);
+        List<teacher> teacher = teaService.getTeacherById(teacherId);
+        String realName = null;
+        if (teacher.size()!=0){
+            realName = teacher.get(0).getRealName();
+        }
         if (list.size() > 0) {
             List<course> courselist = courseService.batchSelectCourse(list);
             if (courselist.size() == 0) {
                 data.put("success", 0);
                 data.put("msg", "未查找到该教师对应教学科目");
                 data.put("count", 0);
+                data.put("teacherName", realName);
                 return data.toJSONString();
             }
             data.put("success", 1);
-            data.put("msg", "查找到该教师对应教学科目");
+            data.put("msg", "查询该教师对应教学科目成功");
+            data.put("teacherName", realName);
             data.put("data", courselist);
             return data.toJSONString();
         } else {
             data.put("success", 0);
             data.put("msg", "未查找到该教师对应教学科目");
+            data.put("teacherName", realName);
             data.put("count", 0);
             return data.toJSONString();
         }

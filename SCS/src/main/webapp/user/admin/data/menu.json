@@ -26,14 +26,14 @@
   },
   {
     "id": "system",
-    "title": "系统管理",
+    "title": "管理中心",
     "icon": "layui-icon layui-icon-set-fill",
     "type": 0,
     "href": "",
     "children": [
       {
         "id": 21,
-        "title": "用户管理",
+        "title": "人员管理",
         "icon": "layui-icon layui-icon-face-smile",
         "type": 0,
         "openType": "_iframe",

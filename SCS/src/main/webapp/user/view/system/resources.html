@@ -112,6 +112,9 @@
     <div class="layui-col-md12">
         <div class="layui-card">
             <div class="layui-card-body">
+                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+                    <legend>公共资源列表</legend>
+                </fieldset>
                 <div class="layui-form-item layui-inline">
                     <button id="files_refresh" class="layui-btn  layui-btn-normal layui-btn-sm" lay-submit lay-filter="files_load">
                         <i class="layui-icon layui-icon-refresh"></i>
@@ -143,7 +146,8 @@
 
         $('#files_refresh').click(function (){
             dtree.reload('organizationTree',{
-                url:'/Resource/getInfo'
+                url:'http://localhost:8080/Resource/getInfo',
+                initLevel: 1,
             })
         })
 
@@ -177,7 +181,7 @@
         form.on('submit(resource-query)', function (data) {
             console.log(data.field);
             $.ajax({
-                url: '/Resource/selectByCourseName',
+                url: 'http://localhost:8080/Resource/selectByCourseName',
                 dataType: 'json',
                 data: data.field,
                 type: 'post',
@@ -191,7 +195,6 @@
                     } else {
 
                     }
-
                 },
                 error: function (res) {
                     console.log(res);
@@ -215,7 +218,7 @@
             checkbarType: "all",
             record: true,
             skin: "zdy",
-            url: "/Resource/getInfo",
+            url: "http://localhost:8080/Resource/getInfo",
             beforeSend(ajax, self) {
                 return true;
             },
