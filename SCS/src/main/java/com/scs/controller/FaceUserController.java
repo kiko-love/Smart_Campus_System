@@ -6,7 +6,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.scs.aip.face.FaceDetect;
 import com.scs.aip.face.FaceSearch;
 import com.scs.pojo.FaceUser;
+import com.scs.pojo.checkTeacher;
 import com.scs.service.FaceUserService;
+import com.scs.service.checkTeaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -23,6 +26,9 @@ public class FaceUserController {
 
     @Autowired
     private FaceUserService faceUserService;
+
+    @Autowired
+    private checkTeaService checkTeaService;
 
 
     @ResponseBody
@@ -63,6 +69,10 @@ public class FaceUserController {
             //获取人脸ID
             faceId = array.getString("user_id");
             System.out.println("键值：" + faceId);
+            if(faceId!=null||faceId.equals("")){
+                Date date = new Date();
+                checkTeaService.insertCheck(new checkTeacher(faceId,date));
+            }
         }
         List<String> list = new ArrayList<>();
         //原有的json数据，做备用
