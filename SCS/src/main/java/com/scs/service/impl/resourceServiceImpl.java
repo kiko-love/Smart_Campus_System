@@ -53,4 +53,9 @@ public class resourceServiceImpl implements resourceService {
     public List<String> getCourseByTeacherId(String teacherId) {
         return resMapper.getCourseByTeacherId(teacherId);
     }
+
+    @Override
+    public List<resource> getResourceByCourse(String courseName) {
+        return resMapper.getResourceByCourse(courseName);
+    }
 }
