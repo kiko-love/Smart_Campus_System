@@ -303,7 +303,25 @@ public class resourceController {
         JSONObject jsonData = new JSONObject();
         ArrayList<JsonDataUtils> data = new ArrayList<>();
         String course = request.getParameter("courseName");
-
+        //当未输入课程时
+        if(course==null||course.equals("")){
+            List<String> courses = resourceService.selectcourseName();
+            if (courses.size() > 0) {
+                status = new JsonStatusUtils("200", "获取第一层成功");
+                jsonData.put("status", status);
+                for (int i = 0; i < courses.size(); i++) {
+                    String id = String.valueOf(i + 1);
+                    data.add(new JsonDataUtils(id, courses.get(i), false, "2014",
+                            null, null,new basicDataUtils()));
+                }
+                jsonData.put("data", data);
+            } else {
+                status = new JsonStatusUtils("110", "无资源数据");
+                jsonData.put("status", status);
+                jsonData.put("data", "");
+            }
+            return jsonData.toJSONString();
+        }
         //查询当前的资料的所有种类
         List<resource> resInfo = resourceService.getResourceByCourse(course);
         if (resInfo.size() > 0) {
