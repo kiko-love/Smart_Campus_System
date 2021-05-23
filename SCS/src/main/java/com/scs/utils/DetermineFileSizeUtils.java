@@ -1,32 +1,68 @@
 package com.scs.utils;
 
+import org.springframework.web.multipart.MultipartFile;
+
+import java.text.DecimalFormat;
+
 public class DetermineFileSizeUtils {
-        public static String getFileSize(float size){
-            //如果字节数少于1024，则直接以B为单位，否则先除于1024，后3位因太少无意义
-            if (size < 1024) {
-                return String.valueOf(size) + "B";
+    /**
+     * 获取文件的大小(返回到达的最高单位)
+     * 比如：1024Byte就不再用Byte
+     * 直接返回1KB
+     * 返回值精确到小数点后3位
+     *
+     * @param file 文件
+     * @return 文件的大小 若文件不存在或者不是文件就返回null
+     */
+    public static String getSize(MultipartFile file) {
+        long size = file.getSize();
+        double s = (double) size;
+        String unit;
+        if (size != -1L) {
+            int l;
+            if (size < 1024L) {
+                l = 0;
+            } else if (size < 1024L * 1024L) {
+                l = 1;
+                s = (double) size / 1024L;
             } else {
-                size = size / 1024;
+                for (l = 2; size >= 1024L * 1024L; l++) {
+                    size = size / 1024L;
+                    if ((size / 1024L) < 1024L) {
+                        s = (double) size / 1024L;
+                        break;
+                    }
+                }
             }
-            //如果原字节数除于1024之后，少于1024，则可以直接以KB作为单位
-            //因为还没有到达要使用另一个单位的时候
-            //接下去以此类推
-            if (size < 1024) {
-                return String.valueOf(size) + "KB";
-            } else {
-                size = size / 1024;
+
+            switch (l) {
+                case 0:
+                    unit = "Byte";
+                    break;
+                case 1:
+                    unit = "KB";
+                    break;
+                case 2:
+                    unit = "MB";
+                    break;
+                case 3:
+                    unit = "GB";
+                    break;
+                case 4:
+                    //不可能也不该达到的值
+                    unit = "TB";
+                    break;
+                default:
+                    //ER代表错误
+                    unit = "ER";
             }
-            if (size < 1024) {
-                //因为如果以MB为单位的话，要保留最后1位小数，
-                //因此，把此数乘以100之后再取余
-                size = size * 100;
-                return String.valueOf((size / 100)) + "."
-                        + String.valueOf((size % 100)) + "MB";
-            } else {
-                //否则如果要以GB为单位的，先除于1024再作同样的处理
-                size = size * 100 / 1024;
-                return String.valueOf((size / 100)) + "."
-                        + String.valueOf((size % 100)) + "GB";
-            }
+
+            String format = String.format("%.3f", s);
+            return format + unit;
         }
+        return null;
+    }
 }
+
+
+

@@ -145,7 +145,7 @@ public class TeacherController {
         data.put("data", null);
         return data.toJSONString();
     }
-    //修改学生信息
+    //修改老师信息
     @ResponseBody
     @RequestMapping(value = "/updateTeacher", produces = "application/json;charset=utf-8")
     public String updateTeacher(HttpServletRequest req){
@@ -167,8 +167,8 @@ public class TeacherController {
             e.printStackTrace();
         }
         teacher tea = new teacher(teacherId, realName, phone, sex, collegeId, addr,birthday);
-        int addNumber = teaService.updateTeacher(tea);
-        if (addNumber > 0) {
+        int updateNumber = teaService.updateTeacher(tea);
+        if (updateNumber > 0) {
             data.put("success", "1");
             data.put("msg", "修改成功");
         } else {
@@ -176,7 +176,7 @@ public class TeacherController {
             data.put("msg", "修改失败");
         }
         data.put("code", 0);
-        data.put("count", addNumber);
+        data.put("count", updateNumber);
         data.put("data", null);
         return data.toJSONString();
     }

@@ -75,15 +75,13 @@ public class resourceController {
         for (int i = 0; i < length; i++) {
             //获取要上传的文件名scs
             String filename = files[i].getOriginalFilename();
+            System.out.println(filename);
             //获取可访问该文件的地址
             String filepath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + "/resource/" + course + "/" + teacherId + "/" + filename;
             //查看该文件是否已经存在
             resource resInfo = resourceService.getResInfoById(filename, course, teacherId);
             //获取文件大小
-
-            DecimalFormat formater = new DecimalFormat(".##");
-            float size=Float.valueOf(formater.format(files[i].getSize()));
-            String fileSize = DetermineFileSizeUtils.getFileSize(size);
+            String fileSize = DetermineFileSizeUtils.getSize(files[i]);
             //如果该文件已经存在，覆盖原来的文件
             if (resInfo != null) {
                 //删除已经存在服务器的同名文件
@@ -129,9 +127,6 @@ public class resourceController {
         String teacherId = request.getParameter("teacherId");
         List<String> filenames = JSONObject.parseArray(request.getParameter("contexts"),String.class);
         //响应头的设置
-        System.out.println(course);
-        System.out.println(teacherId);
-        System.out.println(filenames);
         response.reset();
         response.setCharacterEncoding("utf-8");
         response.setContentType("multipart/form-data");
@@ -168,8 +163,7 @@ public class resourceController {
             File file = new File(filepath);
             try {
                 //添加ZipEntry，并ZipEntry中写入文件流
-                //这里，加上i是防止要下载的文件有重名的导致下载失败
-                zipos.putNextEntry(new ZipEntry(i + fileName));
+                zipos.putNextEntry(new ZipEntry(fileName));
                 os = new DataOutputStream(zipos);
                 InputStream is = new FileInputStream(file);
                 byte[] b = new byte[1024];
@@ -216,7 +210,7 @@ public class resourceController {
                 }
                 jsonData.put("data", data);
             } else {
-                status = new JsonStatusUtils("110", "获取第一层失败");
+                status = new JsonStatusUtils("110", "无资源数据");
                 jsonData.put("status", status);
                 jsonData.put("data", "");
             }
@@ -309,6 +303,7 @@ public class resourceController {
         JSONObject jsonData = new JSONObject();
         ArrayList<JsonDataUtils> data = new ArrayList<>();
         String course = request.getParameter("courseName");
+
         //查询当前的资料的所有种类
         List<resource> resInfo = resourceService.getResourceByCourse(course);
         if (resInfo.size() > 0) {
