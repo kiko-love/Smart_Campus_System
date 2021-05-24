@@ -112,11 +112,11 @@
     <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"></script>
     <script src="https://www.layuicdn.com/layui/layui.js"></script>
     <script>
-        var isopen = false;
-        var isgetPic = false;
-        var handling = false;
-        var first_get_pic = false;
-        var upload_url = "/aipFace/detect";
+        let isopen = false;
+        let isgetPic = false;
+        let handling = false;
+        let first_get_pic = false;
+        let upload_url = "/aipFace/detect";
         $(function () {
             $("#open").click(getMedia);
             $("#close").click(closeMedia);
@@ -169,7 +169,7 @@
                 isopen = false;
             }
             /*---------------------分割线-----------------------*/
-            var picinfo = canvas.toDataURL("image/png") + "";
+            let picinfo = canvas.toDataURL("image/png") + "";
             picinfo = picinfo.replace("data:image/png;base64,", "");
             //console.log(picinfo);
             handling = true;
@@ -192,7 +192,7 @@
                     //console.log(result.result.face_num);
                     if (result.error_msg == "SUCCESS") {
                         if (type === "0") {
-                            var faceObj = {
+                            let faceObj = {
                                 face_num: result.result.face_num
                                 , gender: result.result.face_list[0].gender.type
                                 , mask: result.result.face_list[0].mask.type
@@ -234,7 +234,7 @@
                         }
                         if (type === "2") {
                             console.log(result.result);
-                            var faceObj = {
+                            let faceObj = {
                                 face_token: result.result.face_token
                                 , face_name: result.result.name
                                 , group_id: result.result.user_list[0].group_id
@@ -370,7 +370,7 @@
                 });
                 return;
             }
-            var picinfo = canvas.toDataURL("image/png") + "";
+            let picinfo = canvas.toDataURL("image/png") + "";
             let url = uplood_url;
             picinfo = picinfo.replace("data:image/png;base64,", "");
             //console.log(picinfo);
@@ -411,9 +411,9 @@
     </script>
     <script>
         layui.use('upload', function () {
-            var upload = layui.upload;
+            let upload = layui.upload;
             //执行实例
-            var uploadInst = upload.render({
+            let uploadInst = upload.render({
                 elem: '#test1' //绑定元素
                 , url: upload_url //上传接口
                 , before: function (obj) { //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
@@ -443,15 +443,12 @@
             });
         });
         layui.use('dropdown', function () {
-            var dropdown = layui.dropdown
+            let dropdown = layui.dropdown
             dropdown.render({
                 elem: '#snapAndupload' //可绑定在任意元素中，此处以上述按钮为例
                 , trigger: 'hover'
                 , data: [{
-                    title: '人脸检测'
-                    , id: 100
-                }, {
-                    title: '人脸匹配'
+                    title: '人脸签到'
                     , id: 102
                 }
                 ]

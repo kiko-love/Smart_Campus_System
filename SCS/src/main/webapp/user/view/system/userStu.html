@@ -113,7 +113,7 @@
             },
                 {
                     field: 'userId',
-                    title: 'ID',
+                    title: '学号',
                     //width: 80,
                     sort: true,
                     //fixed: true
@@ -163,8 +163,8 @@
                 //     templet: '#user-login'
                 // },
                 {
-                    title: '辅导员',
-                    field: 'counselor',
+                    title: '家庭住址',
+                    field: 'addr',
                     align: 'center',
                     //templet: '#user-createTime'
                 },
@@ -283,7 +283,7 @@
                     body.find('#department').val(obj.data['major'])
                     body.find('#phone').val(obj.data['phone'])
                     body.find('#classes').val(obj.data['classes'])
-                    body.find('#counselor').val(obj.data['counselor'])
+                    body.find('#addr').val(obj.data['addr'])
                     //console.log(obj.data['levels']);
                     if (obj.data['levels'] == '专科') {
                         body.find('#level01').attr("selected", "");

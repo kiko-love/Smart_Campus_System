@@ -15,6 +15,6 @@ public class student {
     private String phone;
     private String levels;
     private String classes;
-    private String counselor;
+    private String addr;
     private String email;
 }

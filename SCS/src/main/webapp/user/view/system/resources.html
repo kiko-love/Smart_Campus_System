@@ -5,6 +5,7 @@
     <title>资源中心</title>
     <link rel="stylesheet" href="../../component/pear/css/pear.css"/>
     <link rel="stylesheet" href="../../admin/css/other/department.css"/>
+    <link rel="stylesheet" href="../../../static/css/bootstrap-icons/bootstrap-icons@1.5.0.css">
 </head>
 <style>
     .t-click {
@@ -74,6 +75,7 @@
         line-height: 50px;
     }
 
+
 </style>
 <body class="pear-container">
 <div class="layui-card">
@@ -86,12 +88,6 @@
                         <input type="text" name="courseName" placeholder="请输入学科名称" class="layui-input">
                     </div>
                 </div>
-                <!--						<div class="layui-form-item layui-inline">-->
-                <!--							<label class="layui-form-label">邮箱</label>-->
-                <!--							<div class="layui-input-inline">-->
-                <!--								<input type="text" name="realName" placeholder="" class="layui-input">-->
-                <!--							</div>-->
-                <!--						</div>-->
                 <div class="layui-form-item layui-inline">
                     <button class="pear-btn pear-btn-md pear-btn-success" lay-submit lay-filter="resource-query">
                         <i class="layui-icon layui-icon-search"></i>
@@ -116,11 +112,12 @@
                     <legend>公共资源列表</legend>
                 </fieldset>
                 <div class="layui-form-item layui-inline">
-                    <button id="files_refresh" class="layui-btn  layui-btn-normal layui-btn-sm" lay-submit lay-filter="files_load">
-                        <i class="layui-icon layui-icon-refresh"></i>
-                        刷新列表
+                    <button id="files_refresh" class="layui-btn  layui-btn-sm" lay-submit lay-filter="files_load">
+                        <i class="layui-icon layui-icon-note"></i>
+                        所有资源
                     </button>
-                    <button id="files_load" class="layui-btn layui-btn-sm" lay-submit lay-filter="files_load">
+                    <button id="files_load" class="layui-btn layui-btn-normal layui-btn-sm" lay-submit
+                            lay-filter="files_load">
                         <i class="layui-icon layui-icon-download-circle"></i>
                         批量下载
                     </button>
@@ -144,49 +141,12 @@
         let $ = layui.jquery;
         let dtree = layui.dtree;
 
-        $('#files_refresh').click(function (){
-            dtree.reload('organizationTree',{
-                url:'http://localhost:8080/Resource/getInfo',
-                initLevel: 1,
-            })
-        })
-
-        $("#files_load").click(function () {
-            let params = dtree.getCheckbarNodesParam("organizationTree");
-            if (params.length===0) {
-                layer.open({
-                    title: '提示'
-                    , icon: 0
-                    , content: '请先选择您要下载的文件'
-                });
-                return false;
-            }
-            let contexts = new Array()
-            for (let i = 0; i < params.length; i++) {
-                contexts[i] = params[i].context
-            }
-            layer.msg('开始下载文件');
-            let secParentId = dtree.getParam('organizationTree', params[0].parentId).parentId;
-            let fileForm = $("<form action='/Resource/downloadResource' method='post'></form>")
-            fileForm.append("<input type='hidden' name='contexts' value='" + JSON.stringify(contexts) + "'/>")
-            fileForm.append("<input type='hidden' name='teacherId' value='" +
-                dtree.getParam('organizationTree', params[0].parentId).basicData.teacherId + "'/>")
-            fileForm.append("<input type='hidden' name='course' value='" +
-                dtree.getParam('organizationTree', secParentId).context + "'/>")
-            $(document.body).append(fileForm);
-            fileForm.submit();
-            fileForm.remove();
-        });
-
-        form.on('submit(resource-query)', function (data) {
-            console.log(data.field);
+        $('#files_refresh').click(function () {
             $.ajax({
-                url: 'http://localhost:8080/Resource/selectByCourseName',
+                url: '/Resource/getInfo',
                 dataType: 'json',
-                data: data.field,
                 type: 'post',
                 success: function (res) {
-                    console.log('res.data');
                     console.log(res.data);
                     if (res.data !== '') {
                         DTree.reload({
@@ -201,9 +161,121 @@
                 }
             })
 
+        })
+
+        $("#files_load").click(function () {
+            let params = dtree.getCheckbarNodesParam("organizationTree");
+            if (params.length === 0) {
+                layer.open({
+                    title: '提示'
+                    , icon: 0
+                    , content: '请先选择您要下载的文件'
+                });
+                return false;
+            }
+            layer.open({
+                title: '批量下载提示',
+                content: '<i class="layui-icon layui-icon-download-circle" style="font-size: 35px">' +
+                    '&nbsp;' +
+                    '</i>是否开始批量下载选中文件'
+                , btn: ['确认', '取消']
+                , yes: function (index, layero) {
+                    let contexts = new Array()
+                    for (let i = 0; i < params.length; i++) {
+                        contexts[i] = params[i].context
+                    }
+                    layer.msg('开始批量下载文件');
+                    let secParentId = dtree.getParam('organizationTree', params[0].parentId).parentId;
+                    let fileForm = $("<form action='/Resource/downloadResource' method='post'></form>")
+                    fileForm.append("<input type='hidden' name='contexts' value='" + JSON.stringify(contexts) + "'/>")
+                    fileForm.append("<input type='hidden' name='teacherId' value='" +
+                        dtree.getParam('organizationTree', params[0].parentId).basicData.teacherId + "'/>")
+                    fileForm.append("<input type='hidden' name='course' value='" +
+                        dtree.getParam('organizationTree', secParentId).context + "'/>")
+                    $(document.body).append(fileForm);
+                    fileForm.submit();
+                    fileForm.remove();
+                }
+                , btn2: function (index, layero) {
+                    //return false 开启该代码可禁止点击该按钮关闭
+                }
+                , cancel: function () {
+                    //return false 开启该代码可禁止点击该按钮关闭
+                }
+            });
+        });
+
+        form.on('submit(resource-query)', function (data) {
+            console.log(data.field);
+            $.ajax({
+                url: '/Resource/selectByCourseName',
+                dataType: 'json',
+                data: data.field,
+                type: 'post',
+                success: function (res) {
+                    console.log('res.data');
+                    console.log(res.data);
+                    if (res.data !== '') {
+                        DTree.reload({
+                            data: res.data
+                        })
+                    } else {
+                        layer.open({
+                            title: '提示'
+                            , icon: 5
+                            , content: '未找到指定学科资源'
+                        });
+                    }
+                },
+                error: function (res) {
+                    console.log(res);
+                }
+            })
+
             return false;
         })
 
+        //判断是否为图片
+        function isImage(ext) {
+            return [
+                'png', 'jpg', 'jpeg', 'bmp', 'gif', 'webp', 'psd', 'svg', 'tiff'].indexOf(ext.toLowerCase()) !== -1;
+        }
+
+        //判断是否为压缩文件
+        function isCompressed(ext) {
+            return [
+                'zip', 'rar', '7z'].indexOf(ext.toLowerCase()) !== -1;
+        }
+
+        //判断是否为word类型文件
+        function isWord(ext) {
+            return [
+                'doc', 'docx', 'docm', 'dotm', 'dot'].indexOf(ext.toLowerCase()) !== -1;
+        }
+
+        //判断是否为excel类型文件
+        function isExcel(ext) {
+            return [
+                'xlsx', 'xlsm', 'xlsb', 'xls', 'xlt'].indexOf(ext.toLowerCase()) !== -1;
+        }
+
+        //判断是否为ppt类型文件
+        function isPPT(ext) {
+            return [
+                'ppt', 'pptx', 'pptm', 'potm', 'potx'].indexOf(ext.toLowerCase()) !== -1;
+        }
+
+        //判断是否为音频类型文件
+        function isMusic(ext) {
+            return [
+                'mp3', 'aac', 'flac', 'wav', 'wma'].indexOf(ext.toLowerCase()) !== -1;
+        }
+
+        //判断是否为文本类型文件
+        function isText(ext) {
+            return [
+                'txt', 'ini', 'json', 'csv', 'html', 'htm', 'log', 'bat'].indexOf(ext.toLowerCase()) !== -1;
+        }
 
         let DTree = dtree.render({
             elem: "#organizationTree",
@@ -218,7 +290,7 @@
             checkbarType: "all",
             record: true,
             skin: "zdy",
-            url: "http://localhost:8080/Resource/getInfo",
+            url: "/Resource/getInfo",
             beforeSend(ajax, self) {
                 return true;
             },
@@ -228,7 +300,7 @@
                         open: "dtree-icon-xiangxia1",  //节点展开
                         close: "dtree-icon-xiangyou"  //节点关闭
                     },
-                    leaf: "dtree-icon-normal-file"  //叶子节点
+                    leaf: ""  //叶子节点
                 }, snode: {  //二级节点
 
                     leaf: ""  //叶子节点
@@ -242,11 +314,42 @@
                     //console.log(data);
                     let s = data.title;
                     if (data.last) {
-                        s += ' <span class="layui-badge layui-bg-gray">' +
+                        let index = s.lastIndexOf(".");
+                        let ext = s.substr(index + 1);
+                        let icon = '';
+                        if (isImage(ext)) {
+                            icon = '<i class="bi-file-earmark-image" style="font-size: 25px"></i> '
+                        } else if (isCompressed(ext)) {
+                            icon = '<i class="bi-file-earmark-zip" style="font-size: 25px"></i> '
+
+                        } else if (isWord(ext)) {
+                            icon = '<i class="bi-file-earmark-word" style="font-size: 25px"></i> '
+
+                        } else if (isExcel(ext)) {
+                            icon = '<i class="bi-file-earmark-excel" style="font-size: 25px"></i> '
+
+                        } else if (isPPT(ext)) {
+                            icon = '<i class="bi-file-earmark-ppt" style="font-size: 25px"></i> '
+
+                        } else if (isMusic(ext)) {
+                            icon = '<i class="bi-file-music" style="font-size: 25px"></i> '
+
+                        } else if (isText(ext)) {
+                            icon = '<i class="bi-file-earmark-text" style="font-size: 25px"></i> '
+
+                        } else if (ext === 'pdf') {
+                            icon = '<i class="bi-file-earmark-pdf" style="font-size: 25px"></i> '
+
+                        } else {
+                            icon = '<i class="bi-file-earmark" style="font-size: 25px"></i> '
+                        }
+
+                        s = icon + s +
+                            ' <span class="layui-badge layui-bg-gray">' +
                             '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;创建日期:' +
                             data.basicData.createTime +
-                            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;文件大小:'+data.basicData.filesize
-                            +'</span>';
+                            '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;文件大小:' + data.basicData.filesize
+                            + '</span>';
                     }
                     return s;
                 }
@@ -257,19 +360,35 @@
         // 绑定节点点击事件
         dtree.on("node(organizationTree)", function (obj) {
             console.log(obj.param);
-            let param = dtree.getParentParam(DTree, obj.param.nodeId);
-            console.log(param);
-            let role = '';
-            if (obj.param.nodeId == '001') {
-                role = '0';
+            if (obj.param.leaf === true) {
+                layer.open({
+                    title: '下载提示',
+                    content: '是否开始下载：' + obj.param.context
+                    , btn: ['确认', '取消']
+                    , yes: function (index, layero) {
+                        //按钮【按钮一】的回调
+                        let contexts = new Array()
+                        contexts[0] = obj.param.context
+                        layer.msg('开始下载：' + obj.param.context);
+                        let secParentId = dtree.getParam('organizationTree', obj.param.parentId).parentId;
+                        let fileForm = $("<form action='/Resource/downloadResource' method='post'></form>")
+                        fileForm.append("<input type='hidden' name='contexts' value='" + JSON.stringify(contexts) + "'/>")
+                        fileForm.append("<input type='hidden' name='teacherId' value='" +
+                            dtree.getParam('organizationTree', obj.param.parentId).basicData.teacherId + "'/>")
+                        fileForm.append("<input type='hidden' name='course' value='" +
+                            dtree.getParam('organizationTree', secParentId).context + "'/>")
+                        $(document.body).append(fileForm);
+                        fileForm.submit();
+                        fileForm.remove();
+                    }
+                    , btn2: function (index, layero) {
+                        //return false 开启该代码可禁止点击该按钮关闭
+                    }
+                    , cancel: function () {
+                        //return false 开启该代码可禁止点击该按钮关闭
+                    }
+                });
                 //DTree.clickSpread($div); //调用内置函数展开节点
-            } else if (obj.param.nodeId == '002') {
-                role = '1';
-                //table.reload("organization-table");
-            } else if (obj.param.nodeId == '003') {
-                role = '2';
-            } else {
-                role = '';
             }
         });
 

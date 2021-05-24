@@ -10,6 +10,52 @@
     .t-click {
         user-select: none;
     }
+    .dtree-zdy-item {
+        line-height: 50px;
+    }
+    /* zdy主题风格*/
+    .dtree-zdy-item-this {
+        background-color: rgba(232, 230, 230, 0.86) !important;
+        border-right:5px solid rgb(54,179,104)!important;
+    }
+
+    /* 当前选中行样式*/
+    .dtree-zdy-item:hover {
+        background-color: rgba(242, 242, 242, 0.84) !important;
+    }
+
+    /* 行悬停样式*/
+    .dtree-zdy-item cite {
+        font-size: 14px !important;
+    }
+    .dtree-zdy-item:hover cite {
+        color: #096a3b !important
+    }
+
+    /* 行悬停文字样式*/
+    .dtree-zdy-dtreefont {
+        font-size: 30px !important;
+    }
+
+    /* 一级图标、二级图标、复选框样式*/
+    .dtree-zdy-ficon {
+        color: #2F4056 !important;
+    }
+
+    /*一级图标特定样式*/
+    .dtree-zdy-icon {
+        color: #2F4056 !important;
+    }
+
+    /*二级图标特定样式*/
+    .dtree-zdy-checkbox:hover {
+        color: #11824b !important;
+    }
+
+    /*复选框悬停样式*/
+    .dtree-zdy-choose {
+        color: #11824b !important;
+    }
 
 
 </style>
@@ -175,6 +221,7 @@
                     leaf: ""  //叶子节点
                 }
             }],
+            skin: "zdy",
             //data: data,
             initLevel: "2", //默认展开层级为1
             line: false, // 有线树
@@ -304,6 +351,8 @@
                                 form.render('checkbox');
                             }
                         });
+                    }else {
+                        layer.msg('账号状态修改成功',{icon:1})
                     }
                 },
                 error: function (res) {
