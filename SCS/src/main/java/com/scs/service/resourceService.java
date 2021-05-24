@@ -27,11 +27,13 @@ public interface resourceService {
 
     /**
      * 删除某个资源信息
-     * @param fileName
-     * @param courseName
+     * @param
+     * @param
      * @return
-     */
-    int deleteRes(String fileName,String courseName);
+     * */
+
+
+    int deleteRes(Integer fileId);
 
     /**
      * 更新资料信息，用于覆盖某个资源
@@ -75,4 +77,24 @@ public interface resourceService {
      * @return
      */
     List<resource> getResourceByCourse(String courseName);
+
+    /**
+     * 查找指定老师上传的资源
+     * @param teacherId
+     * @return
+     */
+    List<resource> getResourceByTeacherId(String teacherId);
+
+    /**
+     * 获取所有资源信息
+     * @return
+     */
+    List<resource> getAllResource();
+
+    /**
+     * 批量删除
+     * @param List
+     * @return
+     */
+    int batchDeleteResource(List<Integer> List);
 }

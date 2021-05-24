@@ -31,12 +31,12 @@ public interface resourceMapper {
 
     /**
      * 删除某个资源信息
-     * @param fileName
-     * @param courseName
+     * @param
+     * @param
      * @return
      */
-    @Delete("delete from resource where fileName=#{arg0} and courseName=#{arg1}")
-    int deleteRes(String fileName,String courseName);
+    @Delete("delete from resource where fileId=#{fileId}")
+    int deleteRes(Integer fileId);
 
     /**
      * 更新资料信息，用于覆盖某个资源
@@ -86,4 +86,28 @@ public interface resourceMapper {
      */
     @Select("select * from resource where courseName=#{courseName}")
     List<resource> getResourceByCourse(String courseName);
+
+    /**
+     * 查找指定老师上传的资源
+     * @param teacherId
+     * @return
+     */
+    @Select("select * from resource where teacherId=#{teacherId}")
+    List<resource> getResourceByTeacherId(String teacherId);
+
+    /**
+     * 获取所有资源信息
+     * @return
+     */
+    @Select("select * from resource ")
+    List<resource> getAllResource();
+
+    /**
+     * 批量删除
+     * @param List
+     * @return
+     */
+    @Delete("<script>delete from resource where fileId in " +
+            "<foreach collection='list' item='id' open='(' separator=',' close=')'>#{id}</foreach> </script>")
+    int batchDeleteResource(List<Integer> List);
 }

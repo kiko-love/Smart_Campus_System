@@ -57,7 +57,7 @@ public class DetermineFileSizeUtils {
                     unit = "ER";
             }
 
-            String format = String.format("%.3f", s);
+            String format = String.format("%.2f", s);
             return format + unit;
         }
         return null;

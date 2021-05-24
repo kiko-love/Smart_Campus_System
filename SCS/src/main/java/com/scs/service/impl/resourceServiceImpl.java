@@ -6,6 +6,7 @@ import com.scs.service.resourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service("resourceService")
@@ -25,8 +26,8 @@ public class resourceServiceImpl implements resourceService {
     }
 
     @Override
-    public int deleteRes(String fileName, String courseName) {
-        return resMapper.deleteRes(fileName,courseName);
+    public int deleteRes(Integer fileId) {
+        return resMapper.deleteRes(fileId);
     }
 
     @Override
@@ -57,5 +58,20 @@ public class resourceServiceImpl implements resourceService {
     @Override
     public List<resource> getResourceByCourse(String courseName) {
         return resMapper.getResourceByCourse(courseName);
+    }
+
+    @Override
+    public List<resource> getResourceByTeacherId(String teacherId) {
+        return resMapper.getResourceByTeacherId(teacherId);
+    }
+
+    @Override
+    public List<resource> getAllResource() {
+        return resMapper.getAllResource();
+    }
+
+    @Override
+    public int batchDeleteResource(List<Integer> List) {
+        return resMapper.batchDeleteResource(List);
     }
 }
