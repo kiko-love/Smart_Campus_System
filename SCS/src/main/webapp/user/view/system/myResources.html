@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>我的资源</title>
+    <link rel="stylesheet" href="../../component/pear/css/pear.css"/>
+    <link rel="stylesheet" href="../../admin/css/other/department.css"/>
+</head>
+<style>
+    .t-click {
+        user-select: none;
+        font-weight: 500;
+    }
+
+    /* zdy主题风格*/
+    .dtree-zdy-item-this {
+        background-color: rgba(232, 230, 230, 0.86) !important;
+    }
+
+    /* 当前选中行样式*/
+    .dtree-zdy-item:hover {
+        background-color: rgba(242, 242, 242, 0.84) !important;
+    }
+
+    /* 行悬停样式*/
+    .dtree-zdy-item cite {
+        font-size: 14px !important;
+    }
+
+    /* 行文字样式*/
+    .dtree-zdy-item:hover cite {
+        color: #096a3b !important
+    }
+
+    /* 行悬停文字样式*/
+    .dtree-zdy-dtreefont {
+        font-size: 30px !important;
+    }
+
+    /* 一级图标、二级图标、复选框样式*/
+    .dtree-zdy-ficon {
+        color: #2F4056 !important;
+    }
+
+    /*一级图标特定样式*/
+    .dtree-zdy-icon {
+        color: #2F4056 !important;
+    }
+
+    /*二级图标特定样式*/
+    .dtree-zdy-checkbox:hover {
+        color: #11824b !important;
+    }
+
+    /*复选框悬停样式*/
+    .dtree-zdy-choose {
+        color: #11824b !important;
+    }
+
+    /* 复选框选中样式*/
+    .dtree-icon-xiangyou {
+        font-size: 18px !important;
+    }
+
+    .dtree-icon-xiangxia1 {
+        font-size: 18px !important;
+    }
+
+    .dtree-zdy-checkbox {
+        font-size: 18px !important;
+    }
+
+    .dtree-zdy-item {
+        line-height: 50px;
+    }
+
+
+</style>
+<body class="pear-container">
+<div class="layui-card">
+    <div class="layui-card-body">
+        <form id="queryForm" class="layui-form" action="">
+            <div class="layui-form-item">
+                <div class="layui-form-item layui-inline">
+                    <label class="layui-form-label">资源名称</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="courseName" placeholder="请输入学科名称" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item layui-inline">
+                    <button class="pear-btn pear-btn-md pear-btn-success" lay-submit lay-filter="resource-query">
+                        <i class="layui-icon layui-icon-search"></i>
+                        查询
+                    </button>
+                    <button type="reset" class="pear-btn pear-btn-md">
+                        <i class="layui-icon layui-icon-refresh"></i>
+                        重置
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="layui-row layui-col-space15">
+    <div class="layui-col-md12">
+        <div class="layui-card">
+            <div class="layui-card-body">
+                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+                    <legend>我的资源列表</legend>
+                </fieldset>
+
+                <div class="layui-card-body">
+                    <table id="demoTreeTb" lay-filter="demoTreeTb"></table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../../component/layui/layui.js"></script>
+<script src="../../component/pear/pear.js"></script>
+<script type="text/html" id="power-bar">
+    <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>
+    </button>
+    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i>
+    </button>
+</script>
+
+<script type="text/html" id="power-type">
+    {{#if (d.powerType == '0') { }}
+    <span>目录</span>
+    {{# }else if(d.powerType == '1'){ }}
+    <span>菜单</span>
+    {{# }else if(d.powerType == '2'){ }}
+    <span>按钮</span>
+    {{# } }}
+</script>
+
+<script type="text/html" id="power-enable">
+    <input type="checkbox" name="enable" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="user-enable"
+           checked="{{ d.id == 10003 ? 'true' : 'false' }}">
+</script>
+
+<script type="text/html" id="icon">
+    <i class="layui-icon {{d.icon}}"></i>
+</script>
+<script>
+    layui.config({
+        base: '../../component/layui/'  // 配置模块所在的目录
+    }).use(['treeTable'], function () {
+
+    });
+
+    layui.use(['table', 'form', 'jquery', 'treeTable'], function () {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+        var treeTable = layui.treeTable;
+
+        let data = [
+            {
+                "authorityId": 1,
+                "authorityName": "系统管理",
+                "open":false,
+                "menuUrl": null,
+                "authority": null,
+                "parentId": 0,
+                "open": true
+            },
+            {
+                "authorityId": 2,
+                "authorityName": "用户管理",
+                "menuUrl": "system/user",
+                "authority": null,
+                "parentId": 1,
+                "open": true
+            },
+            {
+                "authorityId": 3,
+                "authorityName": "查询用户",
+                "menuUrl": "",
+                "authority": "user:view",
+                "parentId": 2
+            },
+            {
+                "authorityId": 4,
+                "authorityName": "添加用户",
+                "menuUrl": null,
+                "authority": "user:add",
+                "parentId": 2
+            }
+        ]
+
+// 渲染树形表格
+        let insTb = treeTable.render({
+            elem: '#demoTreeTb',
+            data: data,
+            tree: {
+                iconIndex: 2,           // 折叠图标显示在第几列
+                isPidData: true,        // 是否是id、pid形式数据
+                idName: 'authorityId',  // id字段名称
+                pidName: 'parentId'     // pid字段名称
+                ,haveChildName: 'haveChild'
+                ,openName:'open'
+                , arrowType: 'arrow2',   // 自定义箭头风格
+                getIcon: function (d) {  // 自定义图标
+                    console.log(d);
+                    // d是当前行的数据
+                    if (d.children&&d.children.length>0) {  // 判断是否有子集
+                        return '<i class="ew-tree-icon ew-tree-icon-folder"></i>';
+                    } else {
+                        return '<i class="ew-tree-icon ew-tree-icon-file"></i>';
+                    }
+                }
+            },
+            cols: [[
+                {type: 'numbers'},
+                {type: 'checkbox'},
+                {field: 'authorityName', title: '资源名称'},
+                {field: 'menuUrl', title: '文件大小'},
+                {field: 'authority', title: '上传时间'},
+                {field: 'fileId', title: '文件ID',hide:true}
+            ]],
+            text: {
+                none: '<div style="padding: 18px 0;">暂无学科资源信息</div>'
+            }
+        });
+        form.on('submit(resource-query)', function (data) {
+            console.log(data.field);
+            $.ajax({
+                url: '/Resource/selectByCourseName',
+                dataType: 'json',
+                data: data.field,
+                type: 'post',
+                success: function (res) {
+                    console.log('res.data');
+                    console.log(res.data);
+                    if (res.data !== '') {
+                        DTree.reload({
+                            data: res.data
+                        })
+                    } else {
+                        layer.open({
+                            title: '提示'
+                            , icon: 5
+                            , content: '未找到指定学科资源'
+                        });
+                    }
+                },
+                error: function (res) {
+                    console.log(res);
+                }
+            })
+
+            return false;
+        })
+
+
+    })
+</script>
+</body>
+</html>

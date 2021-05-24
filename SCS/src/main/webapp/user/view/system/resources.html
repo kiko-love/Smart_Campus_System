@@ -85,7 +85,9 @@
                 <div class="layui-form-item layui-inline">
                     <label class="layui-form-label">学科名称</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="courseName" placeholder="请输入学科名称" class="layui-input">
+                        <input type="text" name="courseName" placeholder="请输入学科名称"
+                               lay-verify="required|title" lay-reqText="请输入学科名称"
+                               class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item layui-inline">
@@ -153,7 +155,9 @@
                             data: res.data
                         })
                     } else {
-
+                        DTree.reload({
+                            data: []
+                        })
                     }
                 },
                 error: function (res) {
@@ -280,7 +284,7 @@
         let DTree = dtree.render({
             elem: "#organizationTree",
             iconfont: ["layui-icon", "dtreefont", "iconfont"],
-            none: "文件目录加载失败，请重新尝试",
+            none: "无资源数据",
             initLevel: "1", //默认展开层级为1
             line: false, // 有线树
             // ficon: ["1", "-1"], // 设定一级图标样式。0表示方形加减图标，8表示小圆点图标

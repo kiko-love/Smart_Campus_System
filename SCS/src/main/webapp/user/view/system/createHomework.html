@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <title>发布作业</title>
+    <link rel="stylesheet" href="../../component/pear/css/pear.css"/>
+</head>
+<body class="pear-container">
+<div class="layui-card">
+    <div class="layui-card-body">
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+            <legend>发布作业</legend>
+        </fieldset>
+    </div>
+</div>
+<div class="layui-row layui-col-space10">
+    <div class="layui-col-md12">
+        <div class="layui-card">
+            <form id="queryForm" class="layui-form" action="">
+                <blockquote class="layui-elem-quote layui-quote-nm">发布区</blockquote>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">目标课程</label>
+                    <div class="layui-input-inline">
+                        <select name="city" lay-verify="required" lay-reqText="请选择目标课程">
+                            <option value="">请选择一个学科</option>
+                            <option value="010">JavaWeb</option>
+                            <option value="021">数据结构</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">目标班级</label>
+                    <div class="layui-input-inline">
+                        <select name="city" lay-verify="required" lay-reqText="请选择目标班级">
+                            <option value="">请选择一个班级</option>
+                            <option value="010">软工195</option>
+                            <option value="021">大数据191</option>
+                            <option value="0571">大气191</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">作业标题</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="title" lay-verify="required"
+                               lay-reqText="请输入作业标题"
+                               placeholder="请输入作业标题" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">作业附件</label>
+                    <div class="layui-input-inline">
+                        <button class="layui-btn" id="uploadHFile">上传附件</button>
+                    </div>
+                </div>
+            </form>
+            <hr class="layui-border-black">
+            <div class="layui-card-header">作业内容</div>
+            <div class="layui-card-body">
+                <textarea name="" id="edit" cols="30" rows="10"></textarea>
+                <div class="layui-btn-group" style="margin-top: 10px">
+                    <button class="layui-btn" lay-event="getContent">发布作业</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../../component/layui/layui.js"></script>
+<script src="../../component/pear/pear.js"></script>
+<script>
+    layui.use(['tinymce', 'util', 'layer', 'code', 'element','upload'], function () {
+        let tinymce = layui.tinymce
+        let util = layui.util;
+        let upload = layui.upload;
+
+        //执行实例
+        let uploadInst = upload.render({
+            elem: '#uploadHFile' //绑定元素
+            ,url: '/upload/' //上传接口
+            ,done: function(res){
+                //上传完毕回调
+            }
+            ,error: function(){
+                //请求异常回调
+            }
+        });
+
+        layui.code();
+
+        let edit = tinymce.render({
+            elem: "#edit",
+            height: 400
+            ,images_upload_handler:function(blobInfo, succFun, failFun){
+                // 你的代码 ...
+            },
+            toolbar: [ //数组写法
+                'newdocument undo redo | styleselect fontselect fontsizeselect| ' +
+                'blockquote bullist numlist| bold italic underline strikethrough' +
+                '| alignleft aligncenter alignright lineheight| superscript subscript'
+
+            ]
+        });
+
+        util.event('lay-event', {
+            getContent: function () {
+                console.log(edit.getContent())
+                layer.msg("展开控制台查看")
+            }
+        });
+    });
+</script>
+</body>
+</html>

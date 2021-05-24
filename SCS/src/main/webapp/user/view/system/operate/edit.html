@@ -10,6 +10,7 @@
     <div class="mainBox">
         <div class="main-container">
             <div class="main-container">
+                <!--学号-->
                 <div class="layui-form-item">
                     <label class="layui-form-label">学号</label>
                     <div class="layui-input-block">
@@ -19,6 +20,7 @@
                                style="cursor:not-allowed;color: #a1a1a1;" disabled>
                     </div>
                 </div>
+                <!--姓名-->
                 <div class="layui-form-item">
                     <label class="layui-form-label">姓名</label>
                     <div class="layui-input-block">
@@ -27,30 +29,16 @@
                                class="layui-input" lay-reqText="请输入姓名">
                     </div>
                 </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">班级</label>
-                    <div class="layui-input-block">
-                        <input id="classes" type="text" name="classes" lay-verify="required" autocomplete="off"
-                               placeholder="请输入班级"
-                               class="layui-input" lay-reqText="请输入班级">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">家庭住址</label>
-                    <div class="layui-input-block">
-                        <input id="addr" type="text" name="addr" lay-verify="required" autocomplete="off"
-                               placeholder="请输入学生家庭住址"
-                               class="layui-input" lay-reqText="请输入学生家庭住址">
-                    </div>
-                </div>
+                <!--专业-->
                 <div class="layui-form-item">
                     <label class="layui-form-label">专业</label>
                     <div class="layui-input-block">
-                        <input id="department" type="text" name="department" value="" lay-verify="title"
-                               autocomplete="off" placeholder="请输入该生专业" class="layui-input"
-                               lay-reqText="请输入该生专业">
+                        <select id="major" name="major" lay-verify="required"
+                                lay-search lay-reqText="请选择专业">
+                        </select>
                     </div>
                 </div>
+                <!--学历层次-->
                 <div class="layui-form-item">
                     <label class="layui-form-label">学历层次</label>
                     <div class="layui-input-block">
@@ -62,13 +50,35 @@
                         </select>
                     </div>
                 </div>
+                <!--班级-->
+                <div class="layui-form-item">
+                    <label class="layui-form-label">班级</label>
+                    <div class="layui-input-block">
+                        <input id="classes" type="text" name="classes" lay-verify="required" autocomplete="off"
+                               placeholder="请输入班级"
+                               class="layui-input" lay-reqText="请输入班级">
+                    </div>
+                </div>
+                <!--家庭住址-->
+                <div class="layui-form-item">
+                    <label class="layui-form-label">家庭住址</label>
+                    <div class="layui-input-block">
+                        <input id="addr" type="text" name="addr" lay-verify="required" autocomplete="off"
+                               placeholder="请输入学生家庭住址"
+                               class="layui-input" lay-reqText="请输入学生家庭住址">
+                    </div>
+                </div>
+
+                <!--电话-->
                 <div class="layui-form-item">
                     <label class="layui-form-label">电话</label>
                     <div class="layui-input-block">
-                        <input id="phone" type="text" name="phone" value="" lay-verify="required|phone" autocomplete="off"
+                        <input id="phone" type="text" name="phone" value="" lay-verify="required|phone"
+                               autocomplete="off"
                                placeholder="请输入手机号码" class="layui-input" lay-reqText="请输入手机号码">
                     </div>
                 </div>
+                <!--性别-->
                 <div class="layui-form-item">
                     <label class="layui-form-label">性别</label>
                     <div class="layui-input-block">
@@ -100,8 +110,27 @@
         let $ = layui.jquery;
         //$("#userId").val(parent.obj.data['userId']);
         // console.log(parent.layui.table)
+
+        //从服务器加载专业列表
+        $.ajax({
+            url: '/Major/getMajors',
+            dataType: 'json',
+            type: 'post',
+            success: function (res) {
+                console.log(res.data);
+                let major = $('#major');
+                major.append('<option value="">请选择专业</option>')
+                for (let i = 0; i < res.data.length; i++) {
+                    let majorName = res.data[i].majorName;
+                    major.append('<option value="' + majorName + '">' + majorName + '</option>')
+                }
+                form.render('select');
+            }
+        })
+
+
         form.on('submit(user-save)', function (data) {
-            var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
+            let index = layer.load(2, {time: 10 * 1000}); //又换了种风格，并且设定最长等待10秒
             $.ajax({
                 url: '/admin/stu/updateStudent',
                 data: data.field,

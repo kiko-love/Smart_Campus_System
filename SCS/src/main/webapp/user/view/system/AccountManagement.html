@@ -10,13 +10,15 @@
     .t-click {
         user-select: none;
     }
+
     .dtree-zdy-item {
         line-height: 50px;
     }
+
     /* zdy主题风格*/
     .dtree-zdy-item-this {
         background-color: rgba(232, 230, 230, 0.86) !important;
-        border-right:5px solid rgb(54,179,104)!important;
+        border-right: 5px solid rgb(54, 179, 104) !important;
     }
 
     /* 当前选中行样式*/
@@ -28,6 +30,7 @@
     .dtree-zdy-item cite {
         font-size: 14px !important;
     }
+
     .dtree-zdy-item:hover cite {
         color: #096a3b !important
     }
@@ -70,18 +73,6 @@
                         <input type="text" name="username" placeholder="" class="layui-input">
                     </div>
                 </div>
-                <!--						<div class="layui-form-item layui-inline">-->
-                <!--							<label class="layui-form-label">性别</label>-->
-                <!--							<div class="layui-input-inline">-->
-                <!--								<input type="text" name="realName" placeholder="" class="layui-input">-->
-                <!--							</div>-->
-                <!--						</div>-->
-                <!--						<div class="layui-form-item layui-inline">-->
-                <!--							<label class="layui-form-label">邮箱</label>-->
-                <!--							<div class="layui-input-inline">-->
-                <!--								<input type="text" name="realName" placeholder="" class="layui-input">-->
-                <!--							</div>-->
-                <!--						</div>-->
                 <div class="layui-form-item layui-inline">
                     <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="user-query">
                         <i class="layui-icon layui-icon-search"></i>
@@ -351,8 +342,8 @@
                                 form.render('checkbox');
                             }
                         });
-                    }else {
-                        layer.msg('账号状态修改成功',{icon:1})
+                    } else {
+                        layer.msg('账号状态修改成功', {icon: 1})
                     }
                 },
                 error: function (res) {
@@ -418,9 +409,13 @@
         }
 
         window.edit = function (obj) {
+            let newTitle = '修改：' + obj.data['userName']
+            if (obj.data['role'] === '0') {
+                newTitle = '修改：' + obj.data['userName'] + '（管理员）'
+            }
             layer.open({
                 type: 2,
-                title: '修改：' + obj.data['userName'],
+                title: newTitle,
                 shade: 0.1,
                 area: ['500px', '400px'],
                 content: MODULE_PATH + 'editAccount.html',
@@ -431,13 +426,15 @@
                     let iframeWin = window[layero.find('iframe')[0]['name']]
                     body.find('#username').val(obj.data['userName'])
                     //body.find('#password').val(obj.data['md5password'])
-                    if (obj.data['role'] == '0') {
+                    if (obj.data['role'] === '0') {
                         body.find('#role1').attr("selected", "");
+                        body.find('#role2').attr("disabled", "");
+                        body.find('#role3').attr("disabled", "");
                         iframeWin.layui.form.render('select');
-                    } else if (obj.data['role'] == '1') {
+                    } else if (obj.data['role'] === '1') {
                         body.find('#role2').attr("selected", "");
                         iframeWin.layui.form.render('select');
-                    } else if (obj.data['role'] == '2') {
+                    } else if (obj.data['role'] === '2') {
                         body.find('#role3').attr("selected", "");
                         iframeWin.layui.form.render('select');
                     }

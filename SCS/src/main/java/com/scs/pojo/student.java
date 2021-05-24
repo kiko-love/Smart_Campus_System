@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class student {
     private String userId;
-    private String Major;
+    private String major;
     private String realName;
     private String sex;
     private String phone;

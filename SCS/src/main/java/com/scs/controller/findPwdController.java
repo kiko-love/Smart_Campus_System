@@ -43,7 +43,7 @@ public class findPwdController {
             data.put("success", 0);
             data.put("userEmail", "");
             data.put("msg", "学号不存在，无法重置密码");
-        } else{
+        } else {
             List<User> userList = userService.FindByName(studentList.get(0).getUserId());
             System.out.println("studentList:" + studentList);
             //获取用户邮箱
@@ -52,22 +52,26 @@ public class findPwdController {
                 data.put("userEmail", "");
                 data.put("msg", "该学号尚未注册平台账号，请联系管理员咨询");
             } else {
-                String userEmail = studentList.get(0).getEmail();
-                if(userEmail==null || userEmail.equals("")){
-                    //封装成json
+                if (userList.get(0).getStatus().equals("110")) {
                     data.put("success", 0);
-                    data.put("userEmail", userEmail);
-                    data.put("msg", "该账号未在平台绑定邮箱，无法重置密码");
-                }
-                else {
-                    //封装成json
-                    data.put("success", 1);
-                    data.put("userEmail", userEmail);
-                    data.put("msg", "学号查询成功");
+                    data.put("userEmail", "");
+                    data.put("msg", "该账号当前处于冻结状态，无法重置密码，请联系管理员解封");
+                } else {
+                    String userEmail = studentList.get(0).getEmail();
+                    if (userEmail == null || userEmail.equals("")) {
+                        //封装成json
+                        data.put("success", 0);
+                        data.put("userEmail", userEmail);
+                        data.put("msg", "该账号未在平台绑定邮箱，无法重置密码");
+                    } else {
+                        //封装成json
+                        data.put("success", 1);
+                        data.put("userEmail", userEmail);
+                        data.put("msg", "学号查询成功");
+                    }
                 }
             }
         }
-
         return data.toJSONString();
     }
 
