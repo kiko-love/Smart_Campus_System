@@ -110,4 +110,12 @@ public interface resourceMapper {
     @Delete("<script>delete from resource where fileId in " +
             "<foreach collection='list' item='id' open='(' separator=',' close=')'>#{id}</foreach> </script>")
     int batchDeleteResource(List<Integer> List);
+
+    /**
+     * 根据fileId查找资料记录
+     * @param fileId
+     * @return
+     */
+    @Select("select * from resource where fileId=#{fileId}")
+    List<resource> selectResourceById(Integer fileId);
 }

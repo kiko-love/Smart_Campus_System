@@ -74,4 +74,9 @@ public class resourceServiceImpl implements resourceService {
     public int batchDeleteResource(List<Integer> List) {
         return resMapper.batchDeleteResource(List);
     }
+
+    @Override
+    public List<resource> selectResourceById(Integer fileId) {
+        return resMapper.selectResourceById(fileId);
+    }
 }

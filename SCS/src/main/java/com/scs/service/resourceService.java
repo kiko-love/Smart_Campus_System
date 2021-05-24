@@ -97,4 +97,11 @@ public interface resourceService {
      * @return
      */
     int batchDeleteResource(List<Integer> List);
+
+    /**
+     * 根据fileId查找资料记录
+     * @param fileId
+     * @return
+     */
+    List<resource> selectResourceById(Integer fileId);
 }
