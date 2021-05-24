@@ -280,7 +280,7 @@
                     let iframeWin = window[layero.find('iframe')[0]['name']]
                     body.find('#userId').val(obj.data['userId'])
                     body.find('#realName').val(obj.data['realName'])
-                    body.find('#department').val(obj.data['major'])
+                    body.find('#major').find("option[value='"+obj.data['major']+"']").prop("selected",true);
                     body.find('#phone').val(obj.data['phone'])
                     body.find('#classes').val(obj.data['classes'])
                     body.find('#addr').val(obj.data['addr'])

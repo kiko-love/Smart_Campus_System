@@ -262,6 +262,12 @@ public class UserController {
         JSONObject data = new JSONObject();
         List<User> userList = userService.FindByName(userName);
         if (userList.size() != 0) {
+            if (userList.get(0).getRole().equals("0") && !userList.get(0).getRole().equals(role)) {
+                data.put("success", "0");
+                data.put("msg", "您无权修改该账号状态");
+                data.put("data", "");
+                return data.toJSONString();
+            }
             if (userList.get(0).getMd5password().equals(adminPwd)) {
                 User user = new User(userName, password, role, null);
                 int updateNumber = userService.updateAccount(user);
@@ -329,19 +335,26 @@ public class UserController {
         String md5password = request.getParameter("md5password");
         String role = request.getParameter("role");
         String status = request.getParameter("status");
-        User user = new User(username, md5password, role, status);
+        String isDefault = request.getParameter("isDefault");
+        User user = null;
+        if (isDefault == null || !isDefault.equals("")) {
+            user = new User(username, md5password, role, status);
+
+        } else {
+            user = new User(username, "e10adc3949ba59abbe56e057f20f883e", role, status);
+        }
         JSONObject data = new JSONObject();
         int addNumber = userService.addAccount(user);
         if (addNumber > 0) {
             data.put("success", 1);
             data.put("msg", "账号添加成功");
             data.put("data", null);
-        }else {
+        } else {
             data.put("success", 0);
             data.put("msg", "账号添加失败");
             data.put("data", null);
         }
-        return  data.toJSONString();
+        return data.toJSONString();
     }
 
 
@@ -349,25 +362,25 @@ public class UserController {
     @ResponseBody
     @RequestMapping(value = "/batchRemoveAccount", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public String batchRemoveAccount(HttpServletRequest request, HttpServletResponse response) {
-        List<String> List = JSONObject.parseArray(request.getParameter("userNames"),String.class);
+        List<String> List = JSONObject.parseArray(request.getParameter("userNames"), String.class);
         JSONObject data = new JSONObject();
-        if (List.size()==0){
+        if (List.size() == 0) {
             data.put("success", 0);
             data.put("msg", "传递参数错误");
             data.put("data", null);
-        }else {
+        } else {
             int addNumber = userService.batchRemoveAccount(List);
             if (addNumber > 0) {
                 data.put("success", 1);
                 data.put("msg", "批量删除账号添加成功");
                 data.put("data", null);
-            }else {
+            } else {
                 data.put("success", 0);
                 data.put("msg", "批量删除账号添加失败");
                 data.put("data", null);
             }
         }
-        return  data.toJSONString();
+        return data.toJSONString();
     }
 
 
@@ -375,7 +388,7 @@ public class UserController {
     @ResponseBody
     @RequestMapping(value = "/searchAccount", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public String searchAccount(HttpServletRequest request, HttpServletResponse response) {
-        String username= request.getParameter("username");
+        String username = request.getParameter("username");
         JSONObject data = new JSONObject();
         data.put("code", 0);
         data.put("msg", "searchStudent");
@@ -384,9 +397,8 @@ public class UserController {
         System.out.println(list);
         data.put("count", list.size());
         data.put("data", list);
-        return  data.toJSONString();
+        return data.toJSONString();
     }
-
 
 
 }

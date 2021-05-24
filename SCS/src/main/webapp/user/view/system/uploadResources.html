@@ -117,6 +117,7 @@
                                 <th>文件名</th>
                                 <th>大小</th>
                                 <th>上传进度</th>
+                                <th>上传时间</th>
                                 <th>操作</th>
                             </tr>
                             </thead>
@@ -215,7 +216,7 @@
                 if (res.success) { //上传成功
                     let tr = that.elemList.find('tr#upload-' + index)
                         , tds = tr.children();
-                    tds.eq(3).html('<span class="layui-badge layui-bg-green">成功</span>'); //清空操作
+                    tds.eq(4).html('<span class="layui-badge layui-bg-green">成功</span>'); //清空操作
                     delete this.files[index]; //删除文件队列已经上传成功的文件
                     return;
                 }else {
@@ -239,10 +240,12 @@
                 //console.log(files)
                 //读取本地文件
                 obj.preview(function (index, file, result) {
+                    let date =new Date();
                     let tr = $(['<tr id="upload-' + index + '">'
                         , '<td>' + file.name + '</td>'
                         , '<td>' + (file.size / 1014).toFixed(1) + 'kb</td>'
                         , '<td><div class="layui-progress" lay-filter="progress-file-' + index + '"><div class="layui-progress-bar" lay-percent=""></div></div></td>'
+                        ,'<td>'+date.toLocaleTimeString()+'</td>'
                         , '<td>'
                         , '<button class="layui-btn layui-btn-xs file-reload layui-hide">重传</button>'
                         , '<button class="layui-btn layui-btn-xs layui-btn-danger file-delete">删除</button>'

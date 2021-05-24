@@ -1,15 +1,16 @@
 <!DOCTYPE html>
-<html lang="en"  xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
-    <link rel="stylesheet" href="../../../component/pear/css/pear.css" />
+    <link rel="stylesheet" href="../../../component/pear/css/pear.css"/>
 </head>
 <body>
 <form class="layui-form" action="">
     <div class="mainBox">
         <div class="main-container">
             <div class="main-container">
+                <!--学号-->
                 <div class="layui-form-item">
                     <label class="layui-form-label">学号</label>
                     <div class="layui-input-block">
@@ -19,53 +20,61 @@
                               style="text-align: center;display: none">该学生已存在</span>
                     </div>
                 </div>
+                <!--姓名-->
                 <div class="layui-form-item">
                     <label class="layui-form-label">姓名</label>
                     <div class="layui-input-block">
-                        <input type="text"  name="realName" lay-verify="required|title" autocomplete="off"
+                        <input type="text" name="realName" lay-verify="required|title" autocomplete="off"
                                placeholder="请输入姓名" class="layui-input" lay-reqText="请输入姓名">
                     </div>
                 </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">班级</label>
-                    <div class="layui-input-block">
-                        <input type="text"  name="classes" lay-verify="required|title" autocomplete="off"
-                               placeholder="请输入班级" class="layui-input" lay-reqText="请输入班级">
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">家庭住址</label>
-                    <div class="layui-input-block">
-                        <input type="text"  name="addr" lay-verify="required|title" autocomplete="off"
-                               placeholder="请输入学生家庭住址" class="layui-input" lay-reqText="请输入学生家庭住址">
-                    </div>
-                </div>
+                <!--专业-->
                 <div class="layui-form-item">
                     <label class="layui-form-label">专业</label>
                     <div class="layui-input-block">
-                        <input type="text"  name="department" lay-verify="required|title" autocomplete="off"
-                               placeholder="请输入该生专业" class="layui-input" lay-reqText="请输入该生专业">
+                        <select id="major" name="major" lay-verify="required"
+                                lay-search lay-reqText="请选择专业">
+                        </select>
                     </div>
                 </div>
+                <!-- 学历层次-->
                 <div class="layui-form-item">
                     <label class="layui-form-label">学历层次</label>
                     <div class="layui-input-block">
                         <select name="levels" lay-verify="required" lay-reqText="请选择学历层次">
                             <option id="level" value="" selected>请选择学历层次</option>
-                            <option id="level01" value="专科" >专科</option>
+                            <option id="level01" value="专科">专科</option>
                             <option id="level02" value="本科">本科</option>
                             <option id="level03" value="硕士">硕士</option>
                             <option id="level04" value="博士">博士</option>
                         </select>
                     </div>
                 </div>
+                <!--班级-->
+                <div class="layui-form-item">
+                    <label class="layui-form-label">班级</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="classes" lay-verify="required|title" autocomplete="off"
+                               placeholder="请输入班级" class="layui-input" lay-reqText="请输入班级">
+                    </div>
+                </div>
+                <!-- 家庭住址-->
+                <div class="layui-form-item">
+                    <label class="layui-form-label">家庭住址</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="addr" lay-verify="required|title" autocomplete="off"
+                               placeholder="请输入学生家庭住址" class="layui-input" lay-reqText="请输入学生家庭住址">
+                    </div>
+                </div>
+                <!--电话-->
                 <div class="layui-form-item">
                     <label class="layui-form-label">电话</label>
                     <div class="layui-input-block">
-                        <input type="text"  name="phone" lay-verify="required|phone" autocomplete="off"
+                        <input type="text" name="phone" lay-verify="required|phone" autocomplete="off"
                                placeholder="请输入手机号码" class="layui-input" lay-reqText="请输入手机号码">
                     </div>
                 </div>
+                <!--性别-->
                 <div class="layui-form-item">
                     <label class="layui-form-label">性别</label>
                     <div class="layui-input-block">
@@ -92,74 +101,92 @@
 <script src="../../../component/layui/layui.js"></script>
 <script src="../../../component/pear/pear.js"></script>
 <script>
-layui.use(['form','jquery','loading'],function(){
-    let form = layui.form;
-    let $ = layui.jquery;
-    let loading = layui.loading;
-    form.on('submit(user-save)', function(data){
-        //console.log(data.field);
-        loading.Load(3,"");
+    layui.use(['form', 'jquery', 'loading'], function () {
+        let form = layui.form;
+        let $ = layui.jquery;
+        let loading = layui.loading;
+
+        //动态获取专业列表
         $.ajax({
-            url:'/admin/stu/addStudent',
-            data: data.field,
-            dataType:'json',
-            contentType:'application/json',
-            type:'get',
-            success:function(result){
-                loading.loadRemove();
-                //console.log(JSON.stringify(result.data));
-                if(result.success){
-                    layer.msg(result.msg,{icon:1,time:1000},function(){
-                        parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前页
-                        //console.log(JSON.stringify(result.data));
-                        parent.layui.table.reload("user-table",{
-                            data:result.data,
-                            page: {
-                                layout: ['count', 'prev', 'page', 'next', 'skip']
-                                , curr: parent.layui.jquery(".layui-laypage-em").next().html()
-                                ,groups:3
-                                ,last: false
-                            }
+            url: '/Major/getMajors',
+            dataType: 'json',
+            type: 'post',
+            success: function (res) {
+                console.log(res.data);
+                let major = $('#major');
+                major.append('<option value="">请选择专业</option>')
+                for (let i = 0; i < res.data.length; i++) {
+                    let majorName = res.data[i].majorName;
+                    major.append('<option value="' + majorName + '">' + majorName + '</option>')
+                }
+                form.render('select');
+            }
+        })
+
+        form.on('submit(user-save)', function (data) {
+            console.log(data.field);
+            loading.Load(3, "");
+            $.ajax({
+                url: '/admin/stu/addStudent',
+                data: data.field,
+                dataType: 'json',
+                contentType: 'application/json',
+                type: 'get',
+                success: function (result) {
+                    loading.loadRemove();
+                    //console.log(JSON.stringify(result.data));
+                    if (result.success) {
+                        layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                            parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前页
+                            //console.log(JSON.stringify(result.data));
+                            parent.layui.table.reload("user-table", {
+                                data: result.data,
+                                page: {
+                                    layout: ['count', 'prev', 'page', 'next', 'skip']
+                                    , curr: parent.layui.jquery(".layui-laypage-em").next().html()
+                                    , groups: 3
+                                    , last: false
+                                }
+                            });
                         });
-                    });
-                }else{
-                    layer.msg(result.msg,{icon:2,time:1500});
+                    } else {
+                        layer.msg(result.msg, {icon: 2, time: 1500});
+                    }
                 }
-            }
-        })
-        return false;
-    });
-    $('#userId').blur(function (){
-        if ($('#userId').val()==''){
+            })
             return false;
-        }
-        $('#userIdTips').append('<i class="tipsLoad layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop"></i>');
-        $.ajax({
-            url:'/admin/stu/search',
-            data:{
-                userId:$('#userId').val()
-            },
-            dataType:'json',
-            contentType:'application/json',
-            type:'get',
-            success:function(result){
-                $('.tipsLoad').remove();
-                console.log(result);
-                if (result.count<=0){
-                    $('#userIdTips').hide();
-                }else {
-                    $('#userIdTips').show();
-                }
-            },
-            error:function (result){
-                console.log(result);
+        });
+        $('#userId').blur(function () {
+            if ($('#userId').val() == '') {
+                return false;
             }
+            $('#userIdTips').append('<i class="tipsLoad layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop"></i>');
+            $.ajax({
+                url: '/admin/stu/search',
+                data: {
+                    userId: $('#userId').val()
+                },
+                dataType: 'json',
+                contentType: 'application/json',
+                type: 'get',
+                success: function (result) {
+                    $('.tipsLoad').remove();
+                    console.log(result);
+                    if (result.count <= 0) {
+                        $('#userIdTips').hide();
+                    } else {
+                        $('#userIdTips').show();
+                    }
+                },
+                error: function (result) {
+                    console.log(result);
+                }
+            })
         })
+        // $('#userId').focus(function (){
+        //     $('#userIdTips').hide();
+        // })
     })
-    // $('#userId').focus(function (){
-    //     $('#userIdTips').hide();
-    // })
-})
 </script>
 <script>
 </script>

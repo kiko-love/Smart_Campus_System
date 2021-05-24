@@ -10,6 +10,7 @@
     <div class="mainBox">
         <div class="main-container">
             <div class="main-container">
+                <!--账号-->
                 <div class="layui-form-item">
                     <label class="layui-form-label">账号</label>
                     <div class="layui-input-block">
@@ -22,38 +23,50 @@
                         </span>
                     </div>
                 </div>
+                <!--使用默认密码-->
+                <div class="layui-form-item">
+                    <label class="layui-form-label">默认密码</label>
+                    <div class="layui-input-block">
+                        <input type="checkbox" name="isDefaultPwd" lay-skin="switch" value="open"
+                               lay-filter="openDefault" data-value="off"
+                               checked lay-text="启用|禁用">
+                        <span title="将该账号的初始密码赋为默认值123456" style="position: relative;top:8px;left: 3px;cursor: pointer">
+                            <i class="layui-icon layui-icon-about"></i>
+                        </span>
+                    </div>
+                </div>
+                <!--密码-->
                 <div class="layui-form-item">
                     <label class="layui-form-label">密码</label>
                     <div class="layui-input-block">
                         <input id="password_1" type="text" name="password_1"
-                               lay-verify="required" autocomplete="off"
-                               placeholder="请输入密码"
-                               class="layui-input" lay-reqText="请输入密码">
+                               lay-verify="" autocomplete="off"
+                               placeholder="已开启默认密码，无需填写" disabled
+                               class="layui-input layui-disabled" lay-reqText="请输入密码">
                     </div>
                 </div>
-
+                <!--确认密码-->
                 <div class="layui-form-item">
                     <label class="layui-form-label">确认密码</label>
                     <div class="layui-input-block">
-                        <input id="password_2" type="text" name="password_2" lay-verify="required" autocomplete="off"
-                               placeholder="请确认并输入密码"
-                               class="layui-input" lay-reqText="请确认并输入密码">
+                        <input id="password_2" type="text" name="password_2" lay-verify="" autocomplete="off"
+                               placeholder="已开启默认密码，无需填写" disabled
+                               class="layui-input layui-disabled" lay-reqText="请确认并输入密码">
                     </div>
                 </div>
-
+                <!--账号权限-->
                 <div class="layui-form-item">
                     <label class="layui-form-label">账号权限</label>
                     <div class="layui-input-block">
                         <select name="role" lay-verify="required" lay-reqText="请选择学历层次">
                             <option id="role" value="" selected>请选择账号权限</option>
-                            <option id="role1" value="0" >管理员</option>
+                            <option id="role1" value="0">管理员</option>
                             <option id="role2" value="1">教师账号</option>
                             <option id="role3" value="2">学生账号</option>
                         </select>
                     </div>
                 </div>
-
-
+                <!--账号初始状态-->
                 <div class="layui-form-item">
                     <label class="layui-form-label">初始状态</label>
                     <div class="layui-input-block">
@@ -81,7 +94,7 @@
 <script src="../../../component/pear/pear.js"></script>
 <script src="../../../../static/js/md5.js"></script>
 <script>
-    layui.use(['form', 'jquery', 'loading','laydate'], function () {
+    layui.use(['form', 'jquery', 'loading', 'laydate'], function () {
         let form = layui.form;
         let $ = layui.jquery;
         let loading = layui.loading;
@@ -89,16 +102,50 @@
 
         laydate.render({
             elem: '#birthday' //或 elem: document.getElementById('test')、elem: lay('#test') 等
-            ,theme: 'molv'
-            ,calendar: true
+            , theme: 'molv'
+            , calendar: true
         });
 
+        form.on('switch(openDefault)', function (data) {
+            //console.log(data.elem.dataset["value"]);
+            if (data.elem.dataset["value"] === 'on') {
+                data.value = 'close';
+                data.elem.dataset.value = 'off';
+                $('#password_1').attr('placeholder', '已开启默认密码，无需填写');
+                $('#password_2').attr('placeholder', '已开启默认密码，无需填写');
+
+                $('#password_1').prop('disabled', true);
+                $('#password_1').attr('lay-verify', '');
+                $('#password_1').addClass('layui-disabled');
+
+                $('#password_2').prop('disabled', true);
+                $('#password_2').addClass('layui-disabled');
+                $('#password_2').attr('lay-verify', '');
+                form.render();
+            } else {
+                data.elem.dataset.value = 'on';
+                data.value = 'open';
+                $('#password_1').attr('placeholder', '请输入密码');
+                $('#password_2').attr('placeholder', '请确认并输入密码');
+
+                $('#password_1').removeAttr('disabled');
+                $('#password_1').removeClass('layui-disabled');
+                $('#password_1').attr('lay-verify', 'required');
+
+                $('#password_2').removeAttr('disabled');
+                $('#password_2').removeClass('layui-disabled');
+                $('#password_2').attr('lay-verify', 'required');
+                form.render();
+            }
+        })
 
 
         form.on('submit(user-save)', function (data) {
-            console.log(data.field);
+            //console.log(data.field);
             let accountStatus = '';
-            if (data.field.password_1!==data.field.password_2) {
+            let md5pwd = '';
+
+            if (data.field.password_1 !== data.field.password_2) {
                 layer.open({
                     title: '提示'
                     , icon: 5
@@ -106,19 +153,25 @@
                 });
                 return false;
             }
-            if (data.field.accountStatus=="on"){
-                accountStatus = '100';
+            if (data.field.isDefaultPwd){
+                md5pwd = md5("123456");
             }else {
+                md5pwd = md5(data.field.password_1)
+            }
+            if (data.field.accountStatus == "on") {
+                accountStatus = '100';
+            } else {
                 accountStatus = '110';
             }
             loading.Load(3, "");
             $.ajax({
                 url: '/User/addAccount',
                 data: {
-                    username:data.field.username,
-                    md5password:md5(data.field.password_1),
-                    role:data.field.role,
-                    status:accountStatus
+                    username: data.field.username,
+                    md5password: md5pwd,
+                    role: data.field.role,
+                    status: accountStatus,
+                    isDefault:data.field.isDefaultPwd
                 },
                 dataType: 'json',
                 type: 'post',
@@ -130,7 +183,7 @@
                             parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前页
                             //console.log(JSON.stringify(result.data));
                             parent.layui.table.reload("organization-table", {
-                                url:'/User/getAllUsers',
+                                url: '/User/getAllUsers',
                                 page: {
                                     layout: ['count', 'prev', 'page', 'next', 'skip']
                                     , curr: parent.layui.jquery(".layui-laypage-em").next().html()

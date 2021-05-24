@@ -79,15 +79,22 @@
 <script src="../../../component/layui/layui.js"></script>
 <script src="../../../component/pear/pear.js"></script>
 <script>
-    layui.use(['form', 'jquery'], function () {
+    layui.use(['form', 'jquery','laydate'], function () {
         let form = layui.form;
         let $ = layui.jquery;
-        //$("#userId").val(parent.obj.data['userId']);
-        // console.log(parent.layui.table)
+        let laydate = layui.laydate;
+
+
+        laydate.render({
+            elem: '#birthday' //或 elem: document.getElementById('test')、elem: lay('#test') 等
+            ,theme: 'molv'
+            ,calendar: true
+        });
+
         form.on('submit(user-save)', function (data) {
             var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
             $.ajax({
-                url: '/admin/tea/addTea',
+                url: '/admin/tea/updateTeacher',
                 data: data.field,
                 dataType: 'json',
                 contentType: 'application/json',
