@@ -10,7 +10,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class resource {
-    private String fileId;
+    private Integer fileId;
     private String fileName;
     private String teacherId;
     private String filePath;
