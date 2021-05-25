@@ -460,6 +460,7 @@ public class resourceController {
         if (fileIdOrigin == null || fileIdOrigin.equals("")) {
             data.put("msg", "无fileId参数");
             data.put("data", "");
+            data.put("success",0);
             return data.toJSONString();
         }
         Integer fileId = Integer.valueOf(fileIdOrigin);
@@ -469,6 +470,7 @@ public class resourceController {
         if (resource.size() == 0) {
             data.put("msg", "删除失败，数据库无该文件");
             data.put("data", "");
+            data.put("success",0);
             return data.toJSONString();
         }
         //删除数据库的存储记录
@@ -485,10 +487,12 @@ public class resourceController {
             if (deleteCount == 0) {
                 data.put("msg", "删除失败");
                 data.put("data", "");
+                data.put("success",0);
                 return data.toJSONString();
             }
             data.put("msg", "删除成功");
             data.put("data", "");
+            data.put("success",1);
             String TeacherPath = path.substring(0, path.indexOf("target\\response\\")) + "src\\resource\\" + course + "\\" + teacherId;
             File file1 = new File(TeacherPath);
             //当该老师目录下没有文件，就删除该文件夹
@@ -503,9 +507,9 @@ public class resourceController {
             return data.toJSONString();
 
         }
-
         data.put("msg", "没有储存文件");
         data.put("data", "");
+        data.put("success",0);
         return data.toJSONString();
     }
 
@@ -523,6 +527,7 @@ public class resourceController {
         if (fileIdsOrigin == null || fileIdsOrigin.size()==0) {
             data.put("msg", "无fileId参数");
             data.put("data", "");
+            data.put("success",0);
             return data.toJSONString();
         }
         data.put("code", 0);
@@ -558,14 +563,14 @@ public class resourceController {
             }
         }
         if (removeNumber > 0) {
-            data.put("success", "1");
+            data.put("success", 1);
             data.put("msg", "删除选中资源成功");
         } else {
-            data.put("success", "0");
+            data.put("success", 0);
             data.put("msg", "删除选中资源失败");
         }
         data.put("count", removeNumber);
-        data.put("data", null);
+        data.put("data", "");
         return data.toJSONString();
     }
 
@@ -609,10 +614,10 @@ public class resourceController {
         }
         int removeNumber = resourceService.batchDeleteResource(fileIdList);
         if (removeNumber > 0) {
-            jsonObject.put("success", "1");
+            jsonObject.put("success", 1);
             jsonObject.put("msg", "删除选中资源成功");
         } else {
-            jsonObject.put("success", "0");
+            jsonObject.put("success", 0);
             jsonObject.put("msg", "删除选中资源失败");
         }
         jsonObject.put("count", removeNumber);
