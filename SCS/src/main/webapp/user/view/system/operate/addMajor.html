@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>新增专业</title>
+    <link rel="stylesheet" href="../../../component/pear/css/pear.css"/>
+</head>
+<body>
+<form class="layui-form">
+    <div class="mainBox">
+        <div class="main-container">
+            <div class="main-container">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">专业ID</label>
+                    <div class="layui-input-block">
+                        <input id="majorId" type="text" name="majorId" value="" lay-verify="title"
+                               autocomplete="off"
+                               placeholder="无需填写，系统将自动生成ID" class="layui-input"
+                               style="cursor:not-allowed;color: #a1a1a1;" disabled>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">专业名称</label>
+                    <div class="layui-input-block">
+                        <input id="majorName" type="text" name="majorName" lay-verify="required" autocomplete="off"
+                               placeholder="请输入专业名称"
+                               class="layui-input" lay-reqText="请输入专业名称">
+                        <span class="layui-badge"
+                              id="userIdTips" style="text-align: center;display: none">该专业已存在
+                        </span>
+                    </div>
+
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">专业类别</label>
+                    <div class="layui-input-block">
+                        <input id="majorType" type="text" name="majorType"
+                               value="" lay-verify="required" autocomplete="off"
+                               placeholder="请输入专业类别" class="layui-input" lay-reqText="请输入专业类别">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">修业年限</label>
+                    <div class="layui-input-block">
+                        <input id="majorYear" type="text" name="majorYear" value=""
+                               lay-verify="required" lay-verify="title" lay-reqText="请输入修业年限"
+                               autocomplete="off" placeholder="请输入修业年限" class="layui-input">
+                    </div>
+                </div>
+
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">所属学院</label>
+                    <div class="layui-input-block">
+                        <input id="academy" type="text" name="academy" value="" lay-verify="required"
+                               lay-reqText="请输入所属学院"
+                               autocomplete="off" placeholder="请输入所属学院" class="layui-input">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bottom">
+        <div class="button-container">
+            <button type="submit" class="pear-btn pear-btn-primary pear-btn-sm" lay-submit="" lay-filter="user-save">
+                <i class="layui-icon layui-icon-ok"></i>
+                提交
+            </button>
+        </div>
+    </div>
+</form>
+<script src="../../../component/layui/layui.js"></script>
+<script src="../../../component/pear/pear.js"></script>
+<script>
+    layui.use(['form', 'jquery', 'loading','laydate'], function () {
+        let form = layui.form;
+        let $ = layui.jquery;
+        let loading = layui.loading;
+        let laydate = layui.laydate;
+
+        laydate.render({
+            elem: '#birthday' //或 elem: document.getElementById('test')、elem: lay('#test') 等
+            ,theme: 'molv'
+            ,calendar: true
+        });
+
+
+
+        form.on('submit(user-save)', function (data) {
+            //console.log(data.field);
+            loading.Load(3, "");
+            $.ajax({
+                url: '/Major/addMajor',
+                data: data.field,
+                dataType: 'json',
+                type: 'post',
+                success: function (result) {
+                    loading.loadRemove();
+                    console.log(result);
+                    if (result.success=='1') {
+                        layer.msg(result.msg, {icon: 1, time: 1000}, function () {
+                            parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前页
+                            //console.log(JSON.stringify(result.data));
+                            parent.layui.table.reload("user-table", {
+                                data: result.data,
+                                page: {
+                                    layout: ['count', 'prev', 'page', 'next', 'skip']
+                                    , curr: parent.layui.jquery(".layui-laypage-em").next().html()
+                                    , groups: 3
+                                    , last: false
+                                }
+                            });
+                        });
+                    } else {
+                        layer.open({
+                            title: '提示'
+                            , icon: 2
+                            , content: result.msg
+                        });
+                    }
+                }
+            })
+            return false;
+        });
+        //前端实时检测用户是否存在
+        $('#majorName').blur(function () {
+            if ($('#majorName').val() == '') {
+                return false;
+            }
+            $('#userIdTips').append('<i class="tipsLoad layui-icon layui-icon-loading layui-anim layui-anim-rotate ' +
+                'layui-anim-loop"></i>');
+            $.ajax({
+                url: '/Major/getMajorByName',
+                data: {
+                    majorName: $('#majorName').val()
+                },
+                dataType: 'json',
+                type: 'get',
+                success: function (result) {
+                    $('.tipsLoad').remove();
+                    console.log(result);
+                    if (result.count <= 0) {
+                        $('#userIdTips').hide();
+                    } else {
+                        $('#userIdTips').show();
+                    }
+                },
+                error: function (result) {
+                    console.log(result);
+                }
+            })
+        })
+    })
+</script>
+<script>
+</script>
+</body>
+</html>
