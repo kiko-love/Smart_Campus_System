@@ -569,5 +569,56 @@ public class resourceController {
         return data.toJSONString();
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/deleteByCourseName", produces = "application/json;charset=utf-8")
+    public String deleteByCourseName(HttpServletRequest request){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("code",200);
+        String course = request.getParameter("course");
+        String teacherId = (String) request.getSession().getAttribute("userInformation");
+        //当老师获取不到
+        if(teacherId==null||teacherId.equals("")){
+            jsonObject.put("msg","获取不到老师信息");
+            jsonObject.put("data","");
+            return jsonObject.toJSONString();
+        }
+        if(course==null||course.equals("")){
+            jsonObject.put("msg","获取不到文件夹");
+            jsonObject.put("data","");
+            return jsonObject.toJSONString();
+        }
+        //获取到这个文件夹下的所有文件
+        List<resource> resInfo = resourceService.getResInfo(teacherId, course);
+        System.out.println(resInfo);
+        //获取到这些文件的fileId集合
+        ArrayList<Integer> fileIdList = new ArrayList<>();
+        for(int i=0;i<resInfo.size();i++){
+            fileIdList.add(resInfo.get(i).getFileId());
+        }
+        String path = request.getSession().getServletContext().getRealPath("");
+        //获取到这个文件的储存地址
+        String savePath = path.substring(0, path.indexOf("target\\response\\")) + "src\\resource\\" + course + "\\" + teacherId;
+        File file = new File(savePath);
+        fileDeleteUtils.deleteDir(file);
+        String CoursePath= path.substring(0, path.indexOf("target\\response\\")) + "src\\resource\\" + course;
+        File file1 = new File(CoursePath);
+        int number = fileDeleteUtils.countFileDirNumber(file1);
+        //该科目下没有任何老师的资源，删除该科目文件夹
+        if(number==0){
+            fileDeleteUtils.deleteDir(file1);
+        }
+        int removeNumber = resourceService.batchDeleteResource(fileIdList);
+        if (removeNumber > 0) {
+            jsonObject.put("success", "1");
+            jsonObject.put("msg", "删除选中资源成功");
+        } else {
+            jsonObject.put("success", "0");
+            jsonObject.put("msg", "删除选中资源失败");
+        }
+        jsonObject.put("count", removeNumber);
+        jsonObject.put("data", null);
+        return jsonObject.toJSONString();
+    }
+
 
 }
