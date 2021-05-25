@@ -21,15 +21,12 @@
             <if test="courseTime !=null and courseTime !=''">
                 courseTime=#{courseTime},
             </if>
-            <if test="courseMajor !=null and courseMajor !=''">
-                courseMajor=#{courseMajor}
-            </if>
         </set>
         where courseId=#{courseId}
     </update>
     <insert id="insertCourse" parameterType="com.scs.pojo.course">
-        insert into course(courseId,courseName,courseScore,courseTime,courseMajor)
-        values (#{courseId},#{courseName},#{courseScore},#{courseTime},#{courseMajor})
+        insert into course(courseId,courseName,courseScore,courseTime)
+        values (#{courseId},#{courseName},#{courseScore},#{courseTime})
     </insert>
 
     <delete id="deleteCourse" parameterType="String">

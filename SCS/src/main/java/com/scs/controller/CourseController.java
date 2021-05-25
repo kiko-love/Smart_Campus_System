@@ -33,12 +33,11 @@ public class CourseController{
     @RequestMapping(value = "updateCourse",produces = "application/json;charset=utf-8")
     public String updateCourse(HttpServletRequest request){
         JSONObject data = new JSONObject();
-        String courseid = request.getParameter("courseid");
-        String coursename = request.getParameter("coursename");
-        String coursescore = request.getParameter("coursescore");
-        String coursetime = request.getParameter("coursetime");
-        String coursemajor = request.getParameter("coursemajor");
-        course course = new course(courseid,coursename,coursescore,coursetime,coursemajor);
+        String courseId = request.getParameter("courseId");
+        String courseName = request.getParameter("courseName");
+        String courseScore = request.getParameter("courseScore");
+        String courseTime = request.getParameter("courseTime");
+        course course = new course("0",courseName,courseScore,courseTime);
         int count = courseService.updateCourse(course);
         if(count>0){
             data.put("success","1");
@@ -56,12 +55,10 @@ public class CourseController{
     @RequestMapping(value = "/insertCourse",produces = "application/json;charset=utf-8")
     public String insertCourse(HttpServletRequest request){
         JSONObject data = new JSONObject();
-        String courseid = request.getParameter("courseid");
-        String coursename = request.getParameter("coursename");
-        String coursescore = request.getParameter("coursescore");
-        String coursetime = request.getParameter("coursetime");
-        String coursemajor = request.getParameter("coursemajor");
-        course course = new course(courseid,coursename,coursescore,coursetime,coursemajor);
+        String courseName = request.getParameter("courseName");
+        String courseScore = request.getParameter("courseScore");
+        String courseTime = request.getParameter("courseTime");
+        course course = new course("0",courseName,courseScore,courseTime);
         int count = courseService.insertCourse(course);
         if(count>0){
             data.put("success","1");
@@ -78,7 +75,7 @@ public class CourseController{
     @RequestMapping(value = "/deleteCourse",produces = "application/json;charset=utf-8")
     public String deleteCourse(HttpServletRequest request){
         JSONObject data = new JSONObject();
-        String courseId = request.getParameter("courseid");
+        String courseId = request.getParameter("courseId");
         int count = courseService.deleteCourse(courseId);
         if(count>0){
             data.put("success","1");
@@ -92,13 +89,13 @@ public class CourseController{
         return data.toJSONString();
     }
     @ResponseBody
-    @RequestMapping(value = "batchRemoveStudent",produces = "application/json;charset=utf-8")
-    public String batchRemoveStudent(HttpServletRequest request){
+    @RequestMapping(value = "batchRemoveCourse",produces = "application/json;charset=utf-8")
+    public String batchRemoveCourse(HttpServletRequest request){
         JSONObject data = new JSONObject();
-       // List<String> List = JSONObject.parseArray(request.getParameter("userIds"),String.class);
+        // List<String> List = JSONObject.parseArray(request.getParameter("userIds"),String.class);
         List<String> List = new ArrayList<>();
-        List.add("aaa");
-        List.add("bbb");
+        List.add("9");
+        List.add("8");
         int count = courseService.batchRemoveCourse(List);
         if(count>0){
             data.put("success","1");
