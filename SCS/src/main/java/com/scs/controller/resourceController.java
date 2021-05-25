@@ -430,7 +430,7 @@ public class resourceController {
                 resource resource = resources.get(i);
                 jsonList.add(new TeacherResourceOB(id, 0, resource.getFileName(),
                         resource.getFilesize(), "2",
-                        resource.getCreateTime(), resource.getFileId() * 10000,
+                        resource.getCreateTime(), resource.getFileId() ,
                         false, null));
                 id++;
             }
@@ -464,7 +464,7 @@ public class resourceController {
         }
         Integer fileId = Integer.valueOf(fileIdOrigin);
         data.put("code", 0);
-        List<resource> resource = resourceService.selectResourceById(fileId / 1000);
+        List<resource> resource = resourceService.selectResourceById(fileId);
         //当没有该文件的记录
         if (resource.size() == 0) {
             data.put("msg", "删除失败，数据库无该文件");
@@ -472,7 +472,7 @@ public class resourceController {
             return data.toJSONString();
         }
         //删除数据库的存储记录
-        int deleteCount = resourceService.deleteRes(fileId / 1000);
+        int deleteCount = resourceService.deleteRes(fileId);
         String fileName = resource.get(0).getFileName();
         String course = resource.get(0).getCourseName();
         String teacherId = resource.get(0).getTeacherId();
@@ -489,8 +489,21 @@ public class resourceController {
             }
             data.put("msg", "删除成功");
             data.put("data", "");
+            String TeacherPath = path.substring(0, path.indexOf("target\\response\\")) + "src\\resource\\" + course + "\\" + teacherId;
+            File file1 = new File(TeacherPath);
+            //当该老师目录下没有文件，就删除该文件夹
+            if(fileDeleteUtils.countFileNumber(file1)==0){
+                fileDeleteUtils.deleteDir(file1);
+            }
+            String CoursePath = path.substring(0, path.indexOf("target\\response\\")) + "src\\resource\\" + course;
+            File file2 = new File(CoursePath);
+            if(fileDeleteUtils.countFileDirNumber(file2)==0){
+                fileDeleteUtils.deleteDir(file2);
+            }
             return data.toJSONString();
+
         }
+
         data.put("msg", "没有储存文件");
         data.put("data", "");
         return data.toJSONString();
@@ -506,33 +519,46 @@ public class resourceController {
     @RequestMapping(value = "/batchRemoveResource", produces = "application/json;charset=utf-8")
     public String batchRemoveResource(HttpServletRequest request) {
         JSONObject data = new JSONObject();
-        String fileIdsOrigin = request.getParameter("fileIds");
-        if (fileIdsOrigin == null || fileIdsOrigin.equals("")) {
+        List<Integer> List = JSONObject.parseArray(request.getParameter("fileIds"), Integer.class);
+        if (List == null || List.size()==0) {
             data.put("msg", "无fileId参数");
             data.put("data", "");
             return data.toJSONString();
         }
-        List<Integer> List = JSONObject.parseArray(request.getParameter("fileIds"), Integer.class);
         data.put("code", 0);
         ArrayList<Integer> fileIds = new ArrayList<>();
         for (int i = 0; i < List.size(); i++) {
-            fileIds.add(List.get(i) / 1000);
+            fileIds.add(List.get(i));
         }
         //执行删除
         int removeNumber = resourceService.batchDeleteResource(fileIds);
+        String path = request.getSession().getServletContext().getRealPath("");
+        java.util.List<resource> resourceOne = resourceService.selectResourceById(fileIds.get(0));
+        String course = resourceOne.get(0).getCourseName();
         for (int i = 0; i < List.size(); i++) {
             //获取到每个文件的信息
             java.util.List<resource> resource = resourceService.selectResourceById(fileIds.get(i));
             String fileName = resource.get(i).getFileName();
-            String course = resource.get(i).getCourseName();
+            course = resource.get(i).getCourseName();
             String teacherId = resource.get(i).getTeacherId();
-            String path = request.getSession().getServletContext().getRealPath("");
             //获取到这个文件的储存地址
             String savePath = path.substring(0, path.indexOf("target\\response\\")) + "src\\resource\\" + course + "\\" + teacherId + "\\";
             File file = new File(savePath + fileName);
             if (file.exists()) {
                 file.delete();
             }
+        }
+        String teacherId = (String) request.getSession().getAttribute("userInformation");
+        String TeacherPath = path.substring(0, path.indexOf("target\\response\\")) + "src\\resource\\" + course + "\\" + teacherId;
+        File file1 = new File(TeacherPath);
+        //当该老师目录下没有文件，就删除该文件夹
+        if(fileDeleteUtils.countFileNumber(file1)==0){
+            fileDeleteUtils.deleteDir(file1);
+        }
+        String CoursePath = path.substring(0, path.indexOf("target\\response\\")) + "src\\resource\\" + course;
+        File file2 = new File(CoursePath);
+        if(fileDeleteUtils.countFileDirNumber(file2)==0){
+            fileDeleteUtils.deleteDir(file2);
         }
         if (removeNumber > 0) {
             data.put("success", "1");
@@ -544,5 +570,56 @@ public class resourceController {
         data.put("count", removeNumber);
         data.put("data", null);
         return data.toJSONString();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/deleteByCourseName", produces = "application/json;charset=utf-8")
+    public String deleteByCourseName(HttpServletRequest request){
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("code",200);
+        String course = request.getParameter("course");
+        String teacherId = (String) request.getSession().getAttribute("userInformation");
+        //当老师获取不到
+        if(teacherId==null||teacherId.equals("")){
+            jsonObject.put("msg","获取不到老师信息");
+            jsonObject.put("data","");
+            return jsonObject.toJSONString();
+        }
+        if(course==null||course.equals("")){
+            jsonObject.put("msg","获取不到文件夹");
+            jsonObject.put("data","");
+            return jsonObject.toJSONString();
+        }
+        //获取到这个文件夹下的所有文件
+        List<resource> resInfo = resourceService.getResInfo(teacherId, course);
+        System.out.println(resInfo);
+        //获取到这些文件的fileId集合
+        ArrayList<Integer> fileIdList = new ArrayList<>();
+        for(int i=0;i<resInfo.size();i++){
+            fileIdList.add(resInfo.get(i).getFileId());
+        }
+        String path = request.getSession().getServletContext().getRealPath("");
+        //获取到这个文件的储存地址
+        String savePath = path.substring(0, path.indexOf("target\\response\\")) + "src\\resource\\" + course + "\\" + teacherId;
+        File file = new File(savePath);
+        fileDeleteUtils.deleteDir(file);
+        String CoursePath= path.substring(0, path.indexOf("target\\response\\")) + "src\\resource\\" + course;
+        File file1 = new File(CoursePath);
+        int number = fileDeleteUtils.countFileDirNumber(file1);
+        //该科目下没有任何老师的资源，删除该科目文件夹
+        if(number==0){
+            fileDeleteUtils.deleteDir(file1);
+        }
+        int removeNumber = resourceService.batchDeleteResource(fileIdList);
+        if (removeNumber > 0) {
+            jsonObject.put("success", "1");
+            jsonObject.put("msg", "删除选中资源成功");
+        } else {
+            jsonObject.put("success", "0");
+            jsonObject.put("msg", "删除选中资源失败");
+        }
+        jsonObject.put("count", removeNumber);
+        jsonObject.put("data", null);
+        return jsonObject.toJSONString();
     }
 }

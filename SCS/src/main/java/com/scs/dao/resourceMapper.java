@@ -108,7 +108,7 @@ public interface resourceMapper {
      * @return
      */
     @Delete("<script>delete from resource where fileId in " +
-            "<foreach collection='list' item='id' open='(' separator=',' close=')'>#{id}</foreach> </script>")
+            "<foreach collection='list' item='id' open='(' separator=',' close=')'>#{id}</foreach></script>")
     int batchDeleteResource(List<Integer> List);
 
     /**
