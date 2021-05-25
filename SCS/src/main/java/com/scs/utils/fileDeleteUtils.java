@@ -25,15 +25,14 @@ public class fileDeleteUtils {
     //判断该文件夹下的文件个数和文件夹个数
     public static int countFileNumber(File file){
 
-        int folderCount = 0;
         int fileCount = 0;
         File list[] = file.listFiles();
+        if(list==null||list.length==0){
+            return fileCount;
+        }
         for(int i = 0; i < list.length; i++){
             if(list[i].isFile()){
                 fileCount++;
-            }
-            else{
-                folderCount++;
             }
         }
         return fileCount;
@@ -42,6 +41,9 @@ public class fileDeleteUtils {
     public static int countFileDirNumber(File file){
         int folderCount = 0;
         File list[] = file.listFiles();
+        if(list==null||list.length==0){
+            return folderCount;
+        }
         for(int i = 0; i < list.length; i++){
             if(!list[i].isFile()){
                 folderCount++;
