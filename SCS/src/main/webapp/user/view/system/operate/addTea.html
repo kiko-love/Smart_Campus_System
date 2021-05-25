@@ -105,8 +105,7 @@
                 url: '/admin/tea/addTea',
                 data: data.field,
                 dataType: 'json',
-                contentType: 'application/json',
-                type: 'get',
+                type: 'post',
                 success: function (result) {
                     loading.loadRemove();
                     console.log(result);
@@ -137,7 +136,7 @@
         });
         //前端实时检测用户是否存在
         $('#teacherId').blur(function () {
-            if ($('#userId').val() == '') {
+            if ($('#teacherId').val() == '') {
                 return false;
             }
             $('#userIdTips').append('<i class="tipsLoad layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop"></i>');

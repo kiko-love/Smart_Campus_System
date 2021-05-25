@@ -10,6 +10,10 @@
 <body class="pear-container">
 <div class="layui-card">
     <div class="layui-card-body">
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+            <legend>教师信息管理</legend>
+        </fieldset>
+        <br>
         <form class="layui-form" action="">
             <div class="layui-form-item">
                 <div class="layui-form-item layui-inline">
@@ -18,18 +22,6 @@
                         <input type="text" name="teacherId" placeholder="" class="layui-input">
                     </div>
                 </div>
-                <!--                <div class="layui-form-item layui-inline">-->
-                <!--                    <label class="layui-form-label">姓名</label>-->
-                <!--                    <div class="layui-input-inline">-->
-                <!--                        <input type="text" name="realName" placeholder="" class="layui-input">-->
-                <!--                    </div>-->
-                <!--                </div>-->
-                <!--                <div class="layui-form-item layui-inline">-->
-                <!--                    <label class="layui-form-label">邮箱</label>-->
-                <!--                    <div class="layui-input-inline">-->
-                <!--                        <input type="text" name="email" placeholder="" class="layui-input">-->
-                <!--                    </div>-->
-                <!--                </div>-->
                 <div class="layui-form-item layui-inline">
                     <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="user-query">
                         <i class="layui-icon layui-icon-search"></i>
@@ -42,13 +34,6 @@
                 </div>
             </div>
         </form>
-    </div>
-</div>
-<div class="layui-card">
-    <div class="layui-card-body">
-        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
-            <legend>教师信息管理</legend>
-        </fieldset>
         <table id="user-table" lay-filter="user-table"></table>
     </div>
 </div>
@@ -84,13 +69,6 @@
     {{# } }}
 </script>
 
-<script type="text/html" id="user-login">
-    {{#if (d.login == 0) { }}
-    <span>在线</span>
-    {{# }else if(d.sex == 1){ }}
-    <span>离线</span>
-    {{# } }}
-</script>
 
 <script type="text/html" id="user-createTime">
     {{layui.util.toDateString(d.createTime, 'yyyy-MM-dd HH:mm:ss')}}

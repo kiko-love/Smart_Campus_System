@@ -139,25 +139,27 @@ public class resourceController {
         //下载单个文件
         if (filenames.size() == 1) {
             String fileName = filenames.get(0);
+            System.out.println(fileName);
             String path = request.getSession().getServletContext().getRealPath("");
             String filepath = path.substring(0, path.indexOf("target\\response\\")) + "src\\resource\\" + course + "\\" + teacherId + "\\";
+            System.out.println(filepath);
             //设置文件下载头
             response.addHeader("Content-Disposition", "attachment;filename=" + fileName);
             //1.设置文件ContentType类型，这样设置，会自动判断下载文件类型
             response.setContentType("multipart/form-data");
             //获取输入流
             File file = new File(filepath + fileName);
-            InputStream in = new BufferedInputStream(new FileInputStream(file));
+            FileInputStream fileInputStream = new FileInputStream(file);
             //获取输出流
             OutputStream out = response.getOutputStream();
             //设置缓冲区
             byte buffer[] = new byte[1024];
             int len = 0;
-            while ((len = in.read(buffer)) != -1) {
+            while ((len = fileInputStream.read(buffer)) != -1) {
                 out.write(buffer);
             }
             out.close();
-            in.close();
+            fileInputStream.close();
         }
         //下载多个文件，打包为zip
         else {
