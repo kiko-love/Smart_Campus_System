@@ -1,4 +1,5 @@
 package com.scs.controller;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -23,6 +25,7 @@ import java.util.zip.ZipOutputStream;
 
 @Controller
 @RequestMapping("/Resource")
+@CrossOrigin
 public class resourceController {
     @Autowired
     private resourceService resourceService;
@@ -31,6 +34,7 @@ public class resourceController {
 
     /**
      * 上传文件
+     *
      * @param request
      * @param files
      * @param
@@ -46,7 +50,7 @@ public class resourceController {
         HttpSession session = request.getSession();
         String course = request.getParameter("course");
         JSONObject data = new JSONObject();
-        if (course.equals("")){
+        if (course.equals("")) {
             data.put("status", 200);
             data.put("success", 0);
             data.put("msg", "课程参数错误，请重新上传");
@@ -55,7 +59,7 @@ public class resourceController {
         }
         //获取上传该文件的老师
         String teacherId = (String) session.getAttribute("userInformation");
-        if(teacherId==null||teacherId.equals("")){
+        if (teacherId == null || teacherId.equals("")) {
             data.put("status", 400);
             data.put("success", 0);
             data.put("msg", "文件上传失败,无老师信息");
@@ -92,19 +96,18 @@ public class resourceController {
             resource resInfo = resourceService.getResInfoById(filename, course, teacherId);
             //如果该文件已经存在，覆盖原来的文件
             if (resInfo != null) {
-            //删除已经存在服务器的同名文件
+                //删除已经存在服务器的同名文件
                 File fileExist = new File(savePath + filename);
                 fileExist.delete();
                 count[i] = resourceService.updateRes(filepath, filename, course);
                 files[i].transferTo(new File(savePath + filename));
-                }
-                else{
-                    count[i] = resourceService.saveRes(new resource(null, filename, teacherId, filepath, course,createTime,fileSize));
-                    files[i].transferTo(new File(savePath + filename));
-                }
+            } else {
+                count[i] = resourceService.saveRes(new resource(null, filename, teacherId, filepath, course, createTime, fileSize));
+                files[i].transferTo(new File(savePath + filename));
+            }
             //文件不存在，将资料存在服务器，信息存到数据库
             fileData.put(filename, filepath);
-            }
+        }
         if (count.length == files.length) {
             data.put("status", 200);
             data.put("success", 1);
@@ -121,6 +124,7 @@ public class resourceController {
 
     /**
      * 下载多文件，打包为zip
+     *
      * @param request
      * @param response
      * @throws Exception
@@ -128,15 +132,15 @@ public class resourceController {
     @RequestMapping(value = "/downloadResource", produces = "application/json;charset=utf-8")
     //MultipartFile 后面的值 必须和表单的name属性一致
     @ResponseBody
-    public void downloadResource(HttpServletRequest request, HttpServletResponse response) throws Exception{
+    public void downloadResource(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String course = request.getParameter("course");
         String teacherId = request.getParameter("teacherId");
-        List<String> filenames = JSONObject.parseArray(request.getParameter("contexts"),String.class);
+        List<String> filenames = JSONObject.parseArray(request.getParameter("contexts"), String.class);
         //下载单个文件
-        if (filenames.size()==1){
+        if (filenames.size() == 1) {
             String fileName = filenames.get(0);
             String path = request.getSession().getServletContext().getRealPath("");
-            String filepath = path.substring(0, path.indexOf("target\\response\\")) + "src\\resource\\" + course + "\\" + teacherId + "\\" ;
+            String filepath = path.substring(0, path.indexOf("target\\response\\")) + "src\\resource\\" + course + "\\" + teacherId + "\\";
             //设置文件下载头
             response.addHeader("Content-Disposition", "attachment;filename=" + fileName);
             //1.设置文件ContentType类型，这样设置，会自动判断下载文件类型
@@ -147,30 +151,30 @@ public class resourceController {
             //获取输出流
             OutputStream out = response.getOutputStream();
             //设置缓冲区
-            byte buffer[]=new byte[1024];
-            int len=0;
-            while((len=in.read(buffer))!=-1){
+            byte buffer[] = new byte[1024];
+            int len = 0;
+            while ((len = in.read(buffer)) != -1) {
                 out.write(buffer);
             }
             out.close();
             in.close();
         }
         //下载多个文件，打包为zip
-        else{
+        else {
             //响应头的设置
             response.reset();
             response.setCharacterEncoding("utf-8");
             response.setContentType("multipart/form-data");
             //设置压缩包的名字
             //解决不同浏览器压缩包名字含有中文时乱码的问题
-            String uuid = UUID.randomUUID().toString().replaceAll("-","");
-            String downloadName = uuid+".zip";
+            String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+            String downloadName = uuid + ".zip";
             String agent = request.getHeader("USER-AGENT");
             try {
-                if (agent.contains("MSIE")||agent.contains("Trident")) {
+                if (agent.contains("MSIE") || agent.contains("Trident")) {
                     downloadName = java.net.URLEncoder.encode(downloadName, "UTF-8");
                 } else {
-                    downloadName = new String(downloadName.getBytes("UTF-8"),"ISO-8859-1");
+                    downloadName = new String(downloadName.getBytes("UTF-8"), "ISO-8859-1");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -186,7 +190,7 @@ public class resourceController {
             }
             //循环将文件写入压缩流
             DataOutputStream os = null;
-            for(int i = 0; i < filenames.size(); i++ ){
+            for (int i = 0; i < filenames.size(); i++) {
                 String fileName = resourceService.getResInfoById(filenames.get(i), course, teacherId).getFileName();
                 String path = request.getSession().getServletContext().getRealPath("");
                 String filepath = path.substring(0, path.indexOf("target\\response\\")) + "src\\resource\\" + course + "\\" + teacherId + "\\" + fileName;
@@ -199,7 +203,7 @@ public class resourceController {
                     InputStream is = new FileInputStream(file);
                     byte[] b = new byte[1024];
                     int length = 0;
-                    while((length = is.read(b))!= -1){
+                    while ((length = is.read(b)) != -1) {
                         os.write(b, 0, length);
                     }
                     is.close();
@@ -238,7 +242,7 @@ public class resourceController {
                 for (int i = 0; i < courses.size(); i++) {
                     String id = String.valueOf(i + 1);
                     data.add(new JsonDataUtils(id, courses.get(i), false, "2014",
-                            null, null,new basicDataUtils()));
+                            null, null, new basicDataUtils()));
                 }
                 jsonData.put("data", data);
             } else {
@@ -262,14 +266,14 @@ public class resourceController {
                 for (int i = 0; i < teacherIds.size(); i++) {
                     String id = String.valueOf((1 * 100 + i));
                     List<teacher> teacherName = teacherService.getTeacherById(teacherIds.get(i));
-                    if (teacherName.size()>0){
+                    if (teacherName.size() > 0) {
                         data.add(new JsonDataUtils(id, teacherName.get(0).getRealName(),
-                                false, nodeId,new checkArrUtils("0","0")
-                                , null, new basicDataUtils(teacherIds.get(i),course,null,null)));
-                    }else {
+                                false, nodeId, null
+                                , null, new basicDataUtils(teacherIds.get(i), course, null, null)));
+                    } else {
                         data.add(new JsonDataUtils(id, "[匿名教师]",
-                                false, nodeId,new checkArrUtils("0","0")
-                                , null, new basicDataUtils(teacherIds.get(i),course,null,null)));
+                                false, nodeId, new checkArrUtils("0", "0")
+                                , null, new basicDataUtils(teacherIds.get(i), course, null, null)));
                     }
 
                 }
@@ -305,7 +309,7 @@ public class resourceController {
 
                     String id = String.valueOf(1 * 1000 + i);
                     data.add(new JsonDataUtils(id, resInfo.get(i).getFileName(), true, nodeId,
-                            new checkArrUtils("0","0"),null, new basicDataUtils(null,null,createTime,filesize)));
+                            new checkArrUtils("0", "0"), null, new basicDataUtils(null, null, createTime, filesize)));
                     String format = JSON.toJSONStringWithDateFormat(data, "yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
                     jsonArray = JSONArray.parseArray(format);
                 }
@@ -321,22 +325,24 @@ public class resourceController {
 
         return null;
     }
+
     /**
      * 通过学科名查找该学科的资源
+     *
      * @param request
      * @return
      */
 
     @ResponseBody
-    @RequestMapping(value = "/selectByCourseName",produces = "application/json;charset=utf-8")
+    @RequestMapping(value = "/selectByCourseName", produces = "application/json;charset=utf-8")
     @CrossOrigin
-    public String selectByCourseName(HttpServletRequest request){
-        JsonStatusUtils status ;
+    public String selectByCourseName(HttpServletRequest request) {
+        JsonStatusUtils status;
         JSONObject jsonData = new JSONObject();
         ArrayList<JsonDataUtils> data = new ArrayList<>();
         String course = request.getParameter("courseName");
         //当未输入课程时
-        if(course==null||course.equals("")){
+        if (course == null || course.equals("")) {
             List<String> courses = resourceService.selectcourseName();
             if (courses.size() > 0) {
                 status = new JsonStatusUtils("200", "获取第一层成功");
@@ -344,7 +350,7 @@ public class resourceController {
                 for (int i = 0; i < courses.size(); i++) {
                     String id = String.valueOf(i + 1);
                     data.add(new JsonDataUtils(id, courses.get(i), false, "2014",
-                            null, null,new basicDataUtils()));
+                            null, null, new basicDataUtils()));
                 }
                 jsonData.put("data", data);
             } else {
@@ -360,7 +366,7 @@ public class resourceController {
             status = new JsonStatusUtils("200", "查询成功");
             jsonData.put("status", status);
             data.add(new JsonDataUtils("1", resInfo.get(0).getCourseName(), false, "2014",
-                    null, null,new basicDataUtils()));
+                    null, null, new basicDataUtils()));
             jsonData.put("data", data);
         } else {
             status = new JsonStatusUtils("110", "查询失败");
@@ -371,7 +377,8 @@ public class resourceController {
     }
 
     /**
-     *获取老师本人上传的资源
+     * 获取老师本人上传的资源
+     *
      * @param request
      * @return
      */
@@ -383,88 +390,89 @@ public class resourceController {
         JsonStatusUtils status;
         ArrayList jsonList = new ArrayList();
         String teacherId = (String) request.getSession().getAttribute("userInformation");
-        if(teacherId==null||teacherId.equals("")){
-            jsonData.put("msg","获取不到老师数据");
-            jsonData.put("data","");
+        if (teacherId == null || teacherId.equals("")) {
+            jsonData.put("msg", "获取不到老师数据");
+            jsonData.put("data", "");
             return jsonData.toJSONString();
         }
         String courseName = request.getParameter("course");
         //查询当前的资料的所有种类
         String level = request.getParameter("level");
-        jsonData.put("code",200);
+        jsonData.put("code", 200);
         //获取第一层
-        if(level==null){
-            if(teacherId==null&&teacherId.equals("")){
-                jsonData.put("msg","无资源数据");
-                jsonData.put("data","");
+        if (level == null || level.equals("")) {
+            if (teacherId == null && teacherId.equals("")) {
+                jsonData.put("msg", "无资源数据");
+                jsonData.put("data", "");
                 return jsonData.toJSONString();
             }
-            jsonData.put("msg","获取第一层成功");
+            jsonData.put("msg", "获取第一层成功");
             List<String> courses = resourceService.getCourseByTeacherId(teacherId);
             //当没有资源
-            if(courses.size()==0){
-                jsonData.put("msg","无资源数据");
-                jsonData.put("data","");
+            if (courses.size() == 0) {
+                jsonData.put("msg", "无资源数据");
+                jsonData.put("data", "");
                 return jsonData.toJSONString();
             }
-            int id=0;
-            for(String course : courses){
+            int id = 0;
+            for (String course : courses) {
                 id++;
-                jsonList.add(new TeacherResourceOB(id,null,null,null,null,true,course,null));
+                jsonList.add(new TeacherResourceOB(id, 0, course, null, "1", null, null, true, null));
             }
-            jsonData.put("data",jsonList);
+            jsonData.put("data", jsonList);
             return jsonData.toJSONString();
         }
         //获取第二层
-        List<resource> resources = resourceService.getResInfo(teacherId,courseName);
+        List<resource> resources = resourceService.getResInfo(teacherId, courseName);
         if (resources.size() > 0) {
-            int id=1000;
+            int id = 1000;
             for (int i = 0; i < resources.size(); i++) {
-
                 resource resource = resources.get(i);
-                jsonList.add(new TeacherResourceOB(id,resource.getFileName(),resource.getFilesize(),
-                        resource.getCreateTime(),resource.getFileId()*10000,false,null,null));
+                jsonList.add(new TeacherResourceOB(id, 0, resource.getFileName(),
+                        resource.getFilesize(), "2",
+                        resource.getCreateTime(), resource.getFileId() * 10000,
+                        false, null));
                 id++;
             }
             String format = JSON.toJSONStringWithDateFormat(jsonList, "yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
             JSONArray jsonArray = JSONArray.parseArray(format);
             jsonData.put("data", jsonArray);
             return jsonData.toJSONString();
-            }
-        else {
+        } else {
             status = new JsonStatusUtils("110", "无资源数据");
             jsonData.put("status", status);
             jsonData.put("data", "");
             return jsonData.toJSONString();
-            }
         }
+    }
 
     /**
      * 单个资源的删除
+     *
      * @param request
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/deleteResource",produces = "application/json;charset=utf-8")
+    @RequestMapping(value = "/deleteResource", produces = "application/json;charset=utf-8")
     public String deleteResource(HttpServletRequest request) {
         JSONObject data = new JSONObject();
         String fileIdOrigin = request.getParameter("fileId");
-        if(fileIdOrigin==null||fileIdOrigin.equals("")){
-            data.put("msg","无fileId参数");
-            data.put("data","");
+        if (fileIdOrigin == null || fileIdOrigin.equals("")) {
+            data.put("msg", "无fileId参数");
+            data.put("data", "");
             return data.toJSONString();
         }
         Integer fileId = Integer.valueOf(fileIdOrigin);
-        data.put("code",0);
+        data.put("code", 0);
         List<resource> resource = resourceService.selectResourceById(fileId / 1000);
         //当没有该文件的记录
-        if(resource.size()==0){
-            data.put("msg","删除失败，数据库无该文件");
-            data.put("data","");
+        if (resource.size() == 0) {
+            data.put("msg", "删除失败，数据库无该文件");
+            data.put("data", "");
             return data.toJSONString();
         }
         //删除数据库的存储记录
-        int deleteCount = resourceService.deleteRes(fileId/1000);
+        int deleteCount = resourceService.deleteRes(fileId / 1000);
         String fileName = resource.get(0).getFileName();
         String course = resource.get(0).getCourseName();
         String teacherId = resource.get(0).getTeacherId();
@@ -472,24 +480,25 @@ public class resourceController {
         //获取到这个文件的储存地址
         String savePath = path.substring(0, path.indexOf("target\\response\\")) + "src\\resource\\" + course + "\\" + teacherId + "\\";
         File file = new File(savePath + fileName);
-        if (file.exists()){
+        if (file.exists()) {
             file.delete();
-            if(deleteCount==0){
-                data.put("msg","删除失败");
-                data.put("data","");
+            if (deleteCount == 0) {
+                data.put("msg", "删除失败");
+                data.put("data", "");
                 return data.toJSONString();
             }
-            data.put("msg","删除成功");
-            data.put("data","");
+            data.put("msg", "删除成功");
+            data.put("data", "");
             return data.toJSONString();
         }
-        data.put("msg","没有储存文件");
-        data.put("data","");
+        data.put("msg", "没有储存文件");
+        data.put("data", "");
         return data.toJSONString();
     }
 
     /**
      * 批量资源的删除
+     *
      * @param request
      * @return
      */
@@ -498,20 +507,20 @@ public class resourceController {
     public String batchRemoveResource(HttpServletRequest request) {
         JSONObject data = new JSONObject();
         String fileIdsOrigin = request.getParameter("fileIds");
-        if(fileIdsOrigin==null|| fileIdsOrigin.equals("")){
-            data.put("msg","无fileId参数");
-            data.put("data","");
+        if (fileIdsOrigin == null || fileIdsOrigin.equals("")) {
+            data.put("msg", "无fileId参数");
+            data.put("data", "");
             return data.toJSONString();
         }
-        List<Integer> List = JSONObject.parseArray(request.getParameter("fileIds"),Integer.class);
+        List<Integer> List = JSONObject.parseArray(request.getParameter("fileIds"), Integer.class);
         data.put("code", 0);
         ArrayList<Integer> fileIds = new ArrayList<>();
-        for(int i=0 ;i<List.size();i++){
-            fileIds.add(List.get(i)/1000);
+        for (int i = 0; i < List.size(); i++) {
+            fileIds.add(List.get(i) / 1000);
         }
         //执行删除
         int removeNumber = resourceService.batchDeleteResource(fileIds);
-        for(int i=0;i<List.size();i++){
+        for (int i = 0; i < List.size(); i++) {
             //获取到每个文件的信息
             java.util.List<resource> resource = resourceService.selectResourceById(fileIds.get(i));
             String fileName = resource.get(i).getFileName();
@@ -521,7 +530,7 @@ public class resourceController {
             //获取到这个文件的储存地址
             String savePath = path.substring(0, path.indexOf("target\\response\\")) + "src\\resource\\" + course + "\\" + teacherId + "\\";
             File file = new File(savePath + fileName);
-            if (file.exists()){
+            if (file.exists()) {
                 file.delete();
             }
         }
@@ -536,4 +545,4 @@ public class resourceController {
         data.put("data", null);
         return data.toJSONString();
     }
-    }
+}

@@ -10,12 +10,13 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TeacherResourceOB {
-    private Integer id;
+    private Integer authorityId;
+    private Integer parentId;
     private String fileName;
     private String fileSize;
+    private String level;
     private Date createTime;
     private Integer fileId;
     private boolean haveChild;
-    private String courseName;
     private List<TeacherResourceOB> children;
 }
