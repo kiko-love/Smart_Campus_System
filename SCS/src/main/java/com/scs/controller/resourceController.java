@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.*;
+import java.net.URLEncoder;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -143,23 +144,39 @@ public class resourceController {
             String path = request.getSession().getServletContext().getRealPath("");
             String filepath = path.substring(0, path.indexOf("target\\response\\")) + "src\\resource\\" + course + "\\" + teacherId + "\\";
             System.out.println(filepath);
+
+            //response.setContentType("text/html;charset=UTF-8");
+
+
+//            if (fileName.contains(".doc")){
+//
+//                response.setContentType("application/msword;charset=UTF-8");
+//            }else {
+//
+//            }
             //设置文件下载头
-            response.addHeader("Content-Disposition", "attachment;filename=" + fileName);
+            response.addHeader("Content-Disposition",
+                    "attachment;filename*=UTF-8''"+ URLEncoder.encode(fileName, "UTF-8"));
             //1.设置文件ContentType类型，这样设置，会自动判断下载文件类型
-            response.setContentType("multipart/form-data");
+            response.setContentType("multipart/form-data;charset=UTF-8");
             //获取输入流
-            File file = new File(filepath + fileName);
-            FileInputStream fileInputStream = new FileInputStream(file);
-            //获取输出流
-            OutputStream out = response.getOutputStream();
-            //设置缓冲区
-            byte buffer[] = new byte[1024];
-            int len = 0;
-            while ((len = fileInputStream.read(buffer)) != -1) {
-                out.write(buffer);
+            try{
+                File file = new File(filepath + fileName);
+                FileInputStream fileInputStream = new FileInputStream(file);
+                //获取输出流
+                OutputStream out = response.getOutputStream();
+                //设置缓冲区
+                byte buffer[] = new byte[1024];
+                int len = 0;
+                while ((len = fileInputStream.read(buffer)) != -1) {
+                    out.write(buffer);
+                }
+                out.close();
+                fileInputStream.close();
+            }catch (Exception e){
+                return;
             }
-            out.close();
-            fileInputStream.close();
+
         }
         //下载多个文件，打包为zip
         else {
@@ -260,13 +277,14 @@ public class resourceController {
             String course = request.getParameter("context");
             String nodeId = request.getParameter("nodeId");
             //查询当前的科目资料的所有老师
+            int nodId = Integer.parseInt(nodeId);
             List<String> teacherIds = resourceService.getTeacherId(course);
             System.out.println(teacherIds);
             if (teacherIds.size() > 0) {
                 status = new JsonStatusUtils("200", "获取第二层成功");
                 jsonData.put("status", status);
                 for (int i = 0; i < teacherIds.size(); i++) {
-                    String id = String.valueOf((1 * 100 + i));
+                    String id = String.valueOf((nodId * 100 + i));
                     List<teacher> teacherName = teacherService.getTeacherById(teacherIds.get(i));
                     if (teacherName.size() > 0) {
                         data.add(new JsonDataUtils(id, teacherName.get(0).getRealName(),
@@ -293,6 +311,8 @@ public class resourceController {
             String teacherId = request.getParameter("basicData[teacherId]");
             String course = request.getParameter("basicData[course]");
             String nodeId = request.getParameter("nodeId");
+            //查询当前的科目资料的所有老师
+            int nodId = Integer.parseInt(nodeId);
             System.out.println(teacherId);
             System.out.println(course);
             System.out.println(nodeId);
@@ -309,7 +329,7 @@ public class resourceController {
                     //获取上传文件大小
                     String filesize = resInfo.get(i).getFilesize();
 
-                    String id = String.valueOf(1 * 1000 + i);
+                    String id = String.valueOf(nodId * 1000 + i);
                     data.add(new JsonDataUtils(id, resInfo.get(i).getFileName(), true, nodeId,
                             new checkArrUtils("0", "0"), null, new basicDataUtils(null, null, createTime, filesize)));
                     String format = JSON.toJSONStringWithDateFormat(data, "yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);

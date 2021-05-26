@@ -378,8 +378,9 @@
                         contexts[0] = obj.param.context
                         layer.msg('开始下载：' + obj.param.context);
                         let secParentId = dtree.getParam('organizationTree', obj.param.parentId).parentId;
-                        let fileForm = $("<form action='/Resource/downloadResource' method='post'" +
-                            "enctype=\"multipart/form-data\"></form>")
+                        // console.log(dtree.getParam('organizationTree', secParentId).context);
+                        // return false;
+                        let fileForm = $("<form action='/Resource/downloadResource' method='post'></form>")
                         fileForm.append("<input type='hidden' name='contexts' value='" + JSON.stringify(contexts) + "'/>")
                         fileForm.append("<input type='hidden' name='teacherId' value='" +
                             dtree.getParam('organizationTree', obj.param.parentId).basicData.teacherId + "'/>")
