@@ -19,7 +19,7 @@
             top: 0px;
             left: -10px;
             width: 99%;
-            background-color: rgba(245, 250, 250, 0.8);
+            background-color: #ffffff!important;
             border-bottom: 1px solid rgba(0, 0, 0, 0.1);
         }
 
