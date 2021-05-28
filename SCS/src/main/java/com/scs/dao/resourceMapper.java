@@ -42,8 +42,8 @@ public interface resourceMapper {
      * @param courseName
      * @return
      */
-    @Update("update resource set filepath=#{arg0} where filename=#{arg1} and courseName=#{arg2}")
-    int updateRes(String filepath ,String filename,String courseName);
+    @Update("update resource set filepath=#{arg0},courseName=#{arg1},fileSize=#{arg2} where filename=#{arg3} and courseName=#{arg4} ")
+    int updateRes(String filepath ,String createTime,String fileSize,String filename,String courseName);
     /**
      * 查询某个科目下的所有老师
      * @param courseName

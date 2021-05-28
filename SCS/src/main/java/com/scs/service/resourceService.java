@@ -15,7 +15,7 @@ public interface resourceService {
 
     int deleteRes(Integer fileId);
 
-    int updateRes(String filepath ,String filename,String courseName);
+    int updateRes(String filepath ,String createTime,String fileSize,String filename,String courseName);
 
     List<String> getTeacherId(String courseName);
 

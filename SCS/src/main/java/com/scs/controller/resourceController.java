@@ -103,7 +103,7 @@ public class resourceController {
                 //删除已经存在服务器的同名文件
                 File fileExist = new File(savePath + filename);
                 fileExist.delete();
-                count[i] = resourceService.updateRes(filepath, filename, course);
+                count[i] = resourceService.updateRes(filepath, createTime,fileSize,filename, course);
                 files[i].transferTo(new File(savePath + filename));
             } else {
                 count[i] = resourceService.saveRes(new resource(null, filename, teacherId, filepath, course, createTime, fileSize));
@@ -408,6 +408,7 @@ public class resourceController {
             return jsonData.toJSONString();
         }
         String courseName = request.getParameter("course");
+
         //查询当前的资料的所有种类
         String level = request.getParameter("level");
         jsonData.put("code", 200);
@@ -437,10 +438,12 @@ public class resourceController {
         //获取第二层
         List<resource> resources = resourceService.getResInfo(teacherId, courseName);
         if (resources.size() > 0) {
+            String authorityId = request.getParameter("authorityId");
+            int parentId = Integer.parseInt(authorityId);
             int id = 1000;
             for (int i = 0; i < resources.size(); i++) {
                 resource resource = resources.get(i);
-                jsonList.add(new TeacherResourceOB(id, 0, resource.getFileName(),
+                jsonList.add(new TeacherResourceOB(id, parentId, resource.getFileName(),
                         resource.getFilesize(), "2",
                         resource.getCreateTime(), resource.getFileId() ,
                         false, null));
