@@ -20,6 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.net.URLEncoder;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -32,10 +34,8 @@ public class resourceController {
     private resourceService resourceService;
     @Autowired
     private teacherService teacherService;
-
     /**
      * 上传文件
-     *
      * @param request
      * @param files
      * @param
@@ -83,7 +83,10 @@ public class resourceController {
                 length++;
             }
         }
-        Date createTime = new Date();
+        Date date = new Date();
+        SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String createTime = sim.format(date);
+        System.out.println(createTime);
         for (int i = 0; i < length; i++) {
             //获取要上传的文件名scs
             String filename = files[i].getOriginalFilename();
@@ -122,16 +125,13 @@ public class resourceController {
         }
         return data.toJSONString();
     }
-
     /**
      * 下载多文件，打包为zip
-     *
      * @param request
      * @param response
      * @throws Exception
      */
     @RequestMapping(value = "/downloadResource", produces = "application/json;charset=utf-8")
-    //MultipartFile 后面的值 必须和表单的name属性一致
     @ResponseBody
     public void downloadResource(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String course = request.getParameter("course");
@@ -145,16 +145,6 @@ public class resourceController {
             String filepath = path.substring(0, path.indexOf("target\\response\\")) + "src\\resource\\" + course + "\\" + teacherId + "\\";
             System.out.println(filepath);
 
-            //response.setContentType("text/html;charset=UTF-8");
-
-
-//            if (fileName.contains(".doc")){
-//
-//                response.setContentType("application/msword;charset=UTF-8");
-//            }else {
-//
-//            }
-            //设置文件下载头
             response.addHeader("Content-Disposition",
                     "attachment;filename*=UTF-8''"+ URLEncoder.encode(fileName, "UTF-8"));
             //1.设置文件ContentType类型，这样设置，会自动判断下载文件类型
@@ -242,7 +232,11 @@ public class resourceController {
         }
 
     }
-
+    /**
+     * 获取资源中心的资源
+     * @param request
+     * @return
+     */
     @RequestMapping(value = "/getInfo", produces = "application/json;charset=utf-8")
     @ResponseBody
     @CrossOrigin
@@ -325,14 +319,14 @@ public class resourceController {
 
                 for (int i = 0; i < resInfo.size(); i++) {
                     //获取上传时间
-                    Date createTime = resInfo.get(i).getCreateTime();
+                    String createTime = resInfo.get(i).getCreateTime();
                     //获取上传文件大小
                     String filesize = resInfo.get(i).getFilesize();
 
                     String id = String.valueOf(nodId * 1000 + i);
                     data.add(new JsonDataUtils(id, resInfo.get(i).getFileName(), true, nodeId,
                             new checkArrUtils("0", "0"), null, new basicDataUtils(null, null, createTime, filesize)));
-                    String format = JSON.toJSONStringWithDateFormat(data, "yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
+                    String format = JSON.toJSONStringWithDateFormat(data, "yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteDateUseDateFormat);
                     jsonArray = JSONArray.parseArray(format);
                 }
                 jsonData.put("data", jsonArray);
@@ -347,14 +341,11 @@ public class resourceController {
 
         return null;
     }
-
     /**
      * 通过学科名查找该学科的资源
-     *
      * @param request
      * @return
      */
-
     @ResponseBody
     @RequestMapping(value = "/selectByCourseName", produces = "application/json;charset=utf-8")
     @CrossOrigin
@@ -397,7 +388,6 @@ public class resourceController {
         }
         return jsonData.toJSONString();
     }
-
     /**
      * 获取老师本人上传的资源
      *
@@ -456,7 +446,7 @@ public class resourceController {
                         false, null));
                 id++;
             }
-            String format = JSON.toJSONStringWithDateFormat(jsonList, "yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
+            String format = JSON.toJSONStringWithDateFormat(jsonList, "yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteDateUseDateFormat);
             JSONArray jsonArray = JSONArray.parseArray(format);
             jsonData.put("data", jsonArray);
             return jsonData.toJSONString();
@@ -467,7 +457,6 @@ public class resourceController {
             return jsonData.toJSONString();
         }
     }
-
     /**
      * 单个资源的删除
      *
@@ -534,7 +523,6 @@ public class resourceController {
         data.put("success",0);
         return data.toJSONString();
     }
-
     /**
      * 批量资源的删除
      *
@@ -595,7 +583,11 @@ public class resourceController {
         data.put("data", "");
         return data.toJSONString();
     }
-
+    /**
+     * 根据课程名查找资源
+     * @param request
+     * @return
+     */
     @ResponseBody
     @RequestMapping(value = "/deleteByCourseName", produces = "application/json;charset=utf-8")
     public String deleteByCourseName(HttpServletRequest request){
@@ -646,6 +638,55 @@ public class resourceController {
         jsonObject.put("data", null);
         return jsonObject.toJSONString();
     }
+    /**
+     * 用于老师查找自己的发布的资源
+     * @param request
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/selectByFileName", produces = "application/json;charset=utf-8")
+    public String selectByFileName(HttpServletRequest request) {
+        String teacherId = (String) request.getSession().getAttribute("userInformation");
+        String fileName = request.getParameter("fileName");
+        JSONObject data = new JSONObject();
+        data.put("code", 200);
+        if (teacherId == null || teacherId.equals("")) {
+            data.put("success", 0);
+            data.put("msg", "教师信息获取失败");
+            data.put("data", "");
+            return data.toJSONString();
+        }
+        if (fileName == null || fileName.equals("")) {
+            data.put("success", 0);
+            data.put("msg", "查询条件获取失败");
+            data.put("data", "");
+            return data.toJSONString();
+        }
+        //查询出符合条件的所有记录
+        List<resource> resources = resourceService.selectByFileName(teacherId, fileName);
+        if (resources.size() == 0) {
+            data.put("success", 0);
+            data.put("msg", "未找到需要查询的文件");
+            data.put("data", "");
+            return data.toJSONString();
+        }
+        ArrayList<Object> jsonList = new ArrayList<>();
+        int id;
+        if (resources.size() > 0) {
+            for (int i = 0; i < resources.size(); i++) {
+                resource resource = resources.get(i);
+                id = i + 1;
+                jsonList.add(new TeacherResourceOB(id, 0, resource.getFileName(),
+                        resource.getFilesize(), "1",
+                        resource.getCreateTime(), resource.getFileId(),
+                        false, null));
+            }
+            String format = JSON.toJSONStringWithDateFormat(jsonList, "yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteDateUseDateFormat);
+            JSONArray jsonArray = JSONArray.parseArray(format);
+            data.put("data", jsonArray);
+            return data.toJSONString();
 
-
+        }
+        return null;
+    }
 }

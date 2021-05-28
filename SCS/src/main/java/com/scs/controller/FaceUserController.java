@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -71,7 +72,9 @@ public class FaceUserController {
             System.out.println("键值：" + faceId);
             if(faceId!=null||faceId.equals("")){
                 Date date = new Date();
-                checkTeaService.insertCheck(new checkTeacher(faceId,date));
+                SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String nowTime = sim.format(date);
+                checkTeaService.insertCheck(new checkTeacher(faceId,nowTime));
             }
         }
         List<String> list = new ArrayList<>();
