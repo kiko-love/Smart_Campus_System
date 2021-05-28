@@ -15,7 +15,7 @@ public class resource {
     private String teacherId;
     private String filePath;
     private String courseName;
-    private Date createTime;
+    private String createTime;
     private String filesize;
 
 }

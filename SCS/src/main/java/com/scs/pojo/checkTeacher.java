@@ -11,5 +11,5 @@ import java.util.Date;
 @AllArgsConstructor
 public class checkTeacher {
     private String teacherId;
-    private Date checkDate;
+    private String checkDate;
 }

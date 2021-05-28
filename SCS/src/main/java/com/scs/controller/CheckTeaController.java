@@ -27,7 +27,7 @@ public class CheckTeaController {
         JSONObject data = new JSONObject();
         data.put("code", 0);
         data.put("msg", "getCheckInfoById");
-        ArrayList<Date> checkDates = new ArrayList<>();
+        ArrayList<String> checkDates = new ArrayList<>();
         if(teacherId!=null){
             List<checkTeacher> checkTeachers = checkTeaService.selectById(teacherId);
             for(checkTeacher checkTeacher:checkTeachers){

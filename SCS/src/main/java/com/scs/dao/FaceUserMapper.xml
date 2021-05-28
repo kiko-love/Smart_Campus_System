@@ -6,19 +6,19 @@
 <mapper namespace="com.scs.dao.FaceUserMapper">
     <select id="getUserList" resultType="com.scs.pojo.FaceUser">
         select *
-        from usersdb.face_users
+        from face_users
     </select>
     <select id="getUserById" parameterType="String" resultType="com.scs.pojo.FaceUser">
         select *
-        from usersdb.face_users
+        from face_users
         where id = #{id}
     </select>
     <insert id="addUser" parameterType="com.scs.pojo.FaceUser">
-        insert into usersdb.face_users (id, name, class,profession)
+        insert into face_users (id, name, class,profession)
         values (#{id}, #{name}, #{classes},#{profession});
     </insert>
     <update id="updateUser" parameterType="com.scs.pojo.FaceUser">
-        update usersdb.face_users
+        update face_users
         set name=#{name },
             classes=#{classes},
             profession=#{profession}
@@ -26,7 +26,7 @@
     </update>
     <delete id="deleteUser" parameterType="String">
         delete
-        from usersdb.face_users
+        from face_users
         where id = #{id};
     </delete>
 </mapper>

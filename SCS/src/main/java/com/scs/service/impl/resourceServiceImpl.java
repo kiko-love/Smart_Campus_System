@@ -79,4 +79,9 @@ public class resourceServiceImpl implements resourceService {
     public List<resource> selectResourceById(Integer fileId) {
         return resMapper.selectResourceById(fileId);
     }
+
+    @Override
+    public List<resource> selectByFileName(String teacherId, String fileName) {
+        return resMapper.selectByFileName(teacherId,fileName);
+    }
 }
