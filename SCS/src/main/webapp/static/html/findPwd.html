@@ -24,6 +24,7 @@
         font-size: 18px;
     }
 
+
     .cardBody {
         position: absolute;
         left: 0;
@@ -57,6 +58,7 @@
         width: 260px;
         height: 400px;
         cursor: pointer;
+        transition: all 0.5s;
 
     }
 
@@ -96,12 +98,17 @@
     }
 
     .cardBody_content:hover {
-        background-color: rgba(194, 194, 194, 0.3);
+        background-color: rgba(175, 174, 174, 0.3);
+        transition: all 0.5s;
     }
 
     .cardFooter {
         text-align: center;
         margin-top: 20px;
+    }
+
+    .layui-elem-quote {
+        background-color: #ffffff!important;
     }
 </style>
 
@@ -122,13 +129,13 @@
     </div>
 </div>
 
-<div class="layui-card layui-col-md6 cardBody">
+<div class="layui-card layui-col-md6 cardBody" style="box-shadow: 2px 4px 4px 2px rgba(0,0,0,0.1)">
     <div class="layui-card-header">密码重置方式</div>
     <div class="cardBody_title">选择以下方式重置密码</div>
     <div class="layui-card-body" style="text-align: center;">
-        <div class="cardBody_content" id="phoneVer">
+        <div class="cardBody_content" id="phoneVer" style="cursor: auto;">
             <img src="../images/SMS.png" alt="phone">
-            <span class="contenSpanHeader">手机验证</span>
+            <span class="contenSpanHeader">手机验证（暂未开放）</span>
             <p>如果你的账号已经绑定手机，通过此处发送短信验证重置密码</p>
         </div>
         <div class="cardBody_inline"></div>
@@ -140,7 +147,7 @@
             </a>
         </div>
         <div class="cardBody_inline"></div>
-        <div class="cardBody_content">
+        <div class="cardBody_content" style="cursor: auto">
             <img src="../images/people.png" alt="people">
             <span class="contenSpanHeader">人工办理</span>
             <p>若无法通过手机和邮箱验证找回密码，请带上相关证件(学生证、身份证等)前往学校信息服务中心人工办理密码重置业务</p>
