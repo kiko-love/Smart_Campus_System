@@ -4,9 +4,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.scs.pojo.User;
 import com.scs.pojo.portrait;
 import com.scs.pojo.student;
+import com.scs.pojo.teacher;
 import com.scs.service.UserService;
 import com.scs.service.portraitService;
 import com.scs.service.studentService;
+import com.scs.service.teacherService;
 import com.scs.utils.InformToFront;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,6 +28,10 @@ public class UserController {
     private UserService userService;
     @Autowired
     private portraitService portraitService;
+    @Autowired
+    private studentService studentService;
+    @Autowired
+    private teacherService teacherService;
 
 
     @RequestMapping(value = "/Login", method = RequestMethod.POST)
@@ -59,6 +65,18 @@ public class UserController {
                     InformToFront status_success =
                             new InformToFront("Success", "0", role, accountStatus, null);
                     if (accountStatus.equals("100")) {
+
+                        if(role.equals("0")){
+                            request.getSession().setAttribute("userData", "");
+                        }
+                        if(role.equals("2")){
+                            List<student> student = studentService.getStudentById(userName);
+                            request.getSession().setAttribute("userData", student);
+                        }
+                        if(role.equals("1")){
+                            List<teacher> teacher = teacherService.getTeacherById(userName);
+                            request.getSession().setAttribute("userData", teacher);
+                        }
                         request.getSession().setAttribute("userInformation", userName);
                         request.getSession().setAttribute("role", role);
                     }
