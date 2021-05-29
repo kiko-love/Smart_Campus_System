@@ -43,7 +43,6 @@ public class resourceController {
      * @throws Exception
      */
     @RequestMapping(value = "/uploadResource", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
-    //MultipartFile 后面的值 必须和表单的name属性一致
     @ResponseBody
     @CrossOrigin
     public String uploadResource(HttpServletRequest request, @RequestParam(value = "file") MultipartFile files[]) throws Exception {
@@ -205,6 +204,7 @@ public class resourceController {
                 String filepath = path.substring(0, path.indexOf("target\\response\\")) + "src\\resource\\" + course + "\\" + teacherId + "\\" + fileName;
 
                 File file = new File(filepath);
+
                 try {
                     //添加ZipEntry，并ZipEntry中写入文件流
                     zipos.putNextEntry(new ZipEntry(fileName));
@@ -283,11 +283,11 @@ public class resourceController {
                     if (teacherName.size() > 0) {
                         data.add(new JsonDataUtils(id, teacherName.get(0).getRealName(),
                                 false, nodeId, null
-                                , null, new basicDataUtils(teacherIds.get(i), course, null, null)));
+                                , null, new basicDataUtils(teacherIds.get(i), course, null, null,null)));
                     } else {
                         data.add(new JsonDataUtils(id, "[匿名教师]",
                                 false, nodeId, new checkArrUtils("0", "0")
-                                , null, new basicDataUtils(teacherIds.get(i), course, null, null)));
+                                , null, new basicDataUtils(teacherIds.get(i), course, null, null,null)));
                     }
 
                 }
@@ -322,10 +322,10 @@ public class resourceController {
                     String createTime = resInfo.get(i).getCreateTime();
                     //获取上传文件大小
                     String filesize = resInfo.get(i).getFilesize();
-
+                    Integer fileId = resInfo.get(i).getFileId();
                     String id = String.valueOf(nodId * 1000 + i);
                     data.add(new JsonDataUtils(id, resInfo.get(i).getFileName(), true, nodeId,
-                            new checkArrUtils("0", "0"), null, new basicDataUtils(null, null, createTime, filesize)));
+                            new checkArrUtils("0", "0"), null, new basicDataUtils(null, null, createTime, filesize,fileId)));
                     String format = JSON.toJSONStringWithDateFormat(data, "yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteDateUseDateFormat);
                     jsonArray = JSONArray.parseArray(format);
                 }
@@ -390,7 +390,6 @@ public class resourceController {
     }
     /**
      * 获取老师本人上传的资源
-     *
      * @param request
      * @return
      */
@@ -430,7 +429,7 @@ public class resourceController {
             int id = 0;
             for (String course : courses) {
                 id++;
-                jsonList.add(new TeacherResourceOB(id, 0, course, null, "1", null, null, true, null));
+                jsonList.add(new TeacherResourceOB(id, 0, course, null, "1", null, null,null, true, null,null,null));
             }
             jsonData.put("data", jsonList);
             return jsonData.toJSONString();
@@ -445,8 +444,8 @@ public class resourceController {
                 resource resource = resources.get(i);
                 jsonList.add(new TeacherResourceOB(id, parentId, resource.getFileName(),
                         resource.getFilesize(), "2",
-                        resource.getCreateTime(), resource.getFileId() ,
-                        false, null));
+                        resource.getCreateTime(), null,resource.getFileId() ,
+                        false, null,null,null));
                 id++;
             }
             String format = JSON.toJSONStringWithDateFormat(jsonList, "yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteDateUseDateFormat);
@@ -462,7 +461,6 @@ public class resourceController {
     }
     /**
      * 单个资源的删除
-     *
      * @param request
      * @return
      */
@@ -528,7 +526,6 @@ public class resourceController {
     }
     /**
      * 批量资源的删除
-     *
      * @param request
      * @return
      */
@@ -543,7 +540,7 @@ public class resourceController {
             data.put("success",0);
             return data.toJSONString();
         }
-        data.put("code", 0);
+        data.put("code", 200);
         ArrayList<Integer> fileIds = new ArrayList<>();
         for (int i = 0; i < fileIdsOrigin.size(); i++) {
             fileIds.add(fileIdsOrigin.get(i));
@@ -681,8 +678,8 @@ public class resourceController {
                 id = i + 1;
                 jsonList.add(new TeacherResourceOB(id, 0, resource.getFileName(),
                         resource.getFilesize(), "1",
-                        resource.getCreateTime(), resource.getFileId(),
-                        false, null));
+                        resource.getCreateTime(), null,resource.getFileId(),
+                        false, null,null,null));
             }
             String format = JSON.toJSONStringWithDateFormat(jsonList, "yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteDateUseDateFormat);
             JSONArray jsonArray = JSONArray.parseArray(format);
@@ -691,5 +688,117 @@ public class resourceController {
 
         }
         return null;
+    }
+
+
+    /**
+     * 下载多文件，打包为zip
+     * @param request
+     * @param response
+     * @throws Exception
+     */
+    @RequestMapping(value = "/downloadResByFileId", produces = "application/json;charset=utf-8")
+    @ResponseBody
+    public void downloadResByFileId(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        List<Integer> fileIds = JSONObject.parseArray(request.getParameter("fileIds"), Integer.class);
+        //下载单个文件
+        if (fileIds.size() == 1) {
+            //获取到这个文件的信息
+            List<resource> resource = resourceService.selectResourceById(fileIds.get(0));
+            resource res = resource.get(0);
+            String fileName = res.getFileName();
+            String course = res.getCourseName();
+            String teacherId = res.getTeacherId();
+            String path = request.getSession().getServletContext().getRealPath("");
+            String filepath = path.substring(0, path.indexOf("target\\response\\")) + "src\\resource\\" + course + "\\" + teacherId + "\\";
+            response.addHeader("Content-Disposition", "attachment;filename*=UTF-8''"+ URLEncoder.encode(fileName, "UTF-8"));
+            //1.设置文件ContentType类型，这样设置，会自动判断下载文件类型
+            response.setContentType("multipart/form-data;charset=UTF-8");
+            //获取输入流
+            try{
+                File file = new File(filepath + fileName);
+                FileInputStream fileInputStream = new FileInputStream(file);
+                //获取输出流
+                OutputStream out = response.getOutputStream();
+                //设置缓冲区
+                byte buffer[] = new byte[1024];
+                int len = 0;
+                while ((len = fileInputStream.read(buffer)) != -1) {
+                    out.write(buffer);
+                }
+                out.close();
+                fileInputStream.close();
+            }catch (Exception e){
+                return;
+            }
+        }
+        //下载多个文件，打包为zip
+        else {
+            //响应头的设置
+            response.reset();
+            response.setCharacterEncoding("utf-8");
+            response.setContentType("multipart/form-data");
+            //设置压缩包的名字
+            //解决不同浏览器压缩包名字含有中文时乱码的问题
+            String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+            String downloadName = uuid + ".zip";
+            String agent = request.getHeader("USER-AGENT");
+            try {
+                if (agent.contains("MSIE") || agent.contains("Trident")) {
+                    downloadName = java.net.URLEncoder.encode(downloadName, "UTF-8");
+                } else {
+                    downloadName = new String(downloadName.getBytes("UTF-8"), "ISO-8859-1");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            response.setHeader("Content-Disposition", "attachment;fileName=\"" + downloadName + "\"");
+            //设置压缩流：直接写入response，实现边压缩边下载
+            ZipOutputStream zipos = null;
+            try {
+                zipos = new ZipOutputStream(new BufferedOutputStream(response.getOutputStream()));
+                zipos.setMethod(ZipOutputStream.DEFLATED); //设置压缩方法
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            //循环将文件写入压缩流
+            DataOutputStream os = null;
+            for (int i = 0; i < fileIds.size(); i++) {
+                //获取到这个文件的信息
+                List<resource> resource = resourceService.selectResourceById(fileIds.get(i));
+                resource res = resource.get(0);
+                String fileName = res.getFileName();
+                String course = res.getCourseName();
+                String teacherId = res.getTeacherId();
+                String path = request.getSession().getServletContext().getRealPath("");
+                String filepath = path.substring(0, path.indexOf("target\\response\\")) + "src\\resource\\" + course + "\\" + teacherId + "\\" + fileName;
+
+                File file = new File(filepath);
+                try {
+                    //添加ZipEntry，并ZipEntry中写入文件流
+                    zipos.putNextEntry(new ZipEntry(fileName));
+                    os = new DataOutputStream(zipos);
+                    InputStream is = new FileInputStream(file);
+                    byte[] b = new byte[1024];
+                    int length = 0;
+                    while ((length = is.read(b)) != -1) {
+                        os.write(b, 0, length);
+                    }
+                    is.close();
+                    zipos.closeEntry();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            //关闭流
+            try {
+                os.flush();
+                os.close();
+                zipos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
     }
 }

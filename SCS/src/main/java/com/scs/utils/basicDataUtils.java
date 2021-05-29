@@ -14,4 +14,5 @@ public class basicDataUtils {
     private String course;
     private String createTime;
     private String filesize;
+    private Integer fileId;
 }
