@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>教师管理</title>
+    <title>专业管理</title>
     <link rel="stylesheet" href="../../component/pear/css/pear.css"/>
 </head>
 
@@ -11,19 +11,20 @@
 <div class="layui-card">
     <div class="layui-card-body">
         <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
-            <legend>教师信息管理</legend>
+            <legend>专业信息管理</legend>
         </fieldset>
         <br>
         <form class="layui-form" action="">
             <div class="layui-form-item">
                 <div class="layui-form-item layui-inline">
-                    <label class="layui-form-label">教师ID</label>
+                    <label class="layui-form-label">专业ID</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="teacherId" placeholder="" class="layui-input">
+                        <input type="text" name="majorName" placeholder="" class="layui-input">
                     </div>
                 </div>
                 <div class="layui-form-item layui-inline">
-                    <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="user-query">
+                    <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit
+                            lay-filter="user-query">
                         <i class="layui-icon layui-icon-search"></i>
                         查询
                     </button>
@@ -50,9 +51,11 @@
 </script>
 
 <script type="text/html" id="user-bar">
-    <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>
+    <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit">
+        <i class="layui-icon layui-icon-edit"></i>
     </button>
-    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i>
+    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove">
+        <i class="layui-icon layui-icon-delete"></i>
     </button>
 </script>
 
@@ -60,15 +63,6 @@
     <input type="checkbox" name="enable" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="user-enable"
            checked="{{ d.enable == 0 ? 'true' : 'false' }}">
 </script>
-
-<script type="text/html" id="user-sex">
-    {{#if (d.sex == 1) { }}
-    <span>男</span>
-    {{# }else if(d.sex == 2){ }}
-    <span>女</span>
-    {{# } }}
-</script>
-
 
 <script type="text/html" id="user-createTime">
     {{layui.util.toDateString(d.createTime, 'yyyy-MM-dd HH:mm:ss')}}
@@ -125,37 +119,30 @@
                 type: 'checkbox'
             },
                 {
-                    title: '职员编号',
-                    field: 'teacherId',
-                    //width: 80,
+                    title: '专业ID',
+                    field: 'majorId',
+                    width: 100,
                     sort: true,
                     //fixed: true
                 },
                 {
-                    title: '姓名',
-                    field: 'realName',
+                    title: '专业名称',
+                    field: 'majorName',
                     align: 'center'
                 },
                 {
-                    title: '性别',
-                    field: 'sex',
+                    title: '专业类别',
+                    field: 'majorType',
                     align: 'center',
-                    width: 80,
-                    templet: '#user-sex'
                 },
                 {
-                    title: '电话',
-                    field: 'phone',
+                    title: '修业年限（年）',
+                    field: 'majorYear',
                     align: 'center'
                 },
                 {
-                    title: '现居地址',
-                    field: 'addr',
-                    align: 'center'
-                },
-                {
-                    title: '出生日期',
-                    field: 'birthday',
+                    title: '所属学院',
+                    field: 'academy',
                     align: 'center'
                 },
                 {
@@ -167,9 +154,9 @@
             ]
         ]
 
-        var tableIns = table.render({
+        let tableIns = table.render({
             elem: '#user-table',
-            url: '/admin/tea/getTeachers',
+            url: '/Major/getMajors',
             method: "post",
             page: {
                 layout: ['count', 'prev', 'page', 'next', 'skip']
@@ -184,13 +171,13 @@
             skin: 'line',
             toolbar: '#user-toolbar',
             defaultToolbar: [{
-                title: '刷新教师信息列表',
+                title: '刷新专业信息列表',
                 layEvent: 'refresh',
                 icon: 'layui-icon-refresh',
             }, 'filter', 'print', 'exports'],
             //一定要加这个参数代码，否则会由于layui自身的bug导致无法分页
             parseData: function (res) { //将原始数据解析成 table 组件所规定的数据，res为从url中get到的数据
-                var result;
+                let result;
                 // console.log(res.data[0].birthday);
                 // res.data[0].birthday = dateFormat(res.data[0].birthday, 'Y-M-D')
                 if (this.page.curr) {
@@ -230,8 +217,7 @@
 
         form.on('submit(user-query)', function (data) {
             tableIns.reload({
-                //url: '/getData2',
-                url: '/admin/tea/searchTea',
+                url: '/Major/getMajorByName',
                 method: 'post',
                 page: {
                     layout: ['count', 'prev', 'page', 'next', 'skip']
@@ -244,61 +230,50 @@
             return false;
         });
 
-        form.on('switch(user-enable)', function (obj) {
-            layer.tips(this.value + ' ' + this.name + '：' + obj.elem.checked, obj.othis);
-        });
 
         window.add = function () {
             layer.open({
                 type: 2,
-                title: '新增教师信息',
+                title: '新增专业信息',
                 shade: 0.1,
-                area:['500px', '550px'],
-                content: MODULE_PATH + 'addTea.html'
+                area:['500px', '450px'],
+                content: MODULE_PATH + 'addMajor.html'
             });
         }
 
         window.edit = function (obj) {
             layer.open({
                 type: 2,
-                title: '修改教师信息:' + obj.data['teacherId'],
+                title: '修改专业信息：' + obj.data['majorName'],
                 shade: 0.1,
-                area: ['500px', '550px'],
-                content: MODULE_PATH + 'editTea.html',
+                area: ['500px', '450px'],
+                content: MODULE_PATH + 'editMajor.html',
                 success: function (layero, index) {
-                    var body = layer.getChildFrame('body', index);
+                    let body = layer.getChildFrame('body', index);
                     //得到iframe页的窗口对象，执行iframe页的方法：iframeWin.method();
                     //console.log(obj.data);
-                    var iframeWin = window[layero.find('iframe')[0]['name']]
-                    body.find('#teacherId').val(obj.data['teacherId'])
-                    body.find('#realName').val(obj.data['realName'])
-                    body.find('#phone').val(obj.data['phone'])
-                    body.find('#collegeId').val(obj.data['collegeId'])
-                    body.find('#addr').val(obj.data['addr'])
-                    body.find('#birthday').val(obj.data['birthday'])
-                    if (obj.data['sex'] == '1') {
-                        body.find('#man').attr("checked", "");
-                        iframeWin.layui.form.render('radio');
-                    } else {
-                        body.find('#woman').attr("checked", "");
-                        iframeWin.layui.form.render('radio');
-                    }
+                    let iframeWin = window[layero.find('iframe')[0]['name']]
+                    body.find('#majorId').val(obj.data['majorId'])
+                    body.find('#majorName').val(obj.data['majorName'])
+                    body.find('#majorType').val(obj.data['majorType'])
+                    body.find('#majorYear').val(obj.data['majorYear'])
+                    body.find('#academy').val(obj.data['academy'])
                 }
             });
         }
 
         window.remove = function (obj) {
-            console.log(obj.data['teacherId']);
-            layer.confirm('确定要删除该用户', {
+            console.log(obj.data['majorName']);
+            layer.confirm('确定要删除该专业', {
                 icon: 3,
                 title: '提示'
             }, function (index) {
                 layer.close(index);
                 let loading = layer.load();
                 $.ajax({
-                    url: "/admin/tea/removeTeacher",
+                    url: "/Major/deleteMajor",
                     data: {
-                        teacherId: obj.data['teacherId']
+                        majorName: obj.data['majorName']
                     },
                     dataType: 'json',
                     type: 'post',
@@ -310,7 +285,7 @@
                                 time: 1000
                             }, function () {
                                 tableIns.reload({
-                                    url: "/admin/tea/getTeachers",
+                                    url: "/Major/getMajors",
                                     page: {
                                         layout: ['count', 'prev', 'page', 'next', 'skip']
                                         , curr: $(".layui-laypage-em").next().html()
@@ -334,7 +309,7 @@
 
         window.batchRemove = function (obj) {
 
-            var checkIds = common.checkField(obj, 'userId');
+            let checkIds = common.checkField(obj, 'userId');
 
             if (checkIds === "") {
                 layer.msg("未选中数据", {
@@ -344,26 +319,26 @@
                 return false;
             }
             //批量删除
-            layer.confirm('确定要删除这些用户', {
+            layer.confirm('确定要删除这些专业', {
                 icon: 3,
                 title: '提示'
             }, function (index) {
                 layer.close(index);
-                var checkStatus = table.checkStatus('user-table');
-                let teacherIds = [];
+                let checkStatus = table.checkStatus('user-table');
+                let majorIds = [];
                 for (let i = 0; i < checkStatus.data.length; i++) {
-                    teacherIds[i] = checkStatus.data[i].teacherId;
+                    majorIds[i] = checkStatus.data[i].majorId;
                     //console.log(checkStatus.data[i].userId);
                 }
-                console.log(teacherIds);
+                console.log(majorIds);
                 let loading = layer.load(2, {
                     shade: [0.2, '#323232'] //0.1透明度的白色背景
                 });
                 table.reload('user-table');
                 $.ajax({
-                    url: "/admin/tea/batchRemoveTea",
+                    url: "/Major/batchRemoveMajor",
                     data: {
-                        teacherIds: JSON.stringify(teacherIds)
+                        majorIds: JSON.stringify(majorIds)
                     },
                     dataType: 'json',
                     type: 'post',
@@ -375,7 +350,7 @@
                                 time: 1000
                             }, function () {
                                 tableIns.reload({
-                                    url: "/admin/tea/getTeachers",
+                                    url: "/Major/getMajors",
                                     page: {
                                         layout: ['count', 'prev', 'page', 'next', 'skip']
                                         , curr: 1
@@ -398,7 +373,7 @@
 
         window.refresh = function (param) {
             table.reload('user-table', {
-                url: "/admin/tea/getTeachers",
+                url: "/Major/getMajors",
                 method: "post"
             });
         }

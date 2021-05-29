@@ -33,13 +33,29 @@
     "children": [
       {
         "id": 21,
-        "title": "人员管理",
+        "title": "账号管理",
+        "icon": "layui-icon layui-icon-face-cry",
+        "type": 1,
+        "openType": "_iframe",
+        "href": "view/system/AccountManagement.html"
+      },
+      {
+        "id": 23,
+        "title": "专业管理",
         "icon": "layui-icon layui-icon-face-smile",
+        "type": 1,
+        "openType": "_iframe",
+        "href": "view/system/userMajor.html"
+      },
+      {
+        "id": 22,
+        "title": "人员管理",
+        "icon": "layui-icon layui-icon-face-cry",
         "type": 0,
         "openType": "_iframe",
         "children": [
           {
-            "id": 211,
+            "id": 221,
             "title": "学生管理",
             "icon": "layui-icon layui-icon-face-smile",
             "type": 1,
@@ -47,7 +63,7 @@
             "href": "view/system/userStu.html"
           },
           {
-            "id": 212,
+            "id": 223,
             "title": "教师管理",
             "icon": "layui-icon layui-icon-face-smile",
             "type": 1,
@@ -57,14 +73,14 @@
         ]
       },
       {
-        "id": 22,
+        "id": 24,
         "title": "考勤中心",
         "icon": "layui-icon layui-icon-face-cry",
         "type": 0,
         "href": "",
         "children": [
           {
-            "id": 221,
+            "id": 231,
             "title": "人脸考勤",
             "icon": "layui-icon layui-icon-face-cry",
             "type": 1,
@@ -72,7 +88,7 @@
             "href": "view/face.html"
           },
           {
-            "id": 222,
+            "id": 242,
             "title": "考勤记录",
             "icon": "layui-icon layui-icon-face-cry",
             "type": 1,
@@ -80,14 +96,6 @@
             "href": "view/face.html"
           }
         ]
-      },
-      {
-        "id": 23,
-        "title": "账号管理",
-        "icon": "layui-icon layui-icon-face-cry",
-        "type": 1,
-        "openType": "_iframe",
-        "href": "view/system/AccountManagement.html"
       }
     ]
   },
@@ -99,18 +107,25 @@
     "href": "",
     "children": [
       {
-        "id": 311,
-        "title": "资源列表",
+        "id": 310,
+        "title": "我的资源",
         "icon": "layui-icon layui-icon-chart",
         "type": 1,
-        "href": "view/system/resources.html"
+        "href": "view/system/myResources.html"
       },
       {
-        "id": 312,
+        "id": 311,
         "title": "资源上传",
         "icon": "layui-icon layui-icon-chart",
         "type": 1,
         "href": "view/system/uploadResources.html"
+      },
+      {
+        "id": 312,
+        "title": "资源列表",
+        "icon": "layui-icon layui-icon-chart",
+        "type": 1,
+        "href": "view/system/resources.html"
       }
     ]
   },

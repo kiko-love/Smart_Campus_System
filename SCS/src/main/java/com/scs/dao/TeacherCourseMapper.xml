@@ -7,7 +7,7 @@
             insert into relation_teacher_course(teacherId,courseId)
             values(#{teacherId},#{courseId})
         </insert>
-        <select id="SeclectTeacherCourse" resultType="String">
+        <select id="SelectTeacherCourse" resultType="String">
             select courseId
             from relation_teacher_course
             where teacherId = #{teacherid}

@@ -19,6 +19,6 @@ public class TeacherCourseServiceImpl implements TeacherCourseService {
 
     @Override
     public List<String> SeclectTeacherCourse(String teacherid) {
-        return teacherCourseMapper.SeclectTeacherCourse(teacherid);
+        return teacherCourseMapper.SelectTeacherCourse(teacherid);
     }
 }

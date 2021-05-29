@@ -5,8 +5,8 @@
 <!--绑定Mapper接口-->
 <mapper namespace="com.scs.dao.majorMapper">
     <insert id="addMajor" parameterType="com.scs.pojo.major">
-        insert into major(majorId,majorName,majorType,academy)
-        values (#{majorId},#{majorName},#{majorType},#{academy})
+        insert into major(majorId,majorName,majorYear,majorType,academy)
+        values (#{majorId},#{majorName},#{majorYear},#{majorType},#{academy})
     </insert>
     
     <delete id="deleteMajor" parameterType="String">
@@ -16,11 +16,11 @@
     <update id="updateMajor" parameterType="com.scs.pojo.major">
         update major
         <set>
-            <if test="majorId !=null and majorId!=''">
-                majorId=#{majorId},
-            </if>
             <if test="majorName !=null and majorName!=''">
                 majorName=#{majorName},
+            </if>
+            <if test="majorYear !=null and majorYear!=''">
+                majorYear=#{majorYear},
             </if>
             <if test="majorType !=null and majorType!=''">
                 majorType=#{majorType},

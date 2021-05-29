@@ -31,8 +31,8 @@ public class resourceServiceImpl implements resourceService {
     }
 
     @Override
-    public int updateRes(String filepath, String filename,String courseName) {
-        return resMapper.updateRes(filepath,filename,courseName);
+    public int updateRes(String filepath, String createTime, String fileSize, String filename, String courseName) {
+        return resMapper.updateRes(filepath,createTime,fileSize,filename,courseName);
     }
 
     @Override
@@ -78,5 +78,10 @@ public class resourceServiceImpl implements resourceService {
     @Override
     public List<resource> selectResourceById(Integer fileId) {
         return resMapper.selectResourceById(fileId);
+    }
+
+    @Override
+    public List<resource> selectByFileName(String teacherId, String fileName) {
+        return resMapper.selectByFileName(teacherId,fileName);
     }
 }

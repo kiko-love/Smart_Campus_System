@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface TeacherCourseMapper {
     int InsertTeacherCourse(RelationTeacherCourse item);
-    List<String> SeclectTeacherCourse(String teacherid);
+    List<String> SelectTeacherCourse(String teacherid);
 }

@@ -15,8 +15,11 @@ public class TeacherResourceOB {
     private String fileName;
     private String fileSize;
     private String level;
-    private Date createTime;
+    private String createTime;
+    private String teacherName;
     private Integer fileId;
     private boolean haveChild;
     private List<TeacherResourceOB> children;
+    private String teacherId;
+    private Integer focusId;
 }
