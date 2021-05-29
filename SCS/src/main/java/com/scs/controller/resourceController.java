@@ -375,6 +375,7 @@ public class resourceController {
         }
         //查询当前的资料的所有种类
         List<resource> resInfo = resourceService.getResourceByCourse(course);
+        System.out.println(resInfo);
         if (resInfo.size() > 0) {
             status = new JsonStatusUtils("200", "查询成功");
             jsonData.put("status", status);
@@ -584,7 +585,7 @@ public class resourceController {
         return data.toJSONString();
     }
     /**
-     * 根据课程名查找资源
+     * 删除整个文件夹，用于老师
      * @param request
      * @return
      */
@@ -701,6 +702,9 @@ public class resourceController {
     @ResponseBody
     public void downloadResByFileId(HttpServletRequest request, HttpServletResponse response) throws Exception {
         List<Integer> fileIds = JSONObject.parseArray(request.getParameter("fileIds"), Integer.class);
+        if(fileIds==null||fileIds.equals("")){
+            return;
+        }
         //下载单个文件
         if (fileIds.size() == 1) {
             //获取到这个文件的信息
@@ -799,6 +803,5 @@ public class resourceController {
                 e.printStackTrace();
             }
         }
-
     }
 }

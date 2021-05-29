@@ -40,4 +40,9 @@ public class courseServiceimpl implements courseService {
     public List<course> batchSelectCourse(List<String> list) {
         return courseMapper.batchSelectCourse(list);
     }
+
+    @Override
+    public String getCourseIdByName(String courseName) {
+        return courseMapper.getCourseIdByName(courseName);
+    }
 }

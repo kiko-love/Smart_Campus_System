@@ -12,4 +12,5 @@ public interface CourseMapper {
     int deleteCourse(String courseId);
     int batchRemoveCourse(List<String> list);
     List<course> batchSelectCourse(List<String> list);
+    String getCourseIdByName(String courseName);
 }

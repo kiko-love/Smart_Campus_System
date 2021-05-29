@@ -1,5 +1,6 @@
 package com.scs.dao;
 
+import com.scs.pojo.courseTeaOfFocusOB;
 import com.scs.pojo.resource;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
@@ -76,7 +77,8 @@ public interface resourceMapper {
      * @param courseName
      * @return
      */
-    @Select("select * from resource where courseName=#{courseName}")
+    @Select("select * from resource where " +
+            "courseName like '%${_parameter}' or courseName like '${_parameter}%' or courseName like '%${_parameter}%'")
     List<resource> getResourceByCourse(String courseName);
     /**
      * 查找指定老师上传的资源
@@ -89,7 +91,7 @@ public interface resourceMapper {
      * 获取所有资源信息
      * @return
      */
-    @Select("select * from resource ")
+    @Select("select * from resource")
     List<resource> getAllResource();
     /**
      * 批量删除
@@ -114,4 +116,20 @@ public interface resourceMapper {
      */
     @Select("select * from resource where teacherId=#{arg0} and fileName like '%${arg1}' or fileName like '${arg1}%' or fileName like '%${arg1}%'")
     List<resource> selectByFileName(String teacherId,String fileName);
+    /**
+     * 根据老师和学科模糊查找对应的资源信息
+     * @param teacherId
+     * @param courseName
+     * @return
+     */
+    @Select("select * from resource where TeacherId=#{arg0} and " +
+            "courseName like '%${arg1}' or courseName like '${arg1}%' or courseName like '%${arg1}%'")
+    List<resource> getResInfoByCourse(String teacherId, String courseName);
+
+    /**
+     * 获取可关注资源
+     */
+    @Select("select courseName,teacherId from myResource group by courseName,teacherId ")
+    List<courseTeaOfFocusOB> getResInfoToFocus();
+
 }
