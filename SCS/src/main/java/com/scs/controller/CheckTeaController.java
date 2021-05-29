@@ -33,7 +33,8 @@ public class CheckTeaController {
             for(checkTeacher checkTeacher:checkTeachers){
                 checkDates.add(checkTeacher.getCheckDate());
             }
-            String str = JSON.toJSONStringWithDateFormat(checkDates, "yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
+            String str = JSON.toJSONStringWithDateFormat(checkDates, "yyyy-MM-dd",
+                    SerializerFeature.WriteDateUseDateFormat);
             JSONArray jsonArray = JSONArray.parseArray(str);
             data.put("success",1);
             data.put("teacherId",teacherId);

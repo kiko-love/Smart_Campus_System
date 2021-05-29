@@ -17,7 +17,7 @@ public interface checkTeaService {
      * @param checkTea
      * @return
      */
-    int updateType(checkTeacher checkTea);
+    int updateCheck(checkTeacher checkTea);
 
     /**
      * 根据老师Id查询该老师的所有签到，让老师查看到自己的签到记录
@@ -25,6 +25,14 @@ public interface checkTeaService {
      * @return
      */
     List<checkTeacher> selectById(String teacherId);
+
+    /**
+     * 查询是否有对应的老师签到记录
+     * @param teacherId
+     * @param teacherId
+     * @return
+     */
+    List<checkTeacher> selectByTea(String teacherId,String checkDate);
 
     /**
      * 查询所有签到信息

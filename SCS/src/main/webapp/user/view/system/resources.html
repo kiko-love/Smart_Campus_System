@@ -186,18 +186,13 @@
                     '</i>是否开始批量下载选中文件'
                 , btn: ['确认', '取消']
                 , yes: function (index, layero) {
-                    let contexts = new Array()
+                    let fileIds = new Array()
                     for (let i = 0; i < params.length; i++) {
-                        contexts[i] = params[i].context
+                        fileIds[i] = params[i].basicData.fileId
                     }
                     layer.msg('开始批量下载文件');
-                    let secParentId = dtree.getParam('organizationTree', params[0].parentId).parentId;
-                    let fileForm = $("<form action='/Resource/downloadResource' method='post'></form>")
-                    fileForm.append("<input type='hidden' name='contexts' value='" + JSON.stringify(contexts) + "'/>")
-                    fileForm.append("<input type='hidden' name='teacherId' value='" +
-                        dtree.getParam('organizationTree', params[0].parentId).basicData.teacherId + "'/>")
-                    fileForm.append("<input type='hidden' name='course' value='" +
-                        dtree.getParam('organizationTree', secParentId).context + "'/>")
+                    let fileForm = $("<form action='/Resource/downloadResByFileId' method='post'></form>")
+                    fileForm.append("<input type='hidden' name='fileIds' value='" + JSON.stringify(fileIds) + "'/>")
                     $(document.body).append(fileForm);
                     fileForm.submit();
                     fileForm.remove();
@@ -220,7 +215,7 @@
                 type: 'post',
                 success: function (res) {
                     console.log('res.data');
-                    console.log(res.data);
+                    console.log(res);
                     if (res.data !== '') {
                         DTree.reload({
                             data: res.data
@@ -261,8 +256,7 @@
 
         //判断是否为excel类型文件
         function isExcel(ext) {
-            return [
-                'xlsx', 'xlsm', 'xlsb', 'xls', 'xlt'].indexOf(ext.toLowerCase()) !== -1;
+            return ['xlsx', 'xlsm', 'xlsb', 'xls', 'xlt'].indexOf(ext.toLowerCase()) !== -1;
         }
 
         //判断是否为ppt类型文件
@@ -364,7 +358,7 @@
 
         });
 
-        // 绑定节点点击事件
+        // 绑定节点点击事件（单个下载）
         dtree.on("node(organizationTree)", function (obj) {
             console.log(obj.param);
             if (obj.param.leaf === true) {
@@ -374,18 +368,11 @@
                     , btn: ['确认', '取消']
                     , yes: function (index, layero) {
                         //按钮【按钮一】的回调
-                        let contexts = new Array()
-                        contexts[0] = obj.param.context
+                        let fileIds = new Array()
+                        fileIds[0] = obj.param.basicData.fileId
                         layer.msg('开始下载：' + obj.param.context);
-                        let secParentId = dtree.getParam('organizationTree', obj.param.parentId).parentId;
-                        // console.log(dtree.getParam('organizationTree', secParentId).context);
-                        // return false;
-                        let fileForm = $("<form action='/Resource/downloadResource' method='post'></form>")
-                        fileForm.append("<input type='hidden' name='contexts' value='" + JSON.stringify(contexts) + "'/>")
-                        fileForm.append("<input type='hidden' name='teacherId' value='" +
-                            dtree.getParam('organizationTree', obj.param.parentId).basicData.teacherId + "'/>")
-                        fileForm.append("<input type='hidden' name='course' value='" +
-                            dtree.getParam('organizationTree', secParentId).context + "'/>")
+                        let fileForm = $("<form action='/Resource/downloadResByFileId' method='post'></form>")
+                        fileForm.append("<input type='hidden' name='fileIds' value='" + JSON.stringify(fileIds) + "'/>")
                         $(document.body).append(fileForm);
                         try {
                             fileForm.submit();

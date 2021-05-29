@@ -20,13 +20,18 @@ public class checkTeaServiceImpl implements checkTeaService {
     }
 
     @Override
-    public int updateType(checkTeacher checkTea) {
-        return checkMap.updateType(checkTea);
+    public int updateCheck(checkTeacher checkTea) {
+        return checkMap.updateCheck(checkTea);
     }
 
     @Override
     public List<checkTeacher> selectById(String teacherId) {
         return checkMap.selectById(teacherId);
+    }
+
+    @Override
+    public List<checkTeacher> selectByTea(String teacherId, String checkDate) {
+        return checkMap.selectByTea(teacherId,checkDate);
     }
 
     @Override
