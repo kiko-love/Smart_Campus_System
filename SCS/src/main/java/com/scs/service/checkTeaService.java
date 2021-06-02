@@ -1,5 +1,6 @@
 package com.scs.service;
 
+import com.scs.pojo.CheckRecord;
 import com.scs.pojo.checkTeacher;
 
 import java.util.List;
@@ -39,4 +40,16 @@ public interface checkTeaService {
      * @return
      */
     List<checkTeacher> selectAll();
+
+    /**
+     * 查询全部人员签到记录
+     * @return
+     */
+    List<CheckRecord> checkRecords();
+
+    /**
+     * 查询指定日期内签到记录
+     * @return
+     */
+    List<CheckRecord> RangeCheckRecords(String begin,String end);
 }

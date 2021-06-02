@@ -5,9 +5,30 @@
 <!--绑定Mapper接口-->
 <mapper namespace="com.scs.dao.checkTeaMapper">
     <insert id="insertCheck" parameterType="com.scs.pojo.checkTeacher">
-        insert into teacher_check (teacherId,checkDate)
-        values (#{teacherId},#{checkDate})
+        insert into teacher_check (teacherId, checkDate)
+        values (#{teacherId}, #{checkDate})
     </insert>
+
+    <select id="checkRecords" resultType="com.scs.pojo.CheckRecord">
+        select teacher_check.teacherId as teacherId,
+               teacher_check.checkDate as checkDate,
+               teachers.realName       as realName
+        from teacher_check
+                 inner join teachers
+                            on teacher_check.teacherId = teachers.teacherId
+        ORDER BY teacher_check.checkDate DESC
+    </select>
+
+    <select id="RangeCheckRecords" parameterType="string" resultType="com.scs.pojo.CheckRecord">
+        select teacher_check.teacherId as teacherId,
+               teacher_check.checkDate as checkDate,
+               teachers.realName       as realName
+        from teacher_check
+                 inner join teachers
+                            on teacher_check.teacherId = teachers.teacherId
+                                and teacher_check.checkDate between #{arg0} and #{arg1}
+        ORDER BY teacher_check.checkDate DESC
+    </select>
 
     <update id="updateCheck" parameterType="com.scs.pojo.checkTeacher">
         update teacher_check
@@ -25,13 +46,14 @@
     <select id="selectById" parameterType="String" resultType="com.scs.pojo.checkTeacher">
         select *
         from teacher_check
-        where teacherId=#{teacherId}
+        where teacherId = #{teacherId}
     </select>
 
     <select id="selectByTea" parameterType="String" resultType="com.scs.pojo.checkTeacher">
         select *
         from teacher_check
-        where teacherId=#{arg0} and checkDate=#{arg1}
+        where teacherId = #{arg0}
+          and checkDate = #{arg1}
     </select>
 
     <select id="selectAll" resultType="java.util.List">

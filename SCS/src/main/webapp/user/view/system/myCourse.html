@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>我的课程</title>
+    <link rel="stylesheet" href="../../component/pear/css/pear.css"/>
+</head>
+
+<body class="pear-container">
+<div class="layui-card">
+    <div class="layui-card-body">
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+            <legend>签到记录</legend>
+        </fieldset>
+        <br>
+        <form class="layui-form" action="">
+            <div class="layui-form-item">
+                <div class="layui-form-item layui-inline">
+                    <label class="layui-form-label"><i class="layui-icon layui-icon-date"></i>
+                        签到时间
+                        </label>
+                    <div class="layui-input-inline">
+                        <input id="DateRange" type="text" name="checkDate" placeholder="选择签到日期范围"
+                               class="layui-input">
+                    </div>
+                </div>
+            </div>
+        </form>
+        <table id="user-table" lay-filter="user-table" lay-size="lg"></table>
+    </div>
+</div>
+
+<script type="text/html" id="user-toolbar">
+    <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
+        <i class="layui-icon layui-icon-add-1"></i>
+        新增
+    </button>
+    <button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove">
+        <i class="layui-icon layui-icon-delete"></i>
+        删除
+    </button>
+</script>
+
+<script type="text/html" id="user-bar">
+    <button title="查看记录" class="pear-btn pear-btn-primary pear-btn-sm"
+            lay-event="check"><i class="layui-icon layui-icon-log"></i>
+    </button>
+</script>
+
+<script src="../../../static/layui/layui.js"></script>
+<script src="../../component/pear/pear.js"></script>
+<script>
+    /**
+     * 日期格式化
+     * @param Number time 时间戳
+     * @param String format 格式
+     */
+    function dateFormat(time, format) {
+        const t = new Date(time)
+        // 日期格式
+        format = format || 'Y-m-d h:i:s'
+        let year = t.getFullYear()
+        // 由于 getMonth 返回值会比正常月份小 1
+        let month = t.getMonth() + 1
+        let day = t.getDate()
+        let hours = t.getHours()
+        let minutes = t.getMinutes()
+        let seconds = t.getSeconds()
+
+        const hash = {
+            'y': year,
+            'm': month,
+            'd': day,
+            'h': hours,
+            'i': minutes,
+            's': seconds
+        }
+        // 是否补 0
+        const isAddZero = (o) => {
+            return /M|D|H|I|S/.test(o)
+        }
+        return format.replace(/\w/g, o => {
+            let rt = hash[o.toLocaleLowerCase()]
+            return rt > 10 || !isAddZero(o) ? rt : `0${rt}`
+        })
+    }
+
+    /*比较时间大小，格式为yyyy-mm-dd*/
+    function compareDate(dateTime1, dateTime2) {
+        let formatDate1 = new Date(dateTime1);
+        let formatDate2 = new Date(dateTime2);
+        if (
+            formatDate1 >= formatDate2) {
+            return 1;
+        } else {
+            return 2;
+        }
+    }
+
+    layui.use(['table', 'form', 'jquery', 'laydate'], function () {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+        let laydate = layui.laydate;
+        let MODULE_PATH = "operate/";
+        let cols = [
+            [
+                {
+                    title: '签到序号',
+                    field: 'ID',
+                    align: 'center',
+                    templet: function (d) {
+                        return d.LAY_INDEX;
+                    },
+                },
+                {
+                    title: '签到日期',
+                    field: 'checkDate',
+                    align: 'center'
+                },
+                {
+                    title: '姓名',
+                    field: 'realName',
+                    align: 'center'
+                },
+                {
+                    title: '职员编号',
+                    field: 'teacherId',
+                    align: 'center',
+                    //sort: true,
+                    //fixed: true
+                },
+                {
+                    title: '签到状态',
+                    align: 'center',
+                    templet: function (d) {
+                        //LAY_INDEX
+                        //console.log(d);
+                        //let today = dateFormat(new Date(), 'Y-m-d');
+                        if (d.checkDate !== '') {
+                            return '<span class="layui-badge layui-bg-green">已签到</span>'
+                        } else {
+                            return '<span class="layui-badge">签到异常</span>'
+                        }
+
+                    },
+                    width: 100
+                }
+            ]
+        ]
+
+        //日期时间范围
+        laydate.render({
+            elem: '#DateRange'
+            , type: 'date'
+            , range: true
+            , done: function (value, date, endDate) {
+                if (Object.keys(date).length !== 0 && Object.keys(endDate).length !== 0) {
+                    let begin = date.year + '-' + date.month + '-' + date.date;
+                    let end = endDate.year + '-' + endDate.month + '-' + endDate.date;
+                    tableIns.reload({
+                        url: '/CheckTea/getRangeCheckRecords',
+                        method: 'post',
+                        page: {
+                            layout: ['count', 'prev', 'page', 'next', 'skip']
+                            , curr: 1
+                            , groups: 3
+                            , last: false
+                        }
+                        , where: {
+                            begin: begin,
+                            end: end
+                        }
+                    })
+                }
+            }
+
+        });
+
+        let tableIns = table.render({
+            elem: '#user-table',
+            url: '/CheckTea/getCheckRecords',
+            method: "post",
+            page: {
+                layout: ['count', 'prev', 'page', 'next', 'skip']
+                , curr: 1
+                , groups: 3
+                , last: false
+            },
+            limit: 7,
+            //limits:[5,10,20],
+            cols: cols,
+            id: 'user-table',
+            skin: 'line',
+
+            defaultToolbar: [{
+                title: '刷新签到记录',
+                layEvent: 'refresh',
+                icon: 'layui-icon-refresh',
+            }, 'filter', 'print', 'exports'],
+            //一定要加这个参数代码，否则会由于layui自身的bug导致无法分页
+            parseData: function (res) { //将原始数据解析成 table 组件所规定的数据，res为从url中get到的数据
+                let result;
+                // console.log(res.data[0].birthday);
+                // res.data[0].birthday = dateFormat(res.data[0].birthday, 'Y-M-D')
+                if (this.page.curr) {
+                    result = res.data.slice(this.limit * (this.page.curr - 1), this.limit * this.page.curr);
+                } else {
+                    result = res.data.slice(0, this.limit);
+                }
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": res.count, //解析数据长度
+                    "data": result //解析数据列表
+                };
+            }
+        });
+
+        table.on('tool(user-table)', function (obj) {
+            if (obj.event === 'remove') {
+                window.remove(obj);
+            } else if (obj.event === 'edit') {
+                window.edit(obj);
+            }
+        });
+
+        table.on('toolbar(user-table)', function (obj) {
+            if (obj.event === 'add') {
+                window.add();
+            } else if (obj.event === 'refresh') {
+                window.refresh();
+            } else if (obj.event === 'batchRemove') {
+                window.batchRemove(obj);
+            } else if (obj.event === 'edit') {
+                //obj.del();
+                window.edit(obj);
+            }
+        });
+
+        form.on('submit(user-query)', function (data) {
+            tableIns.reload({
+                //url: '/getData2',
+                url: '/admin/tea/searchTea',
+                method: 'post',
+                page: {
+                    layout: ['count', 'prev', 'page', 'next', 'skip']
+                    , curr: 1
+                    , groups: 3
+                    , last: false
+                }
+                , where: data.field
+            })
+            return false;
+        });
+
+
+        window.add = function () {
+            layer.open({
+                type: 2,
+                title: '新增教师信息',
+                shade: 0.1,
+                area: ['500px', '550px'],
+                content: MODULE_PATH + 'addTea.html'
+            });
+        }
+
+        window.edit = function (obj) {
+            layer.open({
+                type: 2,
+                title: '修改教师信息:' + obj.data['teacherId'],
+                shade: 0.1,
+                area: ['500px', '550px'],
+                content: MODULE_PATH + 'editTea.html',
+                success: function (layero, index) {
+                    var body = layer.getChildFrame('body', index);
+                    //得到iframe页的窗口对象，执行iframe页的方法：iframeWin.method();
+                    //console.log(obj.data);
+                    var iframeWin = window[layero.find('iframe')[0]['name']]
+                    body.find('#teacherId').val(obj.data['teacherId'])
+                    body.find('#realName').val(obj.data['realName'])
+                    body.find('#phone').val(obj.data['phone'])
+                    body.find('#collegeId').val(obj.data['collegeId'])
+                    body.find('#addr').val(obj.data['addr'])
+                    body.find('#birthday').val(obj.data['birthday'])
+                    if (obj.data['sex'] == '1') {
+                        body.find('#man').attr("checked", "");
+                        iframeWin.layui.form.render('radio');
+                    } else {
+                        body.find('#woman').attr("checked", "");
+                        iframeWin.layui.form.render('radio');
+                    }
+                }
+            });
+        }
+
+
+        window.refresh = function (param) {
+            table.reload('user-table', {
+                url: "/CheckTea/getCheckRecords",
+                method: "post"
+            });
+        }
+    })
+</script>
+</body>
+
+</html>
