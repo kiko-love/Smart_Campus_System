@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class classInfo {
     private String classes;//班级名
     private String classId;
-    private String Major;//所属院系
+    private String Major;//所属专业
     private String counselor;//辅导员
+    private String counselorId;//辅导员Id
 }
