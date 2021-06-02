@@ -7,8 +7,8 @@
         select * from classinfo
     </select>
     <insert id="insertClassInfo" parameterType="com.scs.pojo.classInfo">
-        insert into classinfo(classes,classid,Major,counselor)
-        values (#{classes},#{classId},#{Major},#{counselor})
+        insert into classinfo(classes,classid,Major,counselor,counselorId)
+        values (#{classes},#{classId},#{Major},#{counselor},#{counselorId})
     </insert>
     <update id="updateClassInfo" parameterType="com.scs.pojo.classInfo">
         update classinfo
@@ -25,13 +25,16 @@
             <if test="counselor !=null and counselor !=''">
                 counselor=#{counselor}
             </if>
+            <if test="counselorId !=null and counselorId !=''">
+                counselorId=#{counselorId}
+            </if>
         </set>
-        where classes=#{classes}
+        where classeId=#{classeId}
     </update>
     <delete id="deleteClassInfo" parameterType="String">
         delete from
         classinfo
-        where classes=#{classname}
+        where classId=#{classId}
     </delete>
     <delete id="batchDeleteClassInfo" parameterType="java.util.List">
         delete from
