@@ -3,6 +3,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.scs.pojo.CheckRecord;
 import com.scs.pojo.checkTeacher;
 import com.scs.service.checkTeaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,8 @@ import java.util.List;
 public class CheckTeaController {
     @Autowired
     private checkTeaService checkTeaService;
+
+
     @ResponseBody
     @RequestMapping(value = "/getCheckInfoById",produces = "application/json;charset=utf-8" )
     public String getCheckInfoById(HttpServletRequest request){
@@ -46,5 +49,44 @@ public class CheckTeaController {
             data.put("data","");
             return data.toJSONString();
         }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/getCheckRecords",produces = "application/json;charset=utf-8" )
+    public String getCheckRecords(HttpServletRequest request){
+        JSONObject data = new JSONObject();
+        data.put("code", 0);
+        data.put("msg", "getCheckRecords");
+        List<CheckRecord> records = checkTeaService.checkRecords();
+        String str = JSON.toJSONStringWithDateFormat(records, "yyyy-MM-dd",
+                SerializerFeature.WriteDateUseDateFormat);
+        JSONArray jsonArray = JSONArray.parseArray(str);
+        data.put("count", records.size());
+        data.put("data",jsonArray);
+        return data.toJSONString();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/getRangeCheckRecords",produces = "application/json;charset=utf-8" )
+    public String getRangeCheckRecords(HttpServletRequest request){
+        String begin = request.getParameter("begin");
+        String end = request.getParameter("end");
+        JSONObject data = new JSONObject();
+        if (begin.equals("") || end.equals("")){
+            data.put("code", 110);
+            data.put("msg", "日期参数获取失败");
+            data.put("count", 0);
+            data.put("data","");
+        }else {
+            data.put("code", 0);
+            data.put("msg", "getRangeCheckRecords");
+            List<CheckRecord> records = checkTeaService.RangeCheckRecords(begin,end);
+            String str = JSON.toJSONStringWithDateFormat(records, "yyyy-MM-dd",
+                    SerializerFeature.WriteDateUseDateFormat);
+            JSONArray jsonArray = JSONArray.parseArray(str);
+            data.put("count", records.size());
+            data.put("data",jsonArray);
+        }
+        return data.toJSONString();
     }
 }

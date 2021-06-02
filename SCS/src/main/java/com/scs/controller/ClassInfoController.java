@@ -32,13 +32,15 @@ public class ClassInfoController {
     }
     @ResponseBody
     @RequestMapping(value = "insertClassInfo",produces = "application/json;charset=utf-8")
+    //插入班级表
     public String insertClassInfo(HttpServletRequest request){
         JSONObject data = new JSONObject();
         String classes = request.getParameter("classes");
-        String classid = request.getParameter("classid");
+        String classId = request.getParameter("classId");
         String counselor = request.getParameter("counselor");
-        String majorname = request.getParameter("majorname");
-        classInfo classInfo = new classInfo(classes,classid,majorname,counselor);
+        String majorName = request.getParameter("majorName");
+        String counselorId = request.getParameter("counselorId");
+        classInfo classInfo = new classInfo(classes,classId,majorName,counselor,counselorId);
         int count = classInfoService.insertClassInfo(classInfo);
         if(count>0){
             data.put("success","1");
@@ -53,13 +55,15 @@ public class ClassInfoController {
     }
     @ResponseBody
     @RequestMapping(value = "updateClassInfo",produces = "application/json;charset=utf-8")
+    //修改班级表
     public String updateClassInfo(HttpServletRequest request){
         JSONObject data = new JSONObject();
         String classes = request.getParameter("classes");
-        String classid = request.getParameter("classid");
+        String classId = request.getParameter("classId");
         String counselor = request.getParameter("counselor");
-        String majorname = request.getParameter("majorname");
-        classInfo classInfo = new classInfo(classes,classid,majorname,counselor);
+        String majorName = request.getParameter("majorName");
+        String counselorId = request.getParameter("counselorId");
+        classInfo classInfo = new classInfo(classes,classId,majorName,counselor,counselorId);
         int count = classInfoService.updateClassInfo(classInfo);
         if(count>0){
             data.put("success","1");
@@ -74,10 +78,11 @@ public class ClassInfoController {
     }
     @ResponseBody
     @RequestMapping(value = "deleteClassInfo",produces = "application/json;charset=utf-8")
+    //批量删除
     public String deleteClassInfo(HttpServletRequest request){
         JSONObject data = new JSONObject();
-        String classname = request.getParameter("classname");
-        int count = classInfoService.deleteClassInfo(classname);
+        String classId = request.getParameter("classId");
+        int count = classInfoService.deleteClassInfo(classId);
         if(count>0){
             data.put("success","1");
             data.put("msg","删除成功");
@@ -93,7 +98,7 @@ public class ClassInfoController {
     @RequestMapping(value = "/batchDeleteMajor", produces = "application/json;charset=utf-8")
     public String batchDeleteMajor(HttpServletRequest request) {
         JSONObject data = new JSONObject();
-        List<String> List = JSONObject.parseArray(request.getParameter("classid"),String.class);
+        List<String> List = JSONObject.parseArray(request.getParameter("classId"),String.class);
         System.out.println(List);
         ;       data.put("code", 0);
         data.put("msg", "batchRemoveStudent");
