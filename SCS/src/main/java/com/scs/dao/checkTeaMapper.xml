@@ -9,11 +9,14 @@
         values (#{teacherId},#{checkDate})
     </insert>
 
-    <update id="updateType" parameterType="com.scs.pojo.checkTeacher">
+    <update id="updateCheck" parameterType="com.scs.pojo.checkTeacher">
         update teacher_check
         <set>
-            <if test="checkType != null and checkType != ''">
-                checkType=#{checkType},
+            <if test="teacherId != null and teacherId != ''">
+                teacherId=#{teacherId},
+            </if>
+            <if test="checkDate != null and checkDate != ''">
+                checkDate=#{checkDate},
             </if>
         </set>
         where checkDate=#{checkDate} and teacherId=#{teacherId}
@@ -23,6 +26,12 @@
         select *
         from teacher_check
         where teacherId=#{teacherId}
+    </select>
+
+    <select id="selectByTea" parameterType="String" resultType="com.scs.pojo.checkTeacher">
+        select *
+        from teacher_check
+        where teacherId=#{arg0} and checkDate=#{arg1}
     </select>
 
     <select id="selectAll" resultType="java.util.List">

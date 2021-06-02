@@ -1,6 +1,7 @@
 package com.scs.service.impl;
 
 import com.scs.dao.resourceMapper;
+import com.scs.pojo.courseTeaOfFocusOB;
 import com.scs.pojo.resource;
 import com.scs.service.resourceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,5 +84,15 @@ public class resourceServiceImpl implements resourceService {
     @Override
     public List<resource> selectByFileName(String teacherId, String fileName) {
         return resMapper.selectByFileName(teacherId,fileName);
+    }
+
+    @Override
+    public List<resource> getResInfoByCourse(String teacherId, String courseName) {
+        return resMapper.getResInfoByCourse(teacherId,courseName);
+    }
+
+    @Override
+    public List<courseTeaOfFocusOB> getResInfoToFocus() {
+        return resMapper.getResInfoToFocus();
     }
 }

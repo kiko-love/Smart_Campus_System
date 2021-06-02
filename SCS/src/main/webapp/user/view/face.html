@@ -16,13 +16,13 @@
     font-weight: 500;
     text-align: center;
 }*/
-    video::-webkit-media-controls {
-        display: none !important;
-    }
+
+
     .background {
         background-image: url('../admin/images/face_bg.png');
         background-repeat: no-repeat;
     }
+
     .buttons {
         text-align: center;
         position: relative;
@@ -36,7 +36,7 @@
         color: rgb(15, 92, 5);
         font-weight: 600;
         font-size: 22px;
-        width: 1000px;
+        width: 500px;
         position: relative;
         top: 60px;
         margin: auto;
@@ -76,57 +76,209 @@
         background-repeat: no-repeat;
         background-position: center;
     }
+
+
+    .calendar {
+        width: 450px;
+        height: 350px;
+        background: #fff;
+    }
+
+    .body-list ul {
+        width: 100%;
+        font-family: arial;
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    .body-list ul li {
+        width: 14.28%;
+        height: 36px;
+        line-height: 36px;
+        list-style-type: none;
+        display: block;
+        box-sizing: border-box;
+        float: left;
+        text-align: center;
+        user-select: none;
+    }
+
+    .body-list ul li:hover {
+        background-color: rgba(196, 193, 193, 0.2);
+
+    }
+
+    .lightgrey {
+        color: #aaa8a8; /*浅灰色*/
+    }
+
+    .grey {
+        color: #939393; /*浅灰色*/
+    }
+
+    .darkgrey {
+        color: #363535; /*深灰色*/
+    }
+
+    .green {
+        color: #59b324; /*绿色*/
+    }
+
+    .greenbox {
+        border: 1px solid #59b324;
+        background: #e9f8df; /*浅绿色背景*/
+    }
+
+    .red {
+        color: #c14c3c; /*绿色*/
+    }
+
+    .redbox {
+        border: 1px solid #c14c3c;
+        background: #f8e5df; /*浅绿色背景*/
+    }
+
+    .container_record {
+        display: inline-table;
+        text-align: center;
+        position: relative;
+        top: -280px;
+        left: -10%;
+        /*border:1px solid black;*/
+    }
+
+    .container_face {
+        display: inline-table;
+        position: relative;
+        left: -10%;
+    }
+
+    .container {
+        height: 300px;
+    }
 </style>
 <body>
-    <div >
-
+<div class="container">
+    <div class="container_face">
         <div class="contents_video">
             <video id="video" toplay="autoplay"></video>
         </div>
         <div class="contents_canvas">
             <canvas id="canvas" width="500" height="500"></canvas>
         </div>
+        <div id="tips1">
+            人脸签到系统（暂未开启摄像头）
+        </div>
+        <div class="buttons">
+            <button id="open" class="layui-btn layui-btn-radius">
+                <i class="layui-icon layui-icon-camera-fill"></i>
+                打开摄像头
+            </button>
+            <button id="close" class="layui-btn layui-btn-radius">
+                <i class="layui-icon layui-icon-unlink"></i>
+                关闭摄像头
+            </button>
+            <button id="snapAndupload" class="layui-btn layui-btn-radius">拍照上传
+                <i class="layui-icon layui-icon-down layui-font-12"></i>
+            </button>
+            <button type="button" class="layui-btn layui-btn-radius" id="test1" style="display: none;">
+                <i class="layui-icon">&#xe67c;</i>上传测试人脸
+            </button>
+        </div>
+        <!-- <div id="copyRights">
+            ©2021-2021 195_ZY
+        </div>-->
+    </div>
+    <div class="container_record">
+        <div class="calendar">
+            <div class="title">
+                <h1 class="green" id="calendar-title">Month</h1>
+                <h2 class="green small" id="calendar-year">Year</h2>
+            </div>
+            <div class="body">
+                <div class="grey body-list">
+                    <ul>
+                        <li>星期一</li>
+                        <li>星期二</li>
+                        <li>星期三</li>
+                        <li>星期四</li>
+                        <li>星期五</li>
+                        <li>星期六</li>
+                        <li>星期日</li>
+                    </ul>
+                </div>
+                <div class="darkgrey body-list">
+                    <ul id="days">
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-    </div>
-    <div id="tips1">
-        人脸识别系统（暂未开启摄像头）
-    </div>
-    <div class="buttons">
-        <button id="open" class="layui-btn layui-btn-radius">
-            <i class="layui-icon layui-icon-camera-fill"></i>
-            打开摄像头</button>
-        <button id="close" class="layui-btn layui-btn-radius">
-            <i class="layui-icon layui-icon-unlink"></i>
-            关闭摄像头</button>
-        <button id="snapAndupload" class="layui-btn layui-btn-radius">拍照上传
-            <i class="layui-icon layui-icon-down layui-font-12"></i>
-        </button>
-        <button type="button" class="layui-btn layui-btn-radius" id="test1" style="display: none;">
-            <i class="layui-icon">&#xe67c;</i>上传测试人脸
-        </button>
-    </div>
-    <!-- <div id="copyRights">
-        ©2021-2021 195_ZY
-    </div>-->
 </body>
-    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.js"></script>
-    <script src="https://www.layuicdn.com/layui/layui.js"></script>
-    <script>
+<script src="../component/layui/layui.js"></script>
+<script>
+    layui.use(['upload', 'dropdown', 'jquery'], function () {
+        let upload = layui.upload;
         let isopen = false;
         let isgetPic = false;
         let handling = false;
         let first_get_pic = false;
+        let dropdown = layui.dropdown
+        let $ = layui.jquery;
+        let month_olympic = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+        let month_normal = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+        let month_name = ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"];
+        let month_number = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
+        let holder = document.getElementById("days");
+        let prev = document.getElementById("prev");
+        let next = document.getElementById("next");
+        let ctitle = document.getElementById("calendar-title");
+        let cyear = document.getElementById("calendar-year");
+        let my_date = new Date();
+        let my_year = my_date.getFullYear();
+        let my_month = my_date.getMonth();
+        let my_day = my_date.getDate();
         let upload_url = "/aipFace/detect";
-        $(function () {
-            $("#open").click(getMedia);
-            $("#close").click(closeMedia);
-            //$("#snapAndupload").click(snap_upload);
-            $("#upload").click(uploadPic);
+        $("#open").click(getMedia);
+        $("#close").click(closeMedia);
+        //$("#snapAndupload").click(snap_upload);
+        $("#upload").click(uploadPic);
+        //执行实例
+        let uploadInst = upload.render({
+            elem: '#test1' //绑定元素
+            , url: upload_url //上传接口
+            , before: function (obj) { //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
+                console.log(obj)
+            }
+            , choose: function (obj) {
+                //预读本地文件，如果是多文件，则会遍历。(不支持ie8/9)
+                obj.preview(function (index, file, result) {
+                    console.log(index); //得到文件索引
+                    console.log(file); //得到文件对象
+                    console.log(result); //得到文件base64编码，比如图片
 
-        })
+                })
+            }
+            , done: function (res) {
+                //上传完毕回调
+                console.log(res.result.face_num)
+
+            }
+            , error: function () {
+                layer.open({
+                    title: '提示'
+                    , content: '上传失败'
+                    , icon: 5
+                });
+            }
+        });
+
         function test(type) {
             alert(type);
         }
+
         //拍照后上传
         function snap_upload(type) {
             if (isopen == false) {
@@ -226,8 +378,7 @@
                                 $("#tips1").css("color", "rgb(15, 92, 5)")
                                 $("#tips1").html("人脸识别成功" + "<br>" + "检测到的人脸数：" + faceObj.face_num + "<br>" + "性别：" + faceObj.gender + "<br>"
                                     + "年龄判断：" + faceObj.face_age + "<br>" + "是否佩戴口罩：" + faceObj.mask + "<br>" + "是否佩戴眼镜：" + faceObj.glasses);
-                            }
-                            else {
+                            } else {
                                 $("#tips1").css("color", "#aa310c")
                                 $("#tips1").html("人脸识别失败，请检查拍摄环境是否光线充足或拍摄姿势是否正确");
                             }
@@ -244,12 +395,29 @@
                             }
                             if (faceObj.score >= 80) {
                                 $("#tips1").css("color", "rgb(15, 92, 5)")
-                                $("#tips1").html("人脸匹配成功" + "<br>" + "姓名：" + faceObj.face_name + "<br>" + "学号：" + faceObj.user_id + "<br>" + "人脸组id：" + faceObj.group_id);
+                                $("#tips1").html("签到成功" + "<br>" + "姓名：" + faceObj.face_name + "<br>" + "编号：" + faceObj.user_id + "<br>" + "人脸组id：" + faceObj.group_id);
+                                refreshDate();
                             } else {
                                 $("#tips1").css("color", "#aa310c")
                                 $("#tips1").html("人脸匹配失败，未在人脸库中找到符合数据，请确认是否已注册该人脸");
                             }
                         }
+                    } else if (result.error_msg == "errorRole") {
+                        $("#tips1").css("color", "#aa310c")
+                        $("#tips1").html("身份验证失败" + "<br>" + "失败原因：人脸数据与职工信息不匹配");
+                        layer.open({
+                            title: '提示'
+                            , icon: 2
+                            , content: result.msg
+                        });
+                    } else if (result.error_msg == "haveRecord") {
+                        $("#tips1").css("color", "rgb(15, 92, 5)");
+                        $("#tips1").html("您已签到，无需重复打卡");
+                        layer.open({
+                            title: '提示'
+                            , icon: 1
+                            , content: result.msg
+                        });
                     } else {
                         $("#tips1").css("color", "#aa310c")
                         $("#tips1").html("数据处理失败" + "<br>" + "错误原因：" + result.error_msg + "<br>" + "错误代码：" + result.error_code);
@@ -263,7 +431,8 @@
                          , anim: 0
                      });*/
 
-                },
+                }
+                ,
                 error: function (result) {
                     $("#tips1").css("color", "#aa310c")
                     $("#tips1").html("服务器处理数据异常，请稍后尝试！");
@@ -293,7 +462,7 @@
             }
             let constraints = {
                 //参数
-                video: { width: 500, height: 500 },
+                video: {width: 500, height: 500},
                 audio: false
             };
             //获得video摄像头区域
@@ -310,11 +479,12 @@
                 $("#video").css("display", "inline");
                 $("#canvas").css("display", "none");
                 $("#tips1").css("color", "rgb(15, 92, 5)");
-                $("#tips1").html("正在检测你的人像数据，请不要晃动并确保环境光线充足,点击拍照上传开始检测人像");
+                $("#tips1").html("正在检测你的人像数据，请不要剧烈晃动并确保环境光线充足,点击拍照上传开始检测人像");
                 video.style.border = "4px solid rgb(189, 21, 21)";
                 isopen = true;
             });
         }
+
         //关闭摄像头
         function closeMedia() {
             if (isopen == false) {
@@ -330,6 +500,7 @@
             $("#tips1").html("已关闭摄像头，人脸检测请重新打开摄像头");
             isopen = false;
         }
+
         //拍照截图
         function takePhoto() {
             if (isopen == false) {
@@ -347,6 +518,7 @@
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
             isgetPic = true;
         }
+
         //上传得到的人脸图像
         function uploadPic() {
             if (handling == true) {
@@ -407,72 +579,165 @@
 
         }
 
-
-    </script>
-    <script>
-        layui.use('upload', function () {
-            let upload = layui.upload;
-            //执行实例
-            let uploadInst = upload.render({
-                elem: '#test1' //绑定元素
-                , url: upload_url //上传接口
-                , before: function (obj) { //obj参数包含的信息，跟 choose回调完全一致，可参见上文。
-                    console.log(obj)
+        dropdown.render({
+            elem: '#snapAndupload' //可绑定在任意元素中，此处以上述按钮为例
+            , trigger: 'hover'
+            , data: [{
+                title: '人脸签到'
+                , id: 102
+            }
+            ]
+            , id: 'snapAndupload'
+            //菜单被点击的事件
+            , click: function (obj) {
+                if (obj.id == 100) {
+                    // layer.msg('100');
+                    upload_url = "/aipFace/detect"
+                    snap_upload("0");
                 }
-                , choose: function (obj) {
-                    //预读本地文件，如果是多文件，则会遍历。(不支持ie8/9)
-                    obj.preview(function (index, file, result) {
-                        console.log(index); //得到文件索引
-                        console.log(file); //得到文件对象
-                        console.log(result); //得到文件base64编码，比如图片
-
-                    })
+                if (obj.id == 101) {
+                    //layer.msg('101');
+                    snap_upload("1");
                 }
-                , done: function (res) {
-                    //上传完毕回调
-                    console.log(res.result.face_num)
-
+                if (obj.id == 102) {
+                    //layer.msg('102');
+                    upload_url = "/aipFace/search"
+                    snap_upload("2");
                 }
-                , error: function () {
+
+            }
+        });
+
+        // ----------------------------签到表绘制相关函数---------------------
+        let testDate = [
+            "2021-05-01",
+            "2021-05-02",
+            "2021-05-03",
+            "2021-05-04",
+            "2021-05-13",
+            "2021-05-25",
+            "2021-05-28",
+            "2021-05-29"
+        ]
+        Date.prototype.format = function (fmt) {
+            let o = {
+                "M+": this.getMonth() + 1, //月份
+                "d+": this.getDate(), //日
+                "h+": this.getHours(), //小时
+                "m+": this.getMinutes(), //分
+                "s+": this.getSeconds(), //秒
+                "q+": Math.floor((this.getMonth() + 3) / 3), //季度
+                "S": this.getMilliseconds() //毫秒
+            };
+            if (/(y+)/.test(fmt)) {
+                fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+            }
+            for (var k in o) {
+                if (new RegExp("(" + k + ")").test(fmt)) {
+                    fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ?
+                        (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+                }
+            }
+            return fmt;
+        }
+        //console.log(my_date.format('yyyy-MM-dd'));
+
+        //获取某年某月第一天是星期几
+        function dayStart(month, year) {
+            let tmpDate = new Date(year, month, 1);
+            return (tmpDate.getDay());
+        }
+
+        //计算某年是不是闰年，通过求年份除以4的余数即可
+        function daysMonth(month, year) {
+            let tmp = year % 4;
+            if (tmp == 0) {
+                return (month_olympic[month]);
+            } else {
+                return (month_normal[month]);
+            }
+        }
+
+        //判断是否在返回的日期内
+        function isInDays(resDay, nowDay) {
+            // console.log(nowDay.toString());
+            return resDay.indexOf(nowDay) !== -1;
+        }
+
+        function renderDate(checkDate) {
+            let str = "";
+            let totalDay = daysMonth(my_month, my_year); //获取该月总天数
+            let firstDay = dayStart(my_month, my_year); //获取该月第一天是星期几
+            let myclass;
+            let myIcon;
+            //填白
+            for (let i = 1; i < firstDay; i++) {
+                str += "<li></li>"; //为起始日之前的日期创建空白节点
+            }
+            //校验考勤数据
+            for (let i = 1; i <= totalDay; i++) {
+                if (i < 10) {
+                    i = '0' + i;
+                }
+                let nowDay = my_year + '-' + month_number[my_month] + '-' + i;
+                //console.log(my_year + '-' + month_number[my_month] + '-' + i);
+                if ((i < my_day && my_year === my_date.getFullYear() && my_month === my_date.getMonth())
+                    || my_year < my_date.getFullYear()
+                    || (my_year === my_date.getFullYear() && my_month < my_date.getMonth())) {
+                    if (isInDays(checkDate, nowDay)) {
+                        myclass = " class='lightgrey' "; //当该日期在今天之前时，以浅灰色字体显示
+                        myIcon = '<i class=\'layui-icon green layui-icon-ok\'></i>'
+                    } else {
+                        myclass = " class='red' "; //当该日期在今天之前时，以浅灰色字体显示
+                        myIcon = '<i class=\'layui-icon red layui-icon-close\'></i>'
+                    }
+
+                } else if (i === my_day && my_year === my_date.getFullYear()
+                    && my_month === my_date.getMonth()) {
+                    if (isInDays(checkDate, nowDay)) {
+                        myclass = " class='green greenbox'"; //当天日期以绿色背景突出显示
+                        myIcon = '<i class=\'layui-icon green layui-icon-ok\'></i>'
+                    } else {
+                        myclass = " class='red redbox'"; //当天日期以绿色背景突出显示
+                        myIcon = '<i class=\'layui-icon red layui-icon-close\'></i>'
+                    }
+                } else {
+                    myclass = " class='darkgrey'"; //当该日期在今天之后时，以深灰字体显示
+                    myIcon = '<i class=\'layui-icon grey layui-icon-subtraction\'></i>';
+                }
+                str += "<li" + myclass + ">" + i + myIcon + "</li>"; //创建日期节点
+            }
+            holder.innerHTML = str; //设置日期显示
+            ctitle.innerHTML = month_name[my_month] + '-签到记录'; //设置英文月份显示
+            cyear.innerHTML = my_year; //设置年份显示
+        }
+
+
+        function refreshDate() {
+            let checkDate = new Array();
+            $.ajax({
+                url: '/CheckTea/getCheckInfoById',
+                dataType: 'json',
+                type: 'post',
+                success: function (res) {
+                    checkDate = res.data;
+                    //console.log(checkDate);
+                    renderDate(checkDate);
+                    //console.log(testDate);
+                },
+                error: function (result) {
                     layer.open({
-                        title: '提示'
-                        , content: '上传失败'
+                        title: '异常提示'
+                        , content: "服务器获取数据异常，请稍后尝试！"
                         , icon: 5
+                        , anim: 0
                     });
                 }
-            });
-        });
-        layui.use('dropdown', function () {
-            let dropdown = layui.dropdown
-            dropdown.render({
-                elem: '#snapAndupload' //可绑定在任意元素中，此处以上述按钮为例
-                , trigger: 'hover'
-                , data: [{
-                    title: '人脸签到'
-                    , id: 102
-                }
-                ]
-                , id: 'snapAndupload'
-                //菜单被点击的事件
-                , click: function (obj) {
-                    if (obj.id == 100) {
-                        // layer.msg('100');
-                        upload_url="/aipFace/detect"
-                        snap_upload("0");
-                    }
-                    if (obj.id == 101) {
-                        //layer.msg('101');
-                        snap_upload("1");
-                    }
-                    if (obj.id == 102) {
-                        //layer.msg('102');
-                        upload_url="/aipFace/search"
-                        snap_upload("2");
-                    }
+            })
 
-                }
-            });
-        });
-    </script>
+        }
 
+        refreshDate(); //执行该函数
+    });
+</script>
 </html>

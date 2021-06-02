@@ -86,14 +86,6 @@
             "type": 1,
             "openType": "_iframe",
             "href": "view/face.html"
-          },
-          {
-            "id": 242,
-            "title": "考勤记录",
-            "icon": "layui-icon layui-icon-face-cry",
-            "type": 1,
-            "openType": "_iframe",
-            "href": "view/face.html"
           }
         ]
       }

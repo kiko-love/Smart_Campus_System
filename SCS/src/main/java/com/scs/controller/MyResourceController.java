@@ -1,10 +1,8 @@
 package com.scs.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.scs.pojo.TeacherResourceOB;
-import com.scs.pojo.myResource;
-import com.scs.pojo.resource;
-import com.scs.pojo.teacher;
+import com.scs.pojo.*;
+import com.scs.service.courseService;
 import com.scs.service.myResourceService;
 import com.scs.service.resourceService;
 import com.scs.service.teacherService;
@@ -28,6 +26,8 @@ public class MyResourceController {
     private teacherService teaService;
     @Autowired
     private resourceService resService;
+    @Autowired
+    private courseService courseService;
     /**
      * 进行关注
      */
@@ -81,7 +81,7 @@ public class MyResourceController {
         String userId = (String) request.getSession().getAttribute("userInformation");
         ArrayList<TeacherResourceOB> jsonList = new ArrayList<>();
         JsonStatusUtils status;
-        String courseName = request.getParameter("course");
+        String courseName = request.getParameter("courseName");
         System.out.println(courseName);
         if (userId == null || userId.equals("")) {
             status = new JsonStatusUtils("110", "获取学生id失败");
@@ -146,7 +146,7 @@ public class MyResourceController {
                     jsonList.add(new TeacherResourceOB(id, parentId, null,
                             null, "2",
                             null, teacher.get(0).getRealName(), null,
-                            false, null, teacherIds.get(i),focusId));
+                            true, null, teacherIds.get(i),focusId));
                 }
                 status = new JsonStatusUtils("200", "获取第二层成功");
                 data.put("status", status);
@@ -223,6 +223,34 @@ public class MyResourceController {
         data.put("msg", "删除关注课程成功");
         data.put("data", "");
         data.put("success",1);
+        return data.toJSONString();
+    }
+
+    /**
+     * 获取关注列表
+     */
+    @ResponseBody
+    @RequestMapping(value = "/getFocusRes",produces = "application/json;charset=utf-8")
+    public String getFocusRes(HttpServletRequest request){
+        JSONObject data = new JSONObject();
+        List<courseTeaOfFocusOB> allResource = resService.getResInfoToFocus();
+        if(allResource.size()==0){
+            data.put("msg","暂无资源可添加");
+            data.put("data","");
+            data.put("success","1");
+            return data.toJSONString();
+        }
+        ArrayList<FocusResInfoOB> jsonList = new ArrayList<>();
+        for(int i=0;i<allResource.size();i++){
+            String courseName = allResource.get(i).getCourseName();
+            String teacherId = allResource.get(i).getTeacherId();
+            String courseId = courseService.getCourseIdByName(courseName);
+            String teacherName = teaService.getTeacherById(teacherId).get(0).getRealName();
+            jsonList.add(new FocusResInfoOB(courseId,courseName,teacherName,teacherId));
+        }
+        data.put("msg","可关注资源获取成功");
+        data.put("data",jsonList);
+        data.put("success","1");
         return data.toJSONString();
     }
 }

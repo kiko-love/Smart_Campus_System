@@ -4,7 +4,11 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.scs.dao.CourseMapper">
     <select id="getCourse" resultType="com.scs.pojo.course">
-        select * from scs.course
+        select * from course
+    </select>
+    <select id="getCourseIdByName" parameterType="String" resultType="String">
+        select courseId from course
+        where courseName=#{courseName}
     </select>
     <update id="updateCourse" parameterType="com.scs.pojo.course">
         update course

@@ -33,8 +33,8 @@ public class FaceUserController {
 
 
     @ResponseBody
-    @RequestMapping(value = "/detect",produces = "application/json;charset=utf-8")
-    public String GetDetectInfo(HttpServletRequest req, HttpServletResponse resp){
+    @RequestMapping(value = "/detect", produces = "application/json;charset=utf-8")
+    public String GetDetectInfo(HttpServletRequest req, HttpServletResponse resp) {
         String img = req.getParameter("picBASE64");
         resp.setHeader("Access-Control-Allow-Origin", "*");
         resp.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,OPTIONS");
@@ -45,8 +45,8 @@ public class FaceUserController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/search",produces = "application/json;charset=utf-8")
-    public String GetSearchInfo(HttpServletRequest req,HttpServletResponse resp){
+    @RequestMapping(value = "/search", produces = "application/json;charset=utf-8")
+    public String GetSearchInfo(HttpServletRequest req, HttpServletResponse resp) {
         String img = req.getParameter("picBASE64");
         resp.setHeader("Access-Control-Allow-Origin", "*");
         resp.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,OPTIONS");
@@ -55,6 +55,7 @@ public class FaceUserController {
         String res = search.faceSearch(img);
         String faceId = null;
         String result_child = null;
+        boolean hasCheck = false;
 
         //将返回的json转换成java对象
         JSONObject jsonObject = JSONObject.parseObject(res);
@@ -62,19 +63,40 @@ public class FaceUserController {
             //获取result的内容
             result_child = jsonObject.get("result").toString();
             JSONObject faceObject = JSONObject.parseObject(result_child);
-
             //获取result中user_list数组的第一项内容
             JSONArray tmp = faceObject.getJSONArray("user_list");
             JSONObject array = JSONObject.parseObject(tmp.getString(0));
-
             //获取人脸ID
             faceId = array.getString("user_id");
+            String teacherId = (String) req.getSession().getAttribute("userInformation");
+            if (!faceId.equals(teacherId)){
+                JSONObject errorOB = new JSONObject();
+                errorOB.put("error_msg","errorRole");
+                errorOB.put("msg","请职工本人进行人脸签到，且不要代替他人签到");
+                return errorOB.toJSONString();
+            }
             System.out.println("键值：" + faceId);
-            if(faceId!=null||faceId.equals("")){
+            if (faceId != null || faceId.equals("")) {
                 Date date = new Date();
-                SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd");
                 String nowTime = sim.format(date);
-                checkTeaService.insertCheck(new checkTeacher(faceId,nowTime));
+                List<checkTeacher> checkTeachers = checkTeaService.selectByTea(faceId, nowTime);
+                System.out.println("签到记录" + checkTeachers);
+                //new出当前打卡记录
+                checkTeacher teacher = new checkTeacher(faceId, nowTime);
+                if (checkTeachers.size() > 0) {
+                    hasCheck = true;
+                } else {
+                    hasCheck = false;
+                }
+                if (!hasCheck) {
+                    checkTeaService.insertCheck(teacher);
+                }else {
+                    JSONObject errorOB = new JSONObject();
+                    errorOB.put("error_msg","haveRecord");
+                    errorOB.put("msg","您今日已经进行过签到，祝您工作顺利！");
+                    return errorOB.toJSONString();
+                }
             }
         }
         List<String> list = new ArrayList<>();
@@ -82,10 +104,8 @@ public class FaceUserController {
         list.add(res);
         //result的内容
         list.add(result_child);
-
         list.add(faceId);
-
-        if (list.get(2)!=null){
+        if (list.get(2) != null) {
             FaceUser faceUser = faceUserService.getUserById(faceId);
             String name = faceUser.getName();
             System.out.println(name);
@@ -97,10 +117,10 @@ public class FaceUserController {
             //将原有的json数据转换成Java对象
             // 并用result_child覆盖原来result对应的值
             JSONObject result_all = JSONObject.parseObject(list.get(0));
-            result_all.put("result",result_child_data );
+            result_all.put("result", result_child_data);
 
-            return result_all.toString().replaceAll("\\\\","");
-        }else {
+            return result_all.toString().replaceAll("\\\\", "");
+        } else {
             return list.get(0);
         }
     }
