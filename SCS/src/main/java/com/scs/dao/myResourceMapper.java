@@ -1,5 +1,6 @@
 package com.scs.dao;
 
+import com.scs.pojo.TeacherOfCourseOB;
 import com.scs.pojo.myResource;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
@@ -31,8 +32,18 @@ public interface myResourceMapper {
      * @param courseName
      * @return
      */
-    @Select("select teacherId from myResource where userId=#{arg0} and courseName=#{arg1}")
-    List<String> selectTeacherOfCourse(String userId,String courseName);
+    @Select("select myresource.focusId, teachers.teacherId, teachers.realName\n" +
+            "from myResource\n" +
+            "         inner join teachers\n" +
+            "                    /*userId、courseName、为前端传入参数 */\n" +
+            "                    on userId = #{arg0} and myresource.teacherId = teachers.teacherId\n" +
+            "                        and courseName = #{arg1} and myresource.teacherId in (\n" +
+            "                            select teacherId\n" +
+            "                            from myResource\n" +
+            "                            where userId = #{arg0}\n" +
+            "                              and courseName = #{arg1}\n" +
+            "                        )\n")
+    List<TeacherOfCourseOB> selectTeacherOfCourse(String userId, String courseName);
 
     /**
      * 查找是否关注了老师的资源

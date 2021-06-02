@@ -120,20 +120,20 @@ public class MyResourceController {
         }
         //获取第二层
         if (level.equals("1")) {
-            List<String> teacherIds = myResService.selectTeacherOfCourse(userId, courseName);
+            List<TeacherOfCourseOB> myRes = myResService.selectTeacherOfCourse(userId, courseName);
             if (courseName == null || courseName.equals("")) {
                 status = new JsonStatusUtils("110", "获取课程失败");
                 data.put("status", status);
                 data.put("data", "");
                 return data.toJSONString();
             }
-            if (teacherIds.size() == 0) {
+            if (myRes.size() == 0) {
                 status = new JsonStatusUtils("110", "获取老师失败");
                 data.put("status", status);
                 data.put("data", "");
                 return data.toJSONString();
             }
-            if (teacherIds.size() > 0) {
+            if (myRes.size() > 0) {
                 String authorityId = request.getParameter("authorityId");
                 if (authorityId == null || authorityId.equals("")) {
                     status = new JsonStatusUtils("110", "获取authorityId失败");
@@ -143,16 +143,16 @@ public class MyResourceController {
                 }
                 int parentId = Integer.parseInt(authorityId);
                 int id = 1000;
-                for (int i = 0; i < teacherIds.size(); i++) {
+
+                for (int i = 0; i < myRes.size(); i++) {
                     id++;
-                    List<teacher> teacher = teaService.getTeacherById(teacherIds.get(i));
-                    //获取到该条关注记录
-                    List<myResource> thisResource = myResService.selectOneResource(userId, courseName, teacher.get(0).getTeacherId());
-                    Integer focusId = thisResource.get(0).getFocusId();
+                    Integer focusId = myRes.get(i).getFocusId();
+                    String teacherId = myRes.get(i).getTeacherId();
+                    String fileName = myRes.get(i).getTeacherName();
                     jsonList.add(new TeacherResourceOB(id, parentId, null,
                             null, "2",
-                            null, teacher.get(0).getRealName(), null,
-                            true, null, teacherIds.get(i), focusId));
+                            null, fileName, null,
+                            true, null, teacherId, focusId));
                 }
                 status = new JsonStatusUtils("200", "获取第二层成功");
                 data.put("status", status);

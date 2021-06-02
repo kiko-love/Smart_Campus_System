@@ -1,5 +1,6 @@
 package com.scs.service;
 
+import com.scs.pojo.TeacherOfCourseOB;
 import com.scs.pojo.myResource;
 import org.apache.ibatis.annotations.Select;
 
@@ -11,7 +12,7 @@ public interface myResourceService {
 
     List<String> selectMyFocusCourse(String userId);
 
-    List<String> selectTeacherOfCourse(String userId,String courseName);
+    List<TeacherOfCourseOB> selectTeacherOfCourse(String userId, String courseName);
 
     List<myResource> selectOneResource(String userId,String courseName,String teacherId);
 
