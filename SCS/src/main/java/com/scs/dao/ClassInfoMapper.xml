@@ -29,18 +29,20 @@
         where classes=#{classes}
     </update>
     <delete id="deleteClassInfo" parameterType="String">
-        delete from
-        classinfo
+        delete from classinfo
         where classes=#{classname}
     </delete>
     <delete id="batchDeleteClassInfo" parameterType="java.util.List">
-        delete from
-        classinfo
+        delete from classinfo
         where classId in(
             <foreach collection="list" item="classId" separator=",">
                 #{classId}
             </foreach>
             )
     </delete>
+    <select id="getInfo" parameterType="java.lang.String" resultType="com.scs.pojo.classInfo">
+        select * from classInfo
+        where classes=#{arg0} and Major=#{arg1}
+    </select>
 
 </mapper>

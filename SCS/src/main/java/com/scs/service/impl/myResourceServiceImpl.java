@@ -36,4 +36,9 @@ public class myResourceServiceImpl implements myResourceService {
     public int batchDeleteFocus(List<Integer> List) {
         return myResMapper.batchDeleteFocus(List);
     }
+
+    @Override
+    public List<myResource> selectMyResById(String userId) {
+        return myResMapper.selectMyResById(userId);
+    }
 }

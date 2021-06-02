@@ -12,4 +12,5 @@ public class FocusResInfoOB {
     private String courseName;
     private String teacherName;
     private String teacherId;
+    private boolean status;
 }

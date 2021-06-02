@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class courseTeaOfFocusOB {
+    private String courseId;
     private String courseName;
     private String teacherId;
+    private String teacherName;
 }

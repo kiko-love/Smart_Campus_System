@@ -56,8 +56,11 @@ public class TeacherController {
         data.put("code", 0);
         data.put("msg", "getData");
         List<teacher> list = teaService.getTeachers();
-        System.out.println(list);
-        System.out.println();
+        if(list.size()==0){
+            data.put("count", list.size());
+            data.put("data","");
+            return data.toJSONString();
+        }
         data.put("count", list.size());
         String format = JSON.toJSONStringWithDateFormat(list, "yyyy-MM-dd", SerializerFeature.WriteDateUseDateFormat);
         JSONArray jsonArray = JSONArray.parseArray(format);
@@ -68,7 +71,7 @@ public class TeacherController {
     //根据teacherId查询老师信息
     @ResponseBody
     @RequestMapping(value = "/searchTea", produces = "application/json;charset=utf-8")
-    public String searchStudent(HttpServletRequest request) {
+    public String searchTea(HttpServletRequest request) {
         JSONObject data = new JSONObject();
         data.put("code", 0);
         data.put("msg", "searchTeacher");

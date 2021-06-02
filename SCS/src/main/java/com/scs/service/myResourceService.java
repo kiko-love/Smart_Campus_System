@@ -16,4 +16,6 @@ public interface myResourceService {
     List<myResource> selectOneResource(String userId,String courseName,String teacherId);
 
     int batchDeleteFocus(List<Integer> List);
+
+    List<myResource> selectMyResById(String userId);
 }

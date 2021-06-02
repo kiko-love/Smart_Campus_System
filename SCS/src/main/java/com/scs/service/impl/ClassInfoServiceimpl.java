@@ -37,4 +37,9 @@ public class ClassInfoServiceimpl implements ClassInfoService {
     public int batchDeleteClassInfo(List<String> list) {
         return classInfoMapper.batchDeleteClassInfo(list);
     }
+
+    @Override
+    public classInfo getInfo(String classes, String Major) {
+        return classInfoMapper.getInfo(classes,Major);
+    }
 }

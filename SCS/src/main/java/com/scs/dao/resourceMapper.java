@@ -129,7 +129,10 @@ public interface resourceMapper {
     /**
      * 获取可关注资源
      */
-    @Select("select courseName,teacherId from myResource group by courseName,teacherId ")
+    @Select("select course.courseId ,course.courseName,resource.teacherId,teachers.realName from resource inner join teachers\n" +
+            "    on resource.teacherId = teachers.teacherId\n" +
+            "inner join course on resource.courseName = course.courseName\n" +
+            "group by course.courseId, resource.courseName, resource.teacherId")
     List<courseTeaOfFocusOB> getResInfoToFocus();
 
 }
