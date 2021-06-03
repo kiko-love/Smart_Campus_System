@@ -27,6 +27,8 @@ public class relationController {
     //关系表的插入操作
     public String relationInsert(HttpServletRequest request){
         JSONObject data = new JSONObject();
+        String collegeId = request.getParameter("collegeId");
+        String collegeName = request.getParameter("collegeName");
         String majorId = request.getParameter("majorId");
         String majorName = request.getParameter("majorName");
         String classId = request.getParameter("classId");
@@ -35,7 +37,7 @@ public class relationController {
         String courseName = request.getParameter("courseName");
         String teacherId = request.getParameter("teacherId");
         String teacherName = request.getParameter("teacherName");
-        relation item = new relation("0",majorId,majorName,classId,classes,courseId,courseName,teacherId,teacherName);
+        relation item = new relation("0",collegeId,collegeName,majorId,majorName,classId,classes,courseId,courseName,teacherId,teacherName);
         int count = relationService.relationInsert(item);
         if(count!=1){
             data.put("success",0);

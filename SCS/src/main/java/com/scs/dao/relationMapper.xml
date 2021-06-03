@@ -5,8 +5,8 @@
 <!--绑定Mapper接口-->
 <mapper namespace="com.scs.dao.relationMapper">
     <insert id="relationInsert" parameterType="com.scs.pojo.relation">
-        insert into relation(relationId,majorId,majorName,classId,classes,courseId,courseName,teacherId,teacherName)
-        values (#{relationId},#{majorId},#{majorName},#{classId},#{classes},#{courseId},#{courseName},#{teacherId},#{teacherName})
+        insert into relation(relationId,collegeId,collegeName,majorId,majorName,classId,classes,courseId,courseName,teacherId,teacherName)
+        values (#{relationId},#{collegeId},#{collegeName},#{majorId},#{majorName},#{classId},#{classes},#{courseId},#{courseName},#{teacherId},#{teacherName})
     </insert>
     <select id="getAllRelation" resultType="com.scs.pojo.relation">
         select *

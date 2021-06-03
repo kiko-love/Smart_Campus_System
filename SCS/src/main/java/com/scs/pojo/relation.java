@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class relation {
     private String relationId;
+    private String collegeId;
+    private String collegeName;
     private String majorId;
     private String majorName;
     private String classId;
