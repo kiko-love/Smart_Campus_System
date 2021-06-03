@@ -28,46 +28,54 @@ public class MyResourceController {
     private resourceService resService;
     @Autowired
     private courseService courseService;
+
     /**
      * 进行关注
      */
     @ResponseBody
-    @RequestMapping(value = "/insertMyResource",produces = "application/json;charset=utf-8")
-    public String insertMyResource(HttpServletRequest request){
+    @RequestMapping(value = "/insertMyResource", produces = "application/json;charset=utf-8")
+    public String insertMyResource(HttpServletRequest request) {
         JSONObject data = new JSONObject();
-        data.put("code",200);
         String courseName = request.getParameter("courseName");
         String teacherId = request.getParameter("teacherId");
         String userId = (String) request.getSession().getAttribute("userInformation");
-        if(userId==null||userId.equals("")){
-            data.put("msg","获取学生id失败");
-            data.put("data","");
+        if (userId == null || userId.equals("")) {
+            data.put("success", 0);
+            data.put("msg", "获取学生id失败");
+            data.put("data", "");
+
             return data.toJSONString();
         }
-        if(courseName==null||courseName.equals("")||teacherId==null||teacherId.equals("")){
-            data.put("msg","无法获取到要关注的课程或老师");
-            data.put("data","");
+        if (courseName == null || courseName.equals("") || teacherId == null || teacherId.equals("")) {
+            data.put("success", 0);
+            data.put("msg", "无法获取到要关注的课程或老师");
+            data.put("data", "");
             return data.toJSONString();
         }
         System.out.println(teacherId);
         List<myResource> existResource = myResService.selectOneResource(userId, courseName, teacherId);
-        if (existResource.size()==1){
-            data.put("msg","已关注请勿重复关注");
-            data.put("data","");
+        if (existResource.size() == 1) {
+            data.put("success", 0);
+            data.put("msg", "已关注请勿重复关注");
+            data.put("data", "");
             return data.toJSONString();
         }
         Date date = new Date();
+        System.out.println(date);
         SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String focusTime = sim.format(date);
-        int insertCount = myResService.insertMyResource(new myResource(null,userId, courseName, teacherId, focusTime));
+        System.out.println(focusTime);
+        int insertCount = myResService.insertMyResource(new myResource(null, userId, courseName, teacherId, focusTime));
         //关注成功
-        if(insertCount==1){
-            data.put("msg","关注成功");
-            data.put("data","");
+        if (insertCount == 1) {
+            data.put("success", 1);
+            data.put("msg", "关注成功");
+            data.put("data", "");
             return data.toJSONString();
         }
-        data.put("msg","关注失败");
-        data.put("data","");
+        data.put("success", 0);
+        data.put("msg", "关注失败");
+        data.put("data", "");
         return data.toJSONString();
     }
 
@@ -75,14 +83,13 @@ public class MyResourceController {
      * 获取关注的课程
      */
     @ResponseBody
-    @RequestMapping(value = "/selectFocusFIle",produces = "application/json;charset=utf-8")
+    @RequestMapping(value = "/selectFocusFIle", produces = "application/json;charset=utf-8")
     public String selectFocusFIle(HttpServletRequest request) {
         JSONObject data = new JSONObject();
         String userId = (String) request.getSession().getAttribute("userInformation");
         ArrayList<TeacherResourceOB> jsonList = new ArrayList<>();
         JsonStatusUtils status;
         String courseName = request.getParameter("courseName");
-        System.out.println(courseName);
         if (userId == null || userId.equals("")) {
             status = new JsonStatusUtils("110", "获取学生id失败");
             data.put("status", status);
@@ -104,7 +111,7 @@ public class MyResourceController {
             int id = 0;
             for (String course : courseNames) {
                 id++;
-                jsonList.add(new TeacherResourceOB(id, 0, course, null, "1", null, null, null, true, null, null,null));
+                jsonList.add(new TeacherResourceOB(id, 0, course, null, "1", null, null, null, true, null, null, null));
             }
             status = new JsonStatusUtils("200", "获取第一层成功");
             data.put("status", status);
@@ -113,23 +120,22 @@ public class MyResourceController {
         }
         //获取第二层
         if (level.equals("1")) {
-            List<String> teacherIds = myResService.selectTeacherOfCourse(userId, courseName);
-            System.out.println(teacherIds);
+            List<TeacherOfCourseOB> myRes = myResService.selectTeacherOfCourse(userId, courseName);
             if (courseName == null || courseName.equals("")) {
                 status = new JsonStatusUtils("110", "获取课程失败");
                 data.put("status", status);
                 data.put("data", "");
                 return data.toJSONString();
             }
-            if (teacherIds.size() == 0) {
+            if (myRes.size() == 0) {
                 status = new JsonStatusUtils("110", "获取老师失败");
                 data.put("status", status);
                 data.put("data", "");
                 return data.toJSONString();
             }
-            if (teacherIds.size() > 0) {
+            if (myRes.size() > 0) {
                 String authorityId = request.getParameter("authorityId");
-                if(authorityId==null||authorityId.equals("")){
+                if (authorityId == null || authorityId.equals("")) {
                     status = new JsonStatusUtils("110", "获取authorityId失败");
                     data.put("status", status);
                     data.put("data", "");
@@ -137,16 +143,16 @@ public class MyResourceController {
                 }
                 int parentId = Integer.parseInt(authorityId);
                 int id = 1000;
-                for (int i = 0; i < teacherIds.size(); i++) {
+
+                for (int i = 0; i < myRes.size(); i++) {
                     id++;
-                    List<teacher> teacher = teaService.getTeacherById(teacherIds.get(i));
-                    //获取到该条关注记录
-                    List<myResource> thisResource = myResService.selectOneResource(userId, courseName, teacher.get(0).getTeacherId());
-                    Integer focusId = thisResource.get(0).getFocusId();
+                    Integer focusId = myRes.get(i).getFocusId();
+                    String teacherId = myRes.get(i).getTeacherId();
+                    String fileName = myRes.get(i).getTeacherName();
                     jsonList.add(new TeacherResourceOB(id, parentId, null,
                             null, "2",
-                            null, teacher.get(0).getRealName(), null,
-                            true, null, teacherIds.get(i),focusId));
+                            null, fileName, null,
+                            true, null, teacherId, focusId));
                 }
                 status = new JsonStatusUtils("200", "获取第二层成功");
                 data.put("status", status);
@@ -176,7 +182,7 @@ public class MyResourceController {
             }
             if (focusResources.size() > 0) {
                 String authorityId = request.getParameter("authorityId");
-                if(authorityId==null||authorityId.equals("")){
+                if (authorityId == null || authorityId.equals("")) {
                     status = new JsonStatusUtils("110", "获取authorityId失败");
                     data.put("status", status);
                     data.put("data", "");
@@ -189,7 +195,7 @@ public class MyResourceController {
                     jsonList.add(new TeacherResourceOB(id, parentId, resource.getFileName(),
                             resource.getFilesize(), "3",
                             resource.getCreateTime(), null, resource.getFileId(),
-                            false, null, null,null));
+                            false, null, null, null));
                     id++;
                 }
                 status = new JsonStatusUtils("200", "获取文件成功");
@@ -206,15 +212,15 @@ public class MyResourceController {
      * 取消关注
      */
     @ResponseBody
-    @RequestMapping(value = "/deleteFocus",produces = "application/json;charset=utf-8")
-    public String deleteFocus(HttpServletRequest request){
+    @RequestMapping(value = "/deleteFocus", produces = "application/json;charset=utf-8")
+    public String deleteFocus(HttpServletRequest request) {
         JSONObject data = new JSONObject();
-        List<Integer> focusIds = JSONArray.parseArray(request.getParameter("focusId"),Integer.class);
-        if (focusIds == null || focusIds.size()==0) {
+        List<Integer> focusIds = JSONArray.parseArray(request.getParameter("focusId"), Integer.class);
+        if (focusIds == null || focusIds.size() == 0) {
             data.put("code", 110);
             data.put("msg", "无focusId参数");
             data.put("data", "");
-            data.put("success",0);
+            data.put("success", 0);
             return data.toJSONString();
         }
         //删除单个文件
@@ -222,7 +228,7 @@ public class MyResourceController {
         data.put("code", 200);
         data.put("msg", "删除关注课程成功");
         data.put("data", "");
-        data.put("success",1);
+        data.put("success", 1);
         return data.toJSONString();
     }
 
@@ -230,27 +236,47 @@ public class MyResourceController {
      * 获取关注列表
      */
     @ResponseBody
-    @RequestMapping(value = "/getFocusRes",produces = "application/json;charset=utf-8")
-    public String getFocusRes(HttpServletRequest request){
+    @RequestMapping(value = "/getFocusRes", produces = "application/json;charset=utf-8")
+    public String getFocusRes(HttpServletRequest request) {
         JSONObject data = new JSONObject();
+        String userId = (String) request.getSession().getAttribute("userInformation");
         List<courseTeaOfFocusOB> allResource = resService.getResInfoToFocus();
-        if(allResource.size()==0){
-            data.put("msg","暂无资源可添加");
-            data.put("data","");
-            data.put("success","1");
+        if (allResource.size() == 0) {
+            data.put("msg", "暂无资源可添加");
+            data.put("data", "");
+            data.put("code", "110");
+            data.put("count",0);
             return data.toJSONString();
         }
         ArrayList<FocusResInfoOB> jsonList = new ArrayList<>();
-        for(int i=0;i<allResource.size();i++){
+        List<myResource> myResources = myResService.selectMyResById(userId);
+
+        for (int i = 0; i < allResource.size(); i++) {
             String courseName = allResource.get(i).getCourseName();
             String teacherId = allResource.get(i).getTeacherId();
-            String courseId = courseService.getCourseIdByName(courseName);
-            String teacherName = teaService.getTeacherById(teacherId).get(0).getRealName();
-            jsonList.add(new FocusResInfoOB(courseId,courseName,teacherName,teacherId));
+            String courseId = allResource.get(i).getCourseId();
+            String teacherName = allResource.get(i).getTeacherName();
+            int flag=0;
+            for(int j=0;j<myResources.size();j++){
+                myResource myRes = myResources.get(j);
+                if (courseName.equals(myRes.getCourseName())&&teacherId.equals(myRes.getTeacherId())){
+                    //该课程已关注
+                    flag=1;
+                }
+            }
+            if(flag!=0){
+                jsonList.add(new FocusResInfoOB(courseId, courseName, teacherName, teacherId,true));
+            }
+            if(flag==0){
+                jsonList.add(new FocusResInfoOB(courseId, courseName, teacherName, teacherId,false));
+            }
         }
-        data.put("msg","可关注资源获取成功");
-        data.put("data",jsonList);
-        data.put("success","1");
+        data.put("msg", "可关注资源获取成功");
+        data.put("data", jsonList);
+        data.put("code", "0");
+        data.put("count",jsonList.size());
         return data.toJSONString();
     }
+
+
 }

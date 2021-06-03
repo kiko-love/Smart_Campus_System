@@ -1,6 +1,7 @@
 package com.scs.service.impl;
 
 import com.scs.dao.checkTeaMapper;
+import com.scs.pojo.CheckRecord;
 import com.scs.pojo.checkTeacher;
 import com.scs.service.checkTeaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,16 @@ public class checkTeaServiceImpl implements checkTeaService {
     @Override
     public List<checkTeacher> selectAll() {
         return checkMap.selectAll();
+    }
+
+    @Override
+    public List<CheckRecord> checkRecords() {
+        return checkMap.checkRecords();
+    }
+
+    @Override
+    public List<CheckRecord> RangeCheckRecords(String begin, String end) {
+        return checkMap.RangeCheckRecords(begin,end);
     }
 
 }

@@ -9,6 +9,7 @@ public interface ClassInfoMapper {
     List<ClassInfo> getClassInfo();
     int insertClassInfo(classInfo classInfo);
     int updateClassInfo(classInfo classInfo);
-    int deleteClassInfo(String classId);
+    int deleteClassInfo(String classname);
     int batchDeleteClassInfo(List<String> list);
+    classInfo getInfo(String classes,String Major);
 }

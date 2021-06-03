@@ -11,4 +11,5 @@ public interface ClassInfoService {
     int updateClassInfo(classInfo classInfo);
     int deleteClassInfo(String classId);
     int batchDeleteClassInfo(List<String> list);
+    classInfo getInfo(String classes,String Major);
 }

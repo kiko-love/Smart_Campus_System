@@ -1,6 +1,7 @@
 package com.scs.service.impl;
 
 import com.scs.dao.myResourceMapper;
+import com.scs.pojo.TeacherOfCourseOB;
 import com.scs.pojo.myResource;
 import com.scs.service.myResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ public class myResourceServiceImpl implements myResourceService {
     }
 
     @Override
-    public List<String> selectTeacherOfCourse(String userId, String courseName) {
+    public List<TeacherOfCourseOB> selectTeacherOfCourse(String userId, String courseName) {
         return myResMapper.selectTeacherOfCourse(userId,courseName);
     }
 
@@ -35,5 +36,10 @@ public class myResourceServiceImpl implements myResourceService {
     @Override
     public int batchDeleteFocus(List<Integer> List) {
         return myResMapper.batchDeleteFocus(List);
+    }
+
+    @Override
+    public List<myResource> selectMyResById(String userId) {
+        return myResMapper.selectMyResById(userId);
     }
 }

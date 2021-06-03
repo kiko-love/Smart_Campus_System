@@ -121,7 +121,7 @@
 							//console.log(result.success);
 							if (res.success){
 								popup.success("注销成功",function(){
-									location.href = "";
+									location.reload();
 								})
 							}else{
 								popup.success("用户信息注销失败，请重新尝试",function(){
