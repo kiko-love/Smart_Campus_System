@@ -253,7 +253,8 @@
                 type: 2,
                 title: '新增教师信息',
                 shade: 0.1,
-                area:['500px', '550px'],
+                shadeClose:true,
+                area:[common.isModile() ? '100%' : '40%', common.isModile() ? '100%' : '80%'],
                 content: MODULE_PATH + 'addTea.html'
             });
         }
@@ -263,7 +264,8 @@
                 type: 2,
                 title: '修改教师信息:' + obj.data['teacherId'],
                 shade: 0.1,
-                area: ['500px', '550px'],
+                shadeClose:true,
+                area: [common.isModile() ? '100%' : '40%', common.isModile() ? '100%' : '80%'],
                 content: MODULE_PATH + 'editTea.html',
                 success: function (layero, index) {
                     var body = layer.getChildFrame('body', index);

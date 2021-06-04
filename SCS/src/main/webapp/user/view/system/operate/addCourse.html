@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>添加课程</title>
+    <link rel="stylesheet" href="../../../component/pear/css/pear.css"/>
+</head>
+<body>
+<table id="user-table" lay-filter="user-table" lay-size="lg"></table>
+</body>
+<script src="../../../component/layui/layui.js"></script>
+<script src="../../../component/pear/pear.js"></script>
+<script type="text/html" id="user-bar">
+    <button title="关注课程" class="layui-btn layui-btn layui-btn-xs" lay-event="add">
+        <i class="layui-icon layui-icon-addition"></i>
+    </button>
+</script>
+<script>
+    layui.use(['table', 'form', 'jquery', 'laydate', 'loading'], function () {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+
+        let data = [{
+            courseName: '111',
+            teacherName: '111',
+            createTime: '111',
+        }
+        ]
+        let cols = [
+            [
+                {
+                    title: '课程ID',
+                    field: 'courseId',
+                    align: 'center',
+                    width: 100,
+                    sort: true
+                },
+                {
+                    title: '课程名称',
+                    field: 'courseName',
+                    align: 'center'
+                },
+                {
+                    title: '教师名称',
+                    field: 'teacherName',
+                    align: 'center'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    templet:function (d){
+                        if (d.status){
+                            return '<span class="layui-badge layui-bg-gray">' +
+                                '<i class="layui-icon layui-icon-ok"></i></span>'
+                        }else {
+                            return '<button title="关注课程" class="layui-btn layui-btn layui-btn-xs" lay-event="add">\n' +
+                                '        <i class="layui-icon layui-icon-addition"></i>\n' +
+                                '    </button>'
+                        }
+                    },
+                    width: 80
+                }
+            ]
+        ]
+
+
+        let tableIns = table.render({
+            elem: '#user-table',
+            url: '/MyResource/getFocusRes',
+            //data:data,
+            initSort: {
+                field: 'courseId' //排序字段，对应 cols 设定的各字段名
+                , type: 'asc' //排序方式  asc: 升序、desc: 降序、null: 默认排序
+            },
+            height: 'full-20',
+            method: "post",
+            page: {
+                layout: ['count', 'prev', 'page', 'next', 'skip']
+                , curr: 1
+                , groups: 3
+                , last: false
+            },
+            limit: 7,
+            //limits:[5,10,20],
+            cols: cols,
+            id: 'user-table',
+            skin: 'line',
+            defaultToolbar: [{
+                title: '刷新签到记录',
+                layEvent: 'refresh',
+                icon: 'layui-icon-refresh',
+            }, 'filter', 'exports'],
+            //一定要加这个参数代码，否则会由于layui自身的bug导致无法分页
+            parseData: function (res) { //将原始数据解析成 table 组件所规定的数据，res为从url中get到的数据
+                let result;
+                // console.log(res.data[0].birthday);
+                // res.data[0].birthday = dateFormat(res.data[0].birthday, 'Y-M-D')
+                if (this.page.curr) {
+                    result = res.data.slice(this.limit * (this.page.curr - 1), this.limit * this.page.curr);
+                } else {
+                    result = res.data.slice(0, this.limit);
+                }
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": res.count, //解析数据长度
+                    "data": result //解析数据列表
+                };
+            }
+        });
+
+        table.on('tool(user-table)', function (obj) {
+            console.log(obj);
+            if (obj.event === 'add') {
+                window.add(obj);
+            }
+        });
+
+        window.add = function (obj) {
+            $.ajax({
+                url: '/MyResource/insertMyResource',
+                dataType: 'json',
+                type: 'post',
+                data: {
+                    courseName: obj.data.courseName,
+                    teacherId: obj.data.teacherId
+                },
+                success: function (res) {
+                    console.log(res);
+                    if (res.success) {
+                        layer.open({
+                            title: '提示'
+                            , icon: 1
+                            , content: '关注课程成功',
+                            end:function (){
+                                parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前页
+                                parent.layui.jquery('#files_refresh').click();
+                            }
+                        });
+                        obj.tr.children().eq(3).html('<div class="layui-table-cell laytable-cell-1-0-3"> ' +
+                            '<span class="layui-badge layui-bg-gray">' +
+                            '<i class="layui-icon layui-icon-ok"></i></span></div>')
+                    }else {
+                        layer.open({
+                            title: '关注失败'
+                            , icon: 2
+                            , content: res.msg
+                        });
+                    }
+                },
+                error:function (res){
+                    layer.open({
+                        title: '服务器处理异常'
+                        , icon: 2
+                        , content: '服务器处理出错，请稍后再试'
+                    });
+                }
+            })
+        }
+
+    })
+</script>
+</html>

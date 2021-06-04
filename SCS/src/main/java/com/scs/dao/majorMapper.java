@@ -21,7 +21,18 @@ public interface majorMapper {
     int deleteMajor(String majorName);
 
     int updateMajor(major major);
+
+    //获取所有专业列表
     List<major> selectAllMajor();
-    List<major> selectByMajorName(String majorName);
+
+    //根据名称查询学院ID
+    List<major> selectCollegeIdByName(String collegeName);
+
+    //根据专业ID查询专业
+    List<major> selectByMajorId(String majorId);
+
+    //查询所有学院列表
+    List<major> selectAllColleges();
+
     int batchRemoveMajors(List<String> List);
 }

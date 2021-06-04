@@ -16,14 +16,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-@RequestMapping(value = "relation")
+@RequestMapping(value = "/relation")
 public class relationController {
     @Autowired
     private relationService relationService;
     @Autowired
     private courseService courseService;
     @ResponseBody
-    @RequestMapping(value = "relationInsert",produces = "application/json;charset=utf-8")
+    @RequestMapping(value = "/relationInsert",produces = "application/json;charset=utf-8")
     //关系表的插入操作
     public String relationInsert(HttpServletRequest request){
         JSONObject data = new JSONObject();
@@ -50,7 +50,7 @@ public class relationController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "getAllRelation",produces = "application/json;charset=utf-8")
+    @RequestMapping(value = "/getAllRelation",produces = "application/json;charset=utf-8")
     //获得所有关系数据
     public String getAllRelation(){
         JSONObject data = new JSONObject();
@@ -63,7 +63,7 @@ public class relationController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "batchDeleteRelation",produces = "application/json;charset=utf-8")
+    @RequestMapping(value = "/batchDeleteRelation",produces = "application/json;charset=utf-8")
     //批量删除关系
     public String batchDeleteRelation(HttpServletRequest request){
         JSONObject data = new JSONObject();
@@ -84,7 +84,7 @@ public class relationController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "selectCourseByTeacherId",produces = "application/json;charset=utf-8")
+    @RequestMapping(value = "/selectCourseByTeacherId",produces = "application/json;charset=utf-8")
     //通过teacherId获得课程信息
     public String selectCourseByTeacherId(HttpServletRequest request, HttpSession session){
         JSONObject data = new JSONObject();

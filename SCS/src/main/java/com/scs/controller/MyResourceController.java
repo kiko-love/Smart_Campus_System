@@ -111,7 +111,8 @@ public class MyResourceController {
             int id = 0;
             for (String course : courseNames) {
                 id++;
-                jsonList.add(new TeacherResourceOB(id, 0, course, null, "1", null, null, null, true, null, null, null));
+                jsonList.add(new TeacherResourceOB(id, 0, course, null, "1",
+                        null, null, null, true, null, null, null,courseName));
             }
             status = new JsonStatusUtils("200", "获取第一层成功");
             data.put("status", status);
@@ -149,10 +150,10 @@ public class MyResourceController {
                     Integer focusId = myRes.get(i).getFocusId();
                     String teacherId = myRes.get(i).getTeacherId();
                     String fileName = myRes.get(i).getTeacherName();
-                    jsonList.add(new TeacherResourceOB(id, parentId, null,
+                    jsonList.add(new TeacherResourceOB(id, parentId, fileName,
                             null, "2",
-                            null, fileName, null,
-                            true, null, teacherId, focusId));
+                            null,fileName , null,
+                            true, null, teacherId, focusId,courseName));
                 }
                 status = new JsonStatusUtils("200", "获取第二层成功");
                 data.put("status", status);
@@ -195,7 +196,7 @@ public class MyResourceController {
                     jsonList.add(new TeacherResourceOB(id, parentId, resource.getFileName(),
                             resource.getFilesize(), "3",
                             resource.getCreateTime(), null, resource.getFileId(),
-                            false, null, null, null));
+                            false, null, null, null,courseName));
                     id++;
                 }
                 status = new JsonStatusUtils("200", "获取文件成功");
@@ -215,7 +216,8 @@ public class MyResourceController {
     @RequestMapping(value = "/deleteFocus", produces = "application/json;charset=utf-8")
     public String deleteFocus(HttpServletRequest request) {
         JSONObject data = new JSONObject();
-        List<Integer> focusIds = JSONArray.parseArray(request.getParameter("focusId"), Integer.class);
+        List<Integer> focusIds = new ArrayList<>();
+        focusIds.add(Integer.parseInt(request.getParameter("focusId")));
         if (focusIds == null || focusIds.size() == 0) {
             data.put("code", 110);
             data.put("msg", "无focusId参数");

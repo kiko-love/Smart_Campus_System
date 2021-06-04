@@ -11,22 +11,10 @@
 <div class="layui-card">
     <div class="layui-card-body">
         <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
-            <legend>签到记录</legend>
+            <legend>我的课程资源</legend>
         </fieldset>
         <br>
-        <form class="layui-form" action="">
-            <div class="layui-form-item">
-                <div class="layui-form-item layui-inline">
-                    <label class="layui-form-label"><i class="layui-icon layui-icon-date"></i>
-                        签到时间
-                        </label>
-                    <div class="layui-input-inline">
-                        <input id="DateRange" type="text" name="checkDate" placeholder="选择签到日期范围"
-                               class="layui-input">
-                    </div>
-                </div>
-            </div>
-        </form>
+
         <table id="user-table" lay-filter="user-table" lay-size="lg"></table>
     </div>
 </div>
@@ -34,11 +22,11 @@
 <script type="text/html" id="user-toolbar">
     <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
         <i class="layui-icon layui-icon-add-1"></i>
-        新增
+        关注课程
     </button>
-    <button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove">
-        <i class="layui-icon layui-icon-delete"></i>
-        删除
+    <button class="pear-btn pear-btn-warming pear-btn-md" lay-event="batchRemove">
+        <i class="layui-icon layui-icon-subtraction"></i>
+        取消关注
     </button>
 </script>
 
@@ -148,35 +136,9 @@
                     width: 100
                 }
             ]
-        ]
+        ];
 
-        //日期时间范围
-        laydate.render({
-            elem: '#DateRange'
-            , type: 'date'
-            , range: true
-            , done: function (value, date, endDate) {
-                if (Object.keys(date).length !== 0 && Object.keys(endDate).length !== 0) {
-                    let begin = date.year + '-' + date.month + '-' + date.date;
-                    let end = endDate.year + '-' + endDate.month + '-' + endDate.date;
-                    tableIns.reload({
-                        url: '/CheckTea/getRangeCheckRecords',
-                        method: 'post',
-                        page: {
-                            layout: ['count', 'prev', 'page', 'next', 'skip']
-                            , curr: 1
-                            , groups: 3
-                            , last: false
-                        }
-                        , where: {
-                            begin: begin,
-                            end: end
-                        }
-                    })
-                }
-            }
 
-        });
 
         let tableIns = table.render({
             elem: '#user-table',
@@ -193,12 +155,12 @@
             cols: cols,
             id: 'user-table',
             skin: 'line',
-
+            toolbar:'#user-toolbar',
             defaultToolbar: [{
                 title: '刷新签到记录',
                 layEvent: 'refresh',
                 icon: 'layui-icon-refresh',
-            }, 'filter', 'print', 'exports'],
+            }, 'filter', 'exports'],
             //一定要加这个参数代码，否则会由于layui自身的bug导致无法分页
             parseData: function (res) { //将原始数据解析成 table 组件所规定的数据，res为从url中get到的数据
                 let result;
@@ -259,40 +221,15 @@
         window.add = function () {
             layer.open({
                 type: 2,
-                title: '新增教师信息',
+                title: '关注课程',
                 shade: 0.1,
-                area: ['500px', '550px'],
-                content: MODULE_PATH + 'addTea.html'
+                shadeClose:true,
+                area: ['70%', '60%'],
+                content: MODULE_PATH + 'addCourse.html'
             });
         }
 
         window.edit = function (obj) {
-            layer.open({
-                type: 2,
-                title: '修改教师信息:' + obj.data['teacherId'],
-                shade: 0.1,
-                area: ['500px', '550px'],
-                content: MODULE_PATH + 'editTea.html',
-                success: function (layero, index) {
-                    var body = layer.getChildFrame('body', index);
-                    //得到iframe页的窗口对象，执行iframe页的方法：iframeWin.method();
-                    //console.log(obj.data);
-                    var iframeWin = window[layero.find('iframe')[0]['name']]
-                    body.find('#teacherId').val(obj.data['teacherId'])
-                    body.find('#realName').val(obj.data['realName'])
-                    body.find('#phone').val(obj.data['phone'])
-                    body.find('#collegeId').val(obj.data['collegeId'])
-                    body.find('#addr').val(obj.data['addr'])
-                    body.find('#birthday').val(obj.data['birthday'])
-                    if (obj.data['sex'] == '1') {
-                        body.find('#man').attr("checked", "");
-                        iframeWin.layui.form.render('radio');
-                    } else {
-                        body.find('#woman').attr("checked", "");
-                        iframeWin.layui.form.render('radio');
-                    }
-                }
-            });
         }
 
 

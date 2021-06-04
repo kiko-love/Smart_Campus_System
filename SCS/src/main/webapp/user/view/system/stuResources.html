@@ -111,6 +111,11 @@
                 </fieldset>
 
                 <div class="layui-card-body">
+                    <button id="focus_course" class="layui-btn layui-btn-sm"
+                            lay-submit lay-filter="files_load">
+                        <i class="layui-icon layui-icon-addition"></i>
+                        关注课程
+                    </button>
                     <button id="files_refresh" class="layui-btn  layui-btn-sm"
                             lay-submit lay-filter="files_load">
                         <i class="layui-icon layui-icon-refresh"></i>
@@ -148,6 +153,7 @@
     <i class="layui-icon {{d.icon}}"></i>
 </script>
 
+
 <!-- 表格操作列 -->
 <script type="text/html" id="tbBar">
     <a class="layui-btn layui-btn-sm" lay-event="download">
@@ -168,11 +174,24 @@
         let table = layui.table;
         let form = layui.form;
         let $ = layui.jquery;
+        let MODULE_PATH = "operate/";
         let treeTable = layui.treeTable;
         let level = '';
         let courseName = '';
         let authorityId = '';
+        let teacherId = '';
 
+
+        $('#focus_course').click(function () {
+            layer.open({
+                type: 2,
+                title: '关注课程',
+                shade: 0.1,
+                shadeClose: true,
+                area: ['70%', '60%'],
+                content: MODULE_PATH + 'addCourse.html'
+            });
+        })
 
         $('#files_refresh').click(function () {
             insTb.reload({
@@ -180,11 +199,16 @@
                     //console.log('req');
                     //console.log(data);
                     level = data ? data.level : '';
-                    courseName = data ? data.fileName : '';
+                    if (level === '2') {
+                        courseName = data ? data.courseName : '';
+                    } else {
+                        courseName = data ? data.fileName : '';
+                    }
                     authorityId = data ? data.authorityId : '';
+                    teacherId = data ? data.teacherId : '';
                     //console.log(level);
-                    $.get('/Resource/getInfoByTeacherId?level=' + level + '&course=' + courseName +
-                        '&authorityId=' + authorityId,
+                    $.get('/MyResource/selectFocusFIle?level=' + level + '&courseName=' + courseName +
+                        '&authorityId=' + authorityId + '&teacherId=' + teacherId,
                         function (res) {
                             console.log(res);
                             callback(res.data);
@@ -234,16 +258,23 @@
                 //console.log('req');
                 //console.log(data);
                 level = data ? data.level : '';
-                courseName = data ? data.fileName : '';
+                if (level === '2') {
+                    courseName = data ? data.courseName : '';
+                } else {
+                    courseName = data ? data.fileName : '';
+                }
+
                 authorityId = data ? data.authorityId : '';
+                teacherId = data ? data.teacherId : '';
+
                 //console.log(level);
-                $.get('/Resource/getInfoByTeacherId?level=' + level + '&course=' + courseName +
-                    '&authorityId=' + authorityId,
+                $.get('/MyResource/selectFocusFIle?level=' + level + '&courseName=' + courseName +
+                    '&authorityId=' + authorityId + '&teacherId=' + teacherId,
                     function (res) {
-                        console.log(res);
+                        //console.log(res);
                         callback(res.data);
-                        insTb.expandAll();  // 展开全部
-                        insTb.foldAll();  // 折叠全部
+                        // insTb.expandAll();  // 展开全部
+                        // insTb.foldAll();  // 折叠全部
 
                     });
             },
@@ -274,19 +305,18 @@
                     field: 'op', title: '操作', align: 'right',
                     templet: function (obj) {
                         //console.log(obj);
-                        if (obj.haveChild) {
-                            return '<a class="layui-btn layui-btn-danger layui-btn-sm" ' +
+                        if (obj.level === '2') {
+                            return '<a class="layui-btn layui-btn layui-btn layui-btn-normal layui-btn-xs" ' +
                                 'lay-event="del">\n' +
-                                '        <i class="layui-icon layui-icon-delete"></i>\n' +
+                                '取消关注' +
                                 '    </a>'
+                        } else if (!obj.haveChild) {
+                            return '<a class="layui-btn  layui-btn-xs" lay-event="download">\n' +
+                                '        <i class="layui-icon layui-icon-download-circle"></i>下载资源' +
+                                '</a>'
+
                         } else {
-                            return '<a class="layui-btn  layui-btn-sm" lay-event="download">\n' +
-                                '        <i class="layui-icon layui-icon-download-circle"></i>' +
-                                '</a>' +
-                                '<a class="layui-btn layui-btn-danger layui-btn-sm" ' +
-                                'lay-event="del">\n' +
-                                '        <i class="layui-icon layui-icon-delete"></i>\n' +
-                                '    </a>'
+                            return ''
                         }
 
                     }
@@ -404,13 +434,13 @@
             });
         }
 
-        //单个删除
+        //单个取消关注
         window.del = function (obj) {
             let content = '';
             if (obj.data.haveChild) {
-                content = '是否删除学科文件夹：《' + obj.data.fileName + '》'
+                content = '是否取消关注该课程资源'
             } else {
-                content = '是否删除文件：' + obj.data.fileName
+                content = '是否取消关注该课程资源'
             }
             layer.open({
                 title: '提示',
@@ -418,35 +448,47 @@
                 , btn: ['确认', '取消']
                 , yes: function (index, layero) {
                     let delUrl = '';
-                    //判断是否为文件夹
-                    if (obj.data.haveChild) {
-                        delUrl = '/Resource/deleteByCourseName';
-                    } else {
-                        delUrl = '/Resource/deleteResource';
-                    }
+                    let focusId = new Array();
+                    delUrl = '/MyResource/deleteFocus';
                     $.ajax({
                         url: delUrl,
                         type: 'post',
                         data: {
-                            course: obj.data.fileName,
-                            fileId: obj.data.fileId
+                            focusId: JSON.stringify(obj.data.focusId),
                         },
+                        traditional:true,
                         dataType: 'json',
                         success: function (res) {
                             if (res.success) {
-                                layer.msg('删除成功', {icon: 1});
-                                obj.del();
+                                layer.msg('取消关注成功', {icon: 1});
+                                insTb.reload({
+                                    reqData: function (data, callback) {
+                                        //console.log('req');
+                                        //console.log(data);
+                                        level = data ? data.level : '';
+                                        courseName = data ? data.fileName : '';
+                                        authorityId = data ? data.authorityId : '';
+                                        teacherId = data ? data.teacherId : '';
+                                        //console.log(level);
+                                        $.get('/MyResource/selectFocusFIle?level=' + level + '&courseName=' + courseName +
+                                            '&authorityId=' + authorityId + '&teacherId=' + teacherId,
+                                            function (res) {
+                                                console.log(res);
+                                                callback(res.data);
+                                            });
+                                    }
+                                });
                             } else {
                                 layer.open({
                                     title: '提示'
                                     , icon: 5
-                                    , content: '删除失败，请重新尝试'
+                                    , content: '取消关注失败，请重新尝试'
                                 });
                             }
                         },
                         error: function (res) {
                             layer.open({
-                                title: '异常提示'
+                                title: '服务器异常提示'
                                 , icon: 2
                                 , content: '服务器处理异常，请稍后尝试'
                             });

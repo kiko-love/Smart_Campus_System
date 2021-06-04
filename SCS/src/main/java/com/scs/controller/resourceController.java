@@ -430,7 +430,7 @@ public class resourceController {
             int id = 0;
             for (String course : courses) {
                 id++;
-                jsonList.add(new TeacherResourceOB(id, 0, course, null, "1", null, null,null, true, null,null,null));
+                jsonList.add(new TeacherResourceOB(id, 0, course, null, "1", null, null,null, true, null,null,null,courseName));
             }
             jsonData.put("data", jsonList);
             return jsonData.toJSONString();
@@ -446,7 +446,7 @@ public class resourceController {
                 jsonList.add(new TeacherResourceOB(id, parentId, resource.getFileName(),
                         resource.getFilesize(), "2",
                         resource.getCreateTime(), null,resource.getFileId() ,
-                        false, null,null,null));
+                        false, null,null,null,courseName));
                 id++;
             }
             String format = JSON.toJSONStringWithDateFormat(jsonList, "yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteDateUseDateFormat);
@@ -680,7 +680,7 @@ public class resourceController {
                 jsonList.add(new TeacherResourceOB(id, 0, resource.getFileName(),
                         resource.getFilesize(), "1",
                         resource.getCreateTime(), null,resource.getFileId(),
-                        false, null,null,null));
+                        false, null,null,null,null));
             }
             String format = JSON.toJSONStringWithDateFormat(jsonList, "yyyy-MM-dd HH:mm:ss", SerializerFeature.WriteDateUseDateFormat);
             JSONArray jsonArray = JSONArray.parseArray(format);

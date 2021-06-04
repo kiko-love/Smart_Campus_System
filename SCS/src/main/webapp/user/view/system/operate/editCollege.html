@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>修改专业</title>
+    <title>修改学院</title>
     <link rel="stylesheet" href="../../../component/pear/css/pear.css"/>
 </head>
 <body>
@@ -11,48 +11,33 @@
         <div class="main-container">
             <div class="main-container">
                 <div class="layui-form-item">
-                    <label class="layui-form-label">专业ID</label>
+                    <label class="layui-form-label">学院ID</label>
                     <div class="layui-input-block">
-                        <input id="majorId" type="text" name="majorId" value="" lay-verify="title"
+                        <input id="collegeId" type="text" name="collegeId" value="" lay-verify="required"
                                autocomplete="off"
-                               placeholder="请输入专业ID" class="layui-input"
-                               style="cursor:not-allowed;color: #a1a1a1;" disabled>
-                    </div>
-                </div>
-                <div class="layui-form-item">
-                    <label class="layui-form-label">专业名称</label>
-                    <div class="layui-input-block">
-                        <input id="majorName" type="text" name="majorName" lay-verify="required" autocomplete="off"
-                               placeholder="请输入专业名称"
-                               class="layui-input" lay-reqText="请输入专业名称">
+                               placeholder="请输入学院ID" class="layui-input"
+                               lay-reqText="请输入学院ID">
+                        <span class="layui-badge"
+                              id="userIdTips" style="text-align: center;display: none">该学院已存在
+                        </span>
                     </div>
                 </div>
 
                 <div class="layui-form-item">
-                    <label class="layui-form-label">所属学院</label>
+                    <label class="layui-form-label">学院名称</label>
                     <div class="layui-input-block">
-                        <select id="academy" name="academy"  lay-verify="required"
-                                lay-reqText="请选择该专业所属学院" lay-search>
-
-                        </select>
+                        <input id="collegeName" type="text" name="collegeName" lay-verify="required" autocomplete="off"
+                               placeholder="请输入学院名称"
+                               class="layui-input" lay-reqText="请输入学院名称">
                     </div>
                 </div>
 
-                <div class="layui-form-item">
-                    <label class="layui-form-label">专业类别</label>
-                    <div class="layui-input-block">
-                        <input id="majorType" type="text" name="majorType"
-                               value="" lay-verify="required" autocomplete="off"
-                               placeholder="请输入专业类别" class="layui-input" lay-reqText="请输入专业类别">
-                    </div>
-                </div>
 
                 <div class="layui-form-item">
-                    <label class="layui-form-label">修业年限</label>
+                    <label class="layui-form-label">学院概述</label>
                     <div class="layui-input-block">
-                        <input id="majorYear" type="text" name="majorYear" value=""
-                               lay-verify="required" lay-verify="title" lay-reqText="请输入修业年限"
-                               autocomplete="off" placeholder="请输入修业年限" class="layui-input">
+                        <textarea id="collegeIntroduce" name="collegeIntroduce" required lay-verify="title" placeholder="请输入学院概述"
+                                  class="layui-textarea" style="height: 210px"></textarea>
                     </div>
                 </div>
 
@@ -83,29 +68,12 @@
             ,calendar: true
         });
 
-        $.ajax({
-            url: '/Major/getColleges',
-            dataType: 'json',
-            type: 'post',
-            success: function (res) {
-                console.log(res.data);
-                let academy = $('#academy');
-                academy.append('<option value="">请选择该专业所属学院</option>')
-                for (let i = 0; i < res.data.length; i++) {
-                    let collegeName = res.data[i].collegeName;
-                    academy.append('<option value="' + collegeName + '">' + collegeName + '</option>')
-                };
-                form.render('select');
-            }
-        });
-
         form.on('submit(user-save)', function (data) {
-            var index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
+            let index = layer.load(2, {time: 10*1000}); //又换了种风格，并且设定最长等待10秒
             $.ajax({
-                url: '/Major/updateMajor',
+                url: '/College/updateCollege',
                 data: data.field,
                 dataType: 'json',
-                contentType: 'application/json',
                 type: 'get',
                 success: function (result) {
                     layer.close(index);

@@ -9,6 +9,11 @@
 <style>
     .list-item:hover {
         background-color: rgba(88, 84, 84, 0.1);
+        transition: all .5s;
+    }
+
+    .list-item{
+        transition: all .5s;
     }
 
     a:hover {
@@ -17,7 +22,13 @@
 
     #userInfoHead:hover {
         filter:brightness(50%);
+        transition: all .5s;
     }
+
+    #userInfoHead{
+        transition: all .5s;
+    }
+
     #userInfoHead {
         border: 1px solid #4c4c4c;
         box-shadow: 1px 1px 2px 4px rgba(0,0,0,0.1);
@@ -117,7 +128,8 @@
                 type: 2,
                 title: '更换头像',
                 shade: 0.1,
-                area: ["900px", "500px"],
+                area: ["75%", "75%"],
+                shadeClose:true,
                 content: MODULE_PATH + 'uploadProfile.html',
                 btn: ['确定', '取消'],
                 yes: function (index, layero) {

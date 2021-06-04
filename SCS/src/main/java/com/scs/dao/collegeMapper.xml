@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--绑定Mapper接口-->
+<mapper namespace="com.scs.dao.collegeMapper">
+    <insert id="addCollege" parameterType="com.scs.pojo.college">
+        insert into college(collegeId, collegeName, collegeIntroduce)
+        values (#{collegeId}, #{collegeName}, #{collegeIntroduce})
+    </insert>
+
+    <delete id="deleteCollege" parameterType="String">
+        delete
+        from college
+        where collegeName = #{collegeName}
+    </delete>
+
+    <update id="updateCollege" parameterType="com.scs.pojo.college">
+        update college
+        <set>
+            <if test="collegeId !=null and collegeId!=''">
+                collegeId=#{collegeId},
+            </if>
+            <if test="collegeName !=null and collegeName!=''">
+                collegeName=#{collegeName},
+            </if>
+            <if test="collegeIntroduce !=null and collegeIntroduce!=''">
+                collegeIntroduce=#{collegeIntroduce},
+            </if>
+        </set>
+        where collegeId = #{collegeId}
+    </update>
+
+    <select id="selectAllCollege" resultType="com.scs.pojo.college">
+        select *
+        from college
+    </select>
+
+    <select id="selectCollegeById" parameterType="string" resultType="com.scs.pojo.college">
+        select *
+        from college where collegeId = #{collegeId}
+    </select>
+
+    <select id="selectCollege" parameterType="string" resultType="com.scs.pojo.college">
+        select *
+        from college
+        where collegeId like %#{key}%
+           or collegeName like %#{key}%
+    </select>
+
+    <delete id="batchRemoveCollege" parameterType="java.util.List">
+        delete
+        from college
+        where collegeId in (
+        <foreach collection="list" item="id" separator=",">
+            #{id}
+        </foreach>
+        )
+    </delete>
+</mapper>

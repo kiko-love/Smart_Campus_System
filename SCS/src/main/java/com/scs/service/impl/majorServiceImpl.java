@@ -11,6 +11,7 @@ import java.util.List;
 public class majorServiceImpl implements majorService {
     @Autowired
     private majorMapper majorMapper;
+
     @Override
     public int addMajor(major major) {
         return majorMapper.addMajor(major);
@@ -32,8 +33,18 @@ public class majorServiceImpl implements majorService {
     }
 
     @Override
-    public List<major> selectByMajorName(String majorName) {
-        return majorMapper.selectByMajorName(majorName);
+    public List<major> selectCollegeIdByName(String collegeName) {
+        return majorMapper.selectCollegeIdByName(collegeName);
+    }
+
+    @Override
+    public List<major> selectByMajorId(String majorId) {
+        return majorMapper.selectByMajorId(majorId);
+    }
+
+    @Override
+    public List<major> selectAllColleges() {
+        return majorMapper.selectAllColleges();
     }
 
     @Override

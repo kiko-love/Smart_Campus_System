@@ -41,11 +41,28 @@
       },
       {
         "id": 23,
-        "title": "专业管理",
-        "icon": "layui-icon layui-icon-face-smile",
-        "type": 1,
+        "title": "机构管理",
+        "icon": "layui-icon layui-icon-face-cry",
+        "type": 0,
         "openType": "_iframe",
-        "href": "view/system/userMajor.html"
+        "children": [
+          {
+            "id": 231,
+            "title": "学院管理",
+            "icon": "layui-icon layui-icon-face-smile",
+            "type": 1,
+            "openType": "_iframe",
+            "href": "view/system/userCollege.html"
+          },
+          {
+            "id": 232,
+            "title": "专业管理",
+            "icon": "layui-icon layui-icon-face-smile",
+            "type": 1,
+            "openType": "_iframe",
+            "href": "view/system/userMajor.html"
+          }
+        ]
       },
       {
         "id": 22,
@@ -80,7 +97,7 @@
         "href": "",
         "children": [
           {
-            "id": 231,
+            "id": 241,
             "title": "人脸考勤",
             "icon": "layui-icon layui-icon-face-cry",
             "type": 1,
@@ -88,7 +105,7 @@
             "href": "view/face.html"
           },
           {
-            "id": 232,
+            "id": 242,
             "title": "签到记录",
             "icon": "layui-icon layui-icon-face-cry",
             "type": 1,
@@ -112,6 +129,13 @@
         "icon": "layui-icon layui-icon-chart",
         "type": 1,
         "href": "view/system/myResources.html"
+      },
+      {
+        "id": 313,
+        "title": "我的课程",
+        "icon": "layui-icon layui-icon-chart",
+        "type": 1,
+        "href": "view/system/stuResources.html"
       },
       {
         "id": 311,

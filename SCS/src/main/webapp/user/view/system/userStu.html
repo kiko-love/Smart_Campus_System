@@ -70,14 +70,6 @@
     {{# } }}
 </script>
 
-<script type="text/html" id="user-login">
-    {{#if (d.login == 0) { }}
-    <span>在线</span>
-    {{# }else if(d.sex == 1){ }}
-    <span>离线</span>
-    {{# } }}
-</script>
-
 <script type="text/html" id="user-createTime">
     {{layui.util.toDateString(d.createTime, 'yyyy-MM-dd HH:mm:ss')}}
 </script>
@@ -247,7 +239,8 @@
                 type: 2,
                 title: '新增',
                 shade: 0.1,
-                area: [common.isModile() ? '100%' : '500px', common.isModile() ? '100%' : '550px'],
+                shadeClose:true,
+                area: [common.isModile() ? '100%' : '40%', common.isModile() ? '100%' : '85%'],
                 content: MODULE_PATH + 'add.html'
             });
         }
@@ -257,7 +250,8 @@
                 type: 2,
                 title: '修改学生信息:' + obj.data['userId'],
                 shade: 0.1,
-                area: ['500px', '550px'],
+                shadeClose:true,
+                area: [common.isModile() ? '100%' : '40%', common.isModile() ? '100%' : '85%'],
                 content: MODULE_PATH + 'edit.html',
                 success: function (layero, index) {
                     let body = layer.getChildFrame('body', index);

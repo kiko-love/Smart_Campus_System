@@ -22,4 +22,5 @@ public class TeacherResourceOB {
     private List<TeacherResourceOB> children;
     private String teacherId;
     private Integer focusId;
+    private String courseName;
 }

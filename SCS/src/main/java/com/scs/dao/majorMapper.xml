@@ -5,14 +5,15 @@
 <!--绑定Mapper接口-->
 <mapper namespace="com.scs.dao.majorMapper">
     <insert id="addMajor" parameterType="com.scs.pojo.major">
-        insert into major(majorId,majorName,majorYear,majorType,academy)
-        values (#{majorId},#{majorName},#{majorYear},#{majorType},#{academy})
+        insert into major(majorId,majorName,majorYear,majorType,academy,collegeId)
+        values (#{majorId},#{majorName},#{majorYear},#{majorType},#{academy},#{collegeId})
     </insert>
     
     <delete id="deleteMajor" parameterType="String">
         delete from major 
         where majorName = #{majorName}
     </delete>
+
     <update id="updateMajor" parameterType="com.scs.pojo.major">
         update major
         <set>
@@ -28,18 +29,32 @@
             <if test="academy !=null and academy!=''">
                 academy=#{academy},
             </if>
+            <if test="collegeId !=null and collegeId!=''">
+                collegeId=#{collegeId},
+            </if>
         </set>
         where majorId = #{majorId}
     </update>
+
     <select id="selectAllMajor" resultType="com.scs.pojo.major">
         select *
         from major
     </select>
+
+    <select id="selectCollegeIdByName" parameterType="string" resultType="com.scs.pojo.major">
+        select collegeId
+        from college where collegeName = #{collegeName}
+    </select>
+
+    <select id="selectAllColleges" resultType="com.scs.pojo.college">
+        select collegeId,collegeName
+        from college
+    </select>
     
-    <select id="selectByMajorName" resultType="com.scs.pojo.major" parameterType="String">
+    <select id="selectByMajorId" resultType="com.scs.pojo.major" parameterType="String">
         select *
         from major
-        where majorName=#{majorName}
+        where majorId=#{majorId}
     </select>
 
     <delete id="batchRemoveMajors" parameterType="java.util.List">

@@ -129,7 +129,8 @@ public interface resourceMapper {
     /**
      * 获取可关注资源
      */
-    @Select("select course.courseId ,course.courseName,resource.teacherId,teachers.realName from resource inner join teachers\n" +
+    @Select("select course.courseId ,course.courseName,resource.teacherId,teachers.realName as teacherName " +
+            "from resource inner join teachers\n" +
             "    on resource.teacherId = teachers.teacherId\n" +
             "inner join course on resource.courseName = course.courseName\n" +
             "group by course.courseId, resource.courseName, resource.teacherId")

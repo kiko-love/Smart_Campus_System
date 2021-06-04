@@ -40,24 +40,27 @@ public class majorController {
         String majorType = req.getParameter("majorType");
         String majorYear = req.getParameter("majorYear");
         String academy = req.getParameter("academy");
-        List<major> oneMajor = majorService.selectByMajorName(majorName);
+        String majorId = req.getParameter("majorId");
+        String collegeId = null;
+        List<major> collegeIds = majorService.selectCollegeIdByName(academy);
+        if (collegeIds.size() == 0) {
+            data.put("success", "0");
+            data.put("msg", "未找到对应的学院信息");
+            data.put("data", "");
+            return data.toJSONString();
+        } else {
+            collegeId = collegeIds.get(0).getCollegeId();
+        }
+        List<major> oneMajor = majorService.selectByMajorId(majorId);
         //当添加的专业已经存在
         if (oneMajor.size() > 0) {
             data.put("success", "0");
-            data.put("msg", "该用户已存在");
+            data.put("msg", "该专业已经存在");
             data.put("data", "");
             return data.toJSONString();
         }
-        Integer majorId;
-        List<major> allMajor = majorService.selectAllMajor();
-        //为首条记录id赋值为10000
-        if (allMajor.size() == 0) {
-            majorId = 10000;
-        } else {
-            //major为最后一条课程id+1
-            majorId = allMajor.get(allMajor.size() - 1).getMajorId() + 1;
-        }
-        major major = new major(majorId, majorName, majorType, majorYear, academy);
+
+        major major = new major(majorId, majorName, majorType, majorYear, academy, collegeId);
         int count = majorService.addMajor(major);
         //添加成功
         if (count == 1) {
@@ -99,6 +102,33 @@ public class majorController {
         return data.toJSONString();
     }
 
+
+    /**
+     * 获取全部学院列表
+     *
+     * @return
+     * @throws ParseException
+     */
+    @ResponseBody
+    @RequestMapping(value = "/getColleges", produces = "application/json;charset=utf-8")
+    public String getColleges(HttpServletRequest request) throws ParseException {
+        JSONObject data = new JSONObject();
+        data.put("code", 0);
+        List<major> majors = majorService.selectAllColleges();
+        if (majors.size() == 0) {
+            data.put("success", 0);
+            data.put("msg", "无专业信息");
+            data.put("data", "");
+            data.put("count", 0);
+            return data.toJSONString();
+        }
+        data.put("success", 1);
+        data.put("msg", "获取专业信息成功");
+        data.put("data", majors);
+        data.put("count", majors.size());
+        return data.toJSONString();
+    }
+
     /**
      * 通过MajorName获取major信息
      *
@@ -106,12 +136,12 @@ public class majorController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/getMajorByName", produces = "application/json;charset=utf-8")
+    @RequestMapping(value = "/getMajorByMajorId", produces = "application/json;charset=utf-8")
     public String getMajorByName(HttpServletRequest request) {
         JSONObject data = new JSONObject();
         data.put("code", 0);
-        String majorName = request.getParameter("majorName");
-        if (majorName==null || majorName.equals("")){
+        String majorId = request.getParameter("majorId");
+        if (majorId == null || majorId.equals("")) {
             List<major> majors = majorService.selectAllMajor();
             data.put("count", majors.size());
             data.put("msg", "查询成功");
@@ -119,7 +149,7 @@ public class majorController {
             data.put("data", majors);
             return data.toJSONString();
         }
-        List<major> oneMajor = majorService.selectByMajorName(majorName);
+        List<major> oneMajor = majorService.selectByMajorId(majorId);
         if (oneMajor.size() > 0) {
             data.put("count", oneMajor.size());
             data.put("msg", "查询成功");
@@ -174,9 +204,18 @@ public class majorController {
         String majorType = req.getParameter("majorType");
         String majorYear = req.getParameter("majorYear");
         String academy = req.getParameter("academy");
-        String majorIdString = req.getParameter("majorId");
-        Integer majorId = Integer.valueOf(majorIdString);
-        major major = new major(majorId, majorName, majorType, majorYear, academy);
+        String majorId = req.getParameter("majorId");
+        String collegeId = null;
+        List<major> collegeIds = majorService.selectCollegeIdByName(academy);
+        if (collegeIds.size() == 0) {
+            data.put("success", "0");
+            data.put("msg", "未找到对应的学院信息");
+            data.put("data", "");
+            return data.toJSONString();
+        } else {
+            collegeId = collegeIds.get(0).getCollegeId();
+        }
+        major major = new major(majorId, majorName, majorType, majorYear, academy, collegeId);
         int count = majorService.updateMajor(major);
         //添加成功
         if (count == 1) {

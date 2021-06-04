@@ -32,7 +32,7 @@ public interface myResourceMapper {
      * @param courseName
      * @return
      */
-    @Select("select myresource.focusId, teachers.teacherId, teachers.realName\n" +
+    @Select("select myresource.focusId, teachers.teacherId, teachers.realName as teacherName\n" +
             "from myResource\n" +
             "         inner join teachers\n" +
             "                    /*userId、courseName、为前端传入参数 */\n" +

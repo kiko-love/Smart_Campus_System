@@ -680,12 +680,16 @@
             for (let i = 1; i < firstDay; i++) {
                 str += "<li></li>"; //为起始日之前的日期创建空白节点
             }
+            //console.log(totalDay);
             //校验考勤数据
             for (let i = 1; i <= totalDay; i++) {
+                let j ;
                 if (i < 10) {
-                    i = '0' + i;
+                    j = '0' + i;
+                }else {
+                    j = i;
                 }
-                let nowDay = my_year + '-' + month_number[my_month] + '-' + i;
+                let nowDay = my_year + '-' + month_number[my_month] + '-' + j;
                 //console.log(my_year + '-' + month_number[my_month] + '-' + i);
                 if ((i < my_day && my_year === my_date.getFullYear() && my_month === my_date.getMonth())
                     || my_year < my_date.getFullYear()
@@ -693,7 +697,6 @@
                     if (isInDays(checkDate, nowDay)) {
                         myclass = " class='lightgrey' "; //当该日期在今天之前时，以浅灰色字体显示
                         myIcon = '<i class=\'layui-icon green layui-icon-ok\'></i>'
-
                     } else {
                         myclass = " class='red' "; //当该日期在今天之前时，以浅灰色字体显示
                         myIcon = '<i class=\'layui-icon red layui-icon-close\'></i>'
@@ -716,7 +719,7 @@
                     myclass = " class='darkgrey'"; //当该日期在今天之后时，以深灰字体显示
                     myIcon = '<i class=\'layui-icon grey layui-icon-subtraction\'></i>';
                 }
-                str += "<li" + myclass + ">" + i + myIcon + "</li>"; //创建日期节点
+                str += "<li" + myclass + ">" + j + myIcon + "</li>"; //创建日期节点
             }
             holder.innerHTML = str; //设置日期显示
             ctitle.innerHTML = month_name[my_month] + '-签到记录'; //设置英文月份显示
