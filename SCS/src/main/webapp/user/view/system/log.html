@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>行为日志</title>
-    <link rel="stylesheet" href="../../component/pear/css/pear.css" />
+    <link rel="stylesheet" href="../../component/pear/css/pear.css"/>
 </head>
 <body class="pear-container">
 <div class="layui-card">
@@ -11,14 +11,10 @@
         <div class="layui-tab layui-tab-card">
             <ul class="layui-tab-title">
                 <li class="layui-this">登录日志</li>
-                <li>操作日志</li>
             </ul>
             <div class="layui-tab-content">
                 <div class="layui-tab-item layui-show">
                     <table style="margin-top: 10px;" id="log-login-table" lay-filter="user-table"></table>
-                </div>
-                <div class="layui-tab-item">
-                    <table style="margin-top: 10px;" id="log-operate-table" lay-filter="user-table"></table>
                 </div>
             </div>
         </div>
@@ -27,12 +23,14 @@
 </body>
 
 <script type="text/html" id="log-bar">
-    {{#if (d.success == true) { }}
+    {{#if (d.logStatus == true) { }}
     <button class="pear-btn pear-btn-sm pear-btn-success" lay-event="edit"><i class="layui-icon layui-icon-ok"></i>
-        成功</button>
-    {{# }else if(d.success == false){ }}
+        成功
+    </button>
+    {{# }else if(d.logStatus == false){ }}
     <button class="pear-btn pear-btn-sm pear-btn-danger" lay-event="error"><i class="layui-icon layui-icon-help"></i>
-        异常</button>
+        异常
+    </button>
     {{# } }}
 </script>
 
@@ -43,7 +41,7 @@
 <script src="../../component/layui/layui.js"></script>
 <script src="../../component/pear/pear.js"></script>
 <script>
-    layui.use(['table','form','jquery','element'],function () {
+    layui.use(['table', 'form', 'jquery', 'element'], function () {
         let table = layui.table;
         let form = layui.form;
         let element = layui.element;
@@ -52,48 +50,90 @@
 
         let cols = [
             [
-                {title: '模块', field: 'title', align:'center'},
-                {title: '请求方式', field: 'requestMethod', align:'center'},
-                {title: '接口', field: 'method', align:'center'},
-                {title: '浏览器', field: 'browser', align:'center'},
-                {title: '操作地址', field: 'operateAddress',align:'center'},
-                {title: '操作系统', field: 'systemOs', align:'center'},
-                {title: '访问时间', field: 'createTime',templet:'#log-createTime', align:'center'},
-                {title: '操作人', field: 'operateName', align:'center'},
-                {title: '访问状态', toolbar: '#log-bar', align:'center', width:150}
+                {
+                    title: '行为', field: 'title', align: 'center', templet: function (d) {
+                        return '登录'
+                    }
+                },
+                {
+                    title: '登录账号',sort:true, field: 'logUser', align: 'center', templet: function (d) {
+                        return '<span class="layui-badge layui-bg-black">' + d.logUser + '</span>'
+                    }
+                },
+                {
+                    title: '账号类型', field: 'userRole', align: 'center',sort:true, templet: function (d) {
+                        if (d.userRole === '0') {
+                            return '<span class="layui-badge layui-bg-green">管理员</span>'
+                        } else if (d.userRole === '1') {
+                            return '<span class="layui-badge layui-bg-blue">教师账号</span>'
+                        }else {
+                            return '<span class="layui-badge layui-bg-gray">学生账号</span>'
+                        }
+                    }
+                },
+                {title: '浏览器', field: 'broswerName', align: 'center'},
+                {title: '操作地址', field: 'ipAdress', align: 'center'},
+                {title: '操作系统', field: 'operateSystem', align: 'center'},
+                {title: '访问时间', field: 'logTime', align: 'center',sort:true},
+                {
+                    title: '访问状态', align: 'center', templet: function (d) {
+                        if (d.logStatus === '正常') {
+                            return '<span class="layui-badge layui-bg-green">正常</span>'
+                        } else {
+                            return '<span class="layui-badge">登录异常</span>'
+                        }
+                    }, width: 150
+                }
             ]
         ]
 
-        table.render({
-            elem: '#log-operate-table',
-            url: '../../admin/data/operateLog.json',
-            page: true ,
-            cols: cols ,
-            skin: 'line',
-            toolbar: false
-        });
 
         table.render({
             elem: '#log-login-table',
-            url: '../../admin/data/loginLog.json',
-            page: true ,
-            cols: cols ,
+            url: '/User/getLogRecords',
+            initSort: {
+                field: 'logTime' //排序字段，对应 cols 设定的各字段名
+                , type: 'asc' //排序方式  asc: 升序、desc: 降序、null: 默认排序
+            },
+            page: {
+                layout: ['count', 'prev', 'page', 'next', 'skip']
+                , curr: 1
+                , groups: 3
+                , last: false
+            },
+            limit: 10,
+            cols: cols,
             skin: 'line',
-            toolbar: false
+            toolbar: false,
+            parseData: function (res) { //将原始数据解析成 table 组件所规定的数据，res为从url中get到的数据
+                let result;
+                //console.log(JSON.stringify(res.data));
+                if (this.page.curr) {
+                    result = res.data.slice(this.limit * (this.page.curr - 1), this.limit * this.page.curr);
+                } else {
+                    result = res.data.slice(0, this.limit);
+                }
+                return {
+                    "code": res.code, //解析接口状态
+                    "msg": res.msg, //解析提示文本
+                    "count": res.count, //解析数据长度
+                    "data": result //解析数据列表
+                };
+            }
         });
 
-        form.on('submit(dict-type-query)', function(data){
-            table.reload('dict-type-table',{where:data.field})
+        form.on('submit(dict-type-query)', function (data) {
+            table.reload('dict-type-table', {where: data.field})
             return false;
         });
 
-        window.error = function(obj){
+        window.error = function (obj) {
             layer.open({
                 type: 1,
                 title: '异常信息',
                 shade: 0,
                 area: ['450px', '350px'],
-                content: '<div class="pear-container"><div class="layui-card"><div class="layui-card-body">'+obj.data['error']+'</div></div></div>'
+                content: '<div class="pear-container"><div class="layui-card"><div class="layui-card-body">' + obj.data['error'] + '</div></div></div>'
             });
         }
     })

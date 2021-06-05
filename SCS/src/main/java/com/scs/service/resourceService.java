@@ -1,6 +1,7 @@
 package com.scs.service;
 
 import com.scs.pojo.courseTeaOfFocusOB;
+import com.scs.pojo.myResource;
 import com.scs.pojo.resource;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
@@ -41,4 +42,6 @@ public interface resourceService {
     List<resource> getResInfoByCourse(String teacherId, String courseName);
 
     List<courseTeaOfFocusOB> getResInfoToFocus();
+
+    List<courseTeaOfFocusOB> selectCourseRes(String key);
 }

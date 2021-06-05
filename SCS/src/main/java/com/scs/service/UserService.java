@@ -1,5 +1,6 @@
 package com.scs.service;
 
+import com.scs.pojo.LogOB;
 import com.scs.pojo.User;
 import org.apache.ibatis.annotations.Param;
 
@@ -97,5 +98,20 @@ public interface UserService {
      * @return List<User>
      */
     List<User> searchAccount(@Param(value = "username")String username);
+
+    /**
+     * 插入登陆日志记录
+     *
+     * @param logOB
+     * @return int
+     */
+    int addLogRecord(LogOB logOB);
+
+
+    /**
+     * 获取登录日志
+     *  @return List<LogOB>
+     */
+    List<LogOB> getLogRecords();
 
 }

@@ -20,15 +20,7 @@
 				"icon": "layui-icon layui-icon-console",
 				"type": 1,
 				"openType": "_iframe",
-				"href": "view/console/console1.html"
-			},
-			{
-				"id": 12,
-				"title": "信息管理",
-				"icon": "layui-icon layui-icon-console",
-				"type": 1,
-				"openType": "_iframe",
-				"href": "view/console/console2.html"
+				"href": "view/system/personalInfo.html"
 			}
 		]
 	},
@@ -57,13 +49,13 @@
 			},
 			{
 				"id": 203,
-				"title": "课程管理",
+				"title": "请假管理",
 				"icon": "layui-icon layui-icon-console",
 				"type": 0,
 				"children": [
 					{
 						"id": 2031,
-						"title": "数据表格",
+						"title": "我的请假",
 						"icon": "layui-icon layui-icon-face-cry",
 						"type": 1,
 						"openType": "_iframe",
@@ -79,79 +71,36 @@
 				"children": [
 					{
 						"id": 2021,
-						"title": "抽屉组件",
+						"title": "我的作业",
 						"icon": "layui-icon layui-icon-face-cry",
 						"type": 1,
 						"openType": "_iframe",
 						"href": "view/document/drawer.html"
 					}
 				]
-			},
-			{
-				"id": 60331,
-				"title": "资源管理",
-				"icon": "layui-icon layui-icon-console",
-				"type": 0,
-				"children": [
-					{
-						"id": 60131,
-						"title": "多选项卡",
-						"icon": "layui-icon layui-icon-face-cry",
-						"type": 1,
-						"openType": "_iframe",
-						"href": "view/document/tab.html"
-					}
-				]
-			}
-		]
-	},
-	{
-		"id": "system",
-		"title": "活动中心",
-		"icon": "layui-icon layui-icon-set-fill",
-		"type": 0,
-		"href": "",
-		"children": [
-			{
-				"id": 601,
-				"title": "活动列表",
-				"icon": "layui-icon layui-icon-face-smile",
-				"type": 1,
-				"openType": "_iframe",
-				"href": "view/system/user.html"
-			},
-			{
-				"id": 605,
-				"title": "行为日志",
-				"icon": "layui-icon layui-icon-face-cry",
-				"type": 1,
-				"openType": "_iframe",
-				"href": "view/system/log.html"
 			}
 		]
 	},
 	{
 		"id": "echarts",
-		"title": "数据图表",
+		"title": "资源中心",
 		"icon": "layui-icon layui-icon-chart",
 		"type": 0,
 		"href": "",
 		"children": [
 			{
-				"id": 12121,
-				"title": "折线图",
-				"icon": "layui-icon layui-icon-face-smile",
+				"id": 313,
+				"title": "我的资源",
+				"icon": "layui-icon layui-icon-chart",
 				"type": 1,
-				"openType": "_iframe",
-				"href": "view/echarts/line.html"
+				"href": "view/system/stuResources.html"
 			},
 			{
-				"id": 121212,
-				"title": "柱状图",
-				"icon": "layui-icon layui-icon-face-smile",
+				"id": 312,
+				"title": "资源列表",
+				"icon": "layui-icon layui-icon-chart",
 				"type": 1,
-				"openType": "_iframe",
-				"href": "view/echarts/column.html"
+				"href": "view/system/resources.html"
 			}
 		]
 	}

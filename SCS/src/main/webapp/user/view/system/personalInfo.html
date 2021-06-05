@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>个人信息</title>
+    <link rel="stylesheet" href="../../component/pear/css/pear.css"/>
+
+</head>
+
+<style>
+    .title {
+        background-color: #009688;
+        color: #FFFFFF;
+    }
+    table{
+        border-collapse: collapse;
+    }
+    table td {
+        padding:5px;
+        border:1px solid green;
+    }
+
+    .darkColumn{
+        background-color: #03685f;
+        color: #FFFFFF;
+    }
+</style>
+
+<body class="pear-container">
+<div class="layui-card">
+    <div class="layui-card-body">
+        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+            <legend>个人信息</legend>
+        </fieldset>
+        <br>
+
+        <table id="user-table" lay-filter="user-table"></table>
+        <table style="width:95%"
+               align="center"  id="studentInfoTb">
+            <thead>
+            <tr class="border border-green-600">
+                <td colspan="4" style="font-weight:bold;text-align:center" class="darkColumn">
+                    学生个人信息</td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td width="25%" class="title" style="width:18%">学号：</td>
+                <td width="25%">2019081208</td>
+                <td width="25%" class="title" style="width:18%">姓名：</td>
+                <td>张艺</td>
+            </tr>
+            <tr>
+                <td class="title" style="width:18%">英文名：</td>
+                <td>Zhang Yi</td>
+                <td class="title" style="width:18%">性别：</td>
+                <td>男</td>
+            </tr>
+            <tr>
+                <td class="title" style="width:18%">年级：</td>
+                <td>2019</td>
+                <td class="title" style="width:18%">学制：</td>
+                <td>4</td>
+            </tr>
+            <tr>
+                <td class="title" style="width:18%">家庭住址：</td>
+                <td>四川省成都市</td>
+                <td class="title" style="width:18%">学历层次：</td>
+                <td>本科</td>
+            </tr>
+            <tr>
+                <td class="title" style="width:18%">学生类别：</td>
+                <td>普通本科生</td>
+                <td class="title" style="width:18%">院系：</td>
+                <td>软件工程学院</td>
+            </tr>
+            <tr>
+                <td class="title" style="width:18%">专业：</td>
+                <td>软件工程</td>
+                <td class="title" style="width:18%">所属班级：</td>
+                <td>软工195</td>
+            </tr>
+            <tr>
+            </tr>
+            </tbody>
+
+        </table>
+    </div>
+</div>
+
+<script type="text/html" id="user-toolbar">
+    <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
+        <i class="layui-icon layui-icon-add-1"></i>
+        新增
+    </button>
+    <button class="pear-btn pear-btn-danger pear-btn-md" lay-event="batchRemove">
+        <i class="layui-icon layui-icon-delete"></i>
+        删除
+    </button>
+</script>
+
+<script type="text/html" id="user-bar">
+    <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit">
+        <i class="layui-icon layui-icon-edit"></i>
+    </button>
+    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove">
+        <i class="layui-icon layui-icon-delete"></i>
+    </button>
+</script>
+
+<script src="../../../static/layui/layui.js"></script>
+<script src="../../component/pear/pear.js"></script>
+<script>
+    layui.use(['table', 'form', 'jquery', 'common'], function () {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+        let common = layui.common;
+        let MODULE_PATH = "operate/";
+
+        let cols = [
+            [{
+                type: 'checkbox'
+            },
+                {
+                    title: '学院ID',
+                    field: 'collegeId',
+                    width: 100,
+                    sort: true,
+                    //fixed: true
+                },
+                {
+                    title: '学院名称',
+                    field: 'collegeName',
+                    align: 'center'
+                },
+                {
+                    title: '学院概述',
+                    field: 'collegeIntroduce',
+                    align: 'center',
+                },
+                {
+                    title: '操作',
+                    toolbar: '#user-bar',
+                    align: 'center',
+                    width: 130
+                }
+            ]
+        ]
+
+
+
+        table.on('tool(user-table)', function (obj) {
+            if (obj.event === 'remove') {
+                window.remove(obj);
+            } else if (obj.event === 'edit') {
+                window.edit(obj);
+            }
+        });
+
+
+        table.on('toolbar(user-table)', function (obj) {
+            if (obj.event === 'add') {
+                window.add();
+            } else if (obj.event === 'refresh') {
+                window.refresh();
+            } else if (obj.event === 'batchRemove') {
+                window.batchRemove(obj);
+            } else if (obj.event === 'edit') {
+                //obj.del();
+                window.edit(obj);
+            }
+        });
+
+        form.on('submit(user-query)', function (data) {
+            tableIns.reload({
+                url: '/Major/getMajorByName',
+                method: 'post',
+                page: {
+                    layout: ['count', 'prev', 'page', 'next', 'skip']
+                    , curr: 1
+                    , groups: 3
+                    , last: false
+                }
+                , where: data.field
+            })
+            return false;
+        });
+
+
+        window.add = function () {
+            layer.open({
+                type: 2,
+                title: '新增专业信息',
+                shade: 0.1,
+                shadeClose:true,
+                area:['40%', '70%'],
+                content: MODULE_PATH + 'addCollege.html'
+            });
+        }
+
+        window.edit = function (obj) {
+            layer.open({
+                type: 2,
+                title: '修改学院信息：' + obj.data['collegeName'],
+                shade: 0.1,
+                shadeClose:true,
+                area: ['40%', '70%'],
+                content: MODULE_PATH + 'editCollege.html',
+                success: function (layero, index) {
+                    let body = layer.getChildFrame('body', index);
+                    //得到iframe页的窗口对象，执行iframe页的方法：iframeWin.method();
+                    //console.log(obj.data);
+                    let iframeWin = window[layero.find('iframe')[0]['name']]
+                    body.find('#collegeId').val(obj.data['collegeId'])
+                    body.find('#collegeName').val(obj.data['collegeName'])
+                    body.find('#collegeIntroduce').val(obj.data['collegeIntroduce'])
+                }
+            });
+        }
+
+        window.remove = function (obj) {
+            console.log(obj.data['majorName']);
+            layer.confirm('确定要删除该专业', {
+                icon: 3,
+                title: '提示'
+            }, function (index) {
+                layer.close(index);
+                let loading = layer.load();
+                $.ajax({
+                    url: "/Major/deleteMajor",
+                    data: {
+                        majorName: obj.data['majorName']
+                    },
+                    dataType: 'json',
+                    type: 'post',
+                    success: function (result) {
+                        layer.close(loading);
+                        if (result.success) {
+                            layer.msg(result.msg, {
+                                icon: 1,
+                                time: 1000
+                            }, function () {
+                                tableIns.reload({
+                                    url: "/Major/getMajors",
+                                    page: {
+                                        layout: ['count', 'prev', 'page', 'next', 'skip']
+                                        , curr: $(".layui-laypage-em").next().html()
+                                        , groups: 3
+                                        , last: false
+                                    },
+                                    method: "post"
+                                });
+                                obj.del();
+                            });
+                        } else {
+                            layer.msg(result.msg, {
+                                icon: 2,
+                                time: 1000
+                            });
+                        }
+                    }
+                })
+            });
+        }
+
+        window.batchRemove = function (obj) {
+
+            let checkIds = common.checkField(obj, 'userId');
+
+            if (checkIds === "") {
+                layer.msg("未选中数据", {
+                    icon: 3,
+                    time: 1000
+                });
+                return false;
+            }
+            //批量删除
+            layer.confirm('确定要删除这些专业', {
+                icon: 3,
+                title: '提示'
+            }, function (index) {
+                layer.close(index);
+                let checkStatus = table.checkStatus('user-table');
+                let majorIds = [];
+                for (let i = 0; i < checkStatus.data.length; i++) {
+                    majorIds[i] = checkStatus.data[i].majorId;
+                    //console.log(checkStatus.data[i].userId);
+                }
+                console.log(majorIds);
+                let loading = layer.load(2, {
+                    shade: [0.2, '#323232'] //0.1透明度的白色背景
+                });
+                table.reload('user-table');
+                $.ajax({
+                    url: "/Major/batchRemoveMajor",
+                    data: {
+                        majorIds: JSON.stringify(majorIds)
+                    },
+                    dataType: 'json',
+                    type: 'post',
+                    success: function (result) {
+                        layer.close(loading);
+                        if (result.success) {
+                            layer.msg(result.msg, {
+                                icon: 1,
+                                time: 1000
+                            }, function () {
+                                tableIns.reload({
+                                    url: "/Major/getMajors",
+                                    page: {
+                                        layout: ['count', 'prev', 'page', 'next', 'skip']
+                                        , curr: 1
+                                        , groups: 3
+                                        , last: false
+                                    },
+                                    method: "post"
+                                });
+                            });
+                        } else {
+                            layer.msg(result.msg, {
+                                icon: 2,
+                                time: 1000
+                            });
+                        }
+                    }
+                })
+            });
+        }
+
+        window.refresh = function (param) {
+            table.reload('user-table', {
+                url: "/Major/getMajors",
+                method: "post"
+            });
+        }
+    })
+</script>
+</body>
+
+</html>

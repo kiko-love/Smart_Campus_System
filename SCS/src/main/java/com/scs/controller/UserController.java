@@ -1,24 +1,23 @@
 package com.scs.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.scs.pojo.User;
-import com.scs.pojo.portrait;
-import com.scs.pojo.student;
-import com.scs.pojo.teacher;
+import com.scs.pojo.*;
 import com.scs.service.UserService;
 import com.scs.service.portraitService;
 import com.scs.service.studentService;
 import com.scs.service.teacherService;
+import com.scs.utils.IPUtils;
 import com.scs.utils.InformToFront;
+import eu.bitwalker.useragentutils.Browser;
+import eu.bitwalker.useragentutils.OperatingSystem;
+import eu.bitwalker.useragentutils.UserAgent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @Controller
@@ -34,13 +33,36 @@ public class UserController {
     private teacherService teacherService;
 
 
+    public static String GetBrowserName(HttpServletRequest request){
+        String userAgent = request.getHeader("User-Agent");
+        UserAgent ua = UserAgent.parseUserAgentString(userAgent);
+        Browser browser = ua.getBrowser();
+        return browser.getName() + ": " + browser.getVersion(userAgent);
+    }
+
+    public static String GetOsName(HttpServletRequest request){
+        String userAgent = request.getHeader("User-Agent");
+        UserAgent ua = UserAgent.parseUserAgentString(userAgent);
+        OperatingSystem os = ua.getOperatingSystem();
+        return os.getName();
+    }
+
+
+
     @RequestMapping(value = "/Login", method = RequestMethod.POST)
     public @ResponseBody
     InformToFront Login(User user, HttpServletRequest request, HttpServletResponse response) throws Exception {
         String userName = user.getUserName();
         String password = user.getMd5password();
-
         String user_exist = (String) request.getSession().getAttribute("userInformation");
+        String browserName = GetBrowserName(request);
+        String osName = GetOsName(request);
+        String ipAddress = IPUtils.getRequestClientRealIP(request);
+        String logStatus = "正常";
+        Date date = new Date();
+        SimpleDateFormat sim = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String logTime = sim.format(date);
+
 //        if (user_exist != null) {
 //            InformToFront status_err =
 //                    new InformToFront("Prohibit login to multiple accounts", "250", null, null, null);     //没有该用户
@@ -48,8 +70,7 @@ public class UserController {
 //        }
 
         List<User> users = userService.FindByName(userName);
-
-        if (users.size() == 0) {
+       if (users.size() == 0) {
             InformToFront status_err =
                     new InformToFront("Username does not exist", "-1", null, null, null);     //没有该用户
             return status_err;
@@ -58,6 +79,8 @@ public class UserController {
             //查到一条记录，并且用户名对应
             System.out.println(users);
             String role = users.get(0).getRole();
+            userService.addLogRecord(new LogOB(null,browserName,osName
+                    ,ipAddress,logTime,userName,role,logStatus));
             String md5password = users.get(0).getMd5password();
             String accountStatus = users.get(0).getStatus();
             if (md5password != null) {
@@ -108,6 +131,28 @@ public class UserController {
             data.put("success", "0");
         } else {
             data.put("success", "1");
+        }
+        return data.toJSONString();
+    }
+
+
+    //注销用户session
+    @ResponseBody
+    @RequestMapping(value = "/getLogRecords", produces = "application/json;charset=utf-8")
+    public String getLogRecords(HttpServletRequest request, HttpServletResponse response) {
+        String role = (String) request.getSession().getAttribute("role");
+        List<LogOB> logRecords = userService.getLogRecords();
+        JSONObject data = new JSONObject();
+        if (role.equals("0")){
+            data.put("code", 0);
+            data.put("msg", "获取登录日志成功");
+            data.put("data", logRecords);
+            data.put("count", logRecords.size());
+        }else {
+            data.put("code", 110);
+            data.put("msg", "您无权访问该接口！");
+            data.put("data", "");
+            data.put("count", 0);
         }
         return data.toJSONString();
     }

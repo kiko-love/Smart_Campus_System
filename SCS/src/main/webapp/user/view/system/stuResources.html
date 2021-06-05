@@ -88,11 +88,11 @@
                     </div>
                 </div>
                 <div class="layui-form-item layui-inline">
-                    <button class="pear-btn pear-btn-md pear-btn-success" lay-submit lay-filter="resource-query">
+                    <button class="layui-btn layui-btn-sm" lay-submit lay-filter="resource-query">
                         <i class="layui-icon layui-icon-search"></i>
                         查询
                     </button>
-                    <button type="reset" class="pear-btn pear-btn-md">
+                    <button type="reset" class="layui-btn layui-btn-sm layui-btn-primary">
                         <i class="layui-icon layui-icon-refresh"></i>
                         重置
                     </button>
@@ -306,7 +306,7 @@
                     templet: function (obj) {
                         //console.log(obj);
                         if (obj.level === '2') {
-                            return '<a class="layui-btn layui-btn layui-btn layui-btn-normal layui-btn-xs" ' +
+                            return '<a class="layui-btn layui-btn-danger layui-btn-xs" ' +
                                 'lay-event="del">\n' +
                                 '取消关注' +
                                 '    </a>'
@@ -325,7 +325,7 @@
                 {field: 'fileId', title: '文件ID', hide: true}
             ]],
             text: {
-                none: '<div">哎呀，一条数据都没有~</div>'
+                none: '<div">还未关注课程，快去找找看吧~</div>'
             }
         });
 
@@ -346,13 +346,16 @@
 
         //批量下载
         window.allDownload = function (obj) {
-            if (obj.length === 1) {
-                insTb.expand(obj[0].authorityId);
-                //insTb.setChecked([2]);
-                //let data = insTb.checkStatus(false);
-                //console.log(obj[0].authorityId);
-                return false;
-            }
+            //console.log(obj[0]);
+            // if (obj.length === 1&&(obj[0].level==='1'||obj[0].level==='2')) {
+            //     insTb.expand(obj[0].authorityId);
+            //     layer.msg('第一次加载请先展开文件夹获取资源目录后再下载');
+            //     return false;
+            //     //insTb.setChecked([2]);
+            //     //let data = insTb.checkStatus(false);
+            //     //console.log(obj[0].authorityId);
+            //
+            // }
             layer.open({
                 title: '批量下载提示',
                 content: '<i class="layui-icon layui-icon-download-circle" style="font-size: 35px">' +
@@ -436,14 +439,10 @@
 
         //单个取消关注
         window.del = function (obj) {
-            let content = '';
-            if (obj.data.haveChild) {
-                content = '是否取消关注该课程资源'
-            } else {
-                content = '是否取消关注该课程资源'
-            }
+            //console.log(obj);
+            let content = '是否取消关注该教师发布的《' + obj.data.courseName + '》课程资源';
             layer.open({
-                title: '提示',
+                title: obj.data.fileName + '老师：',
                 content: content
                 , btn: ['确认', '取消']
                 , yes: function (index, layero) {
@@ -456,7 +455,7 @@
                         data: {
                             focusId: JSON.stringify(obj.data.focusId),
                         },
-                        traditional:true,
+                        traditional: true,
                         dataType: 'json',
                         success: function (res) {
                             if (res.success) {
@@ -466,7 +465,11 @@
                                         //console.log('req');
                                         //console.log(data);
                                         level = data ? data.level : '';
-                                        courseName = data ? data.fileName : '';
+                                        if (level === '2') {
+                                            courseName = data ? data.courseName : '';
+                                        } else {
+                                            courseName = data ? data.fileName : '';
+                                        }
                                         authorityId = data ? data.authorityId : '';
                                         teacherId = data ? data.teacherId : '';
                                         //console.log(level);
@@ -501,7 +504,6 @@
         }
 
         form.on('submit(resource-query)', function (obj) {
-            console.log(obj.field);
             insTb.reload({
                 reqData: function (data, callback) {
                     //console.log(level);

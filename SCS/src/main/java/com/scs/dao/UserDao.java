@@ -1,5 +1,6 @@
 package com.scs.dao;
 
+import com.scs.pojo.LogOB;
 import com.scs.pojo.User;
 import com.scs.pojo.student;
 import org.apache.ibatis.annotations.Insert;
@@ -53,9 +54,18 @@ public interface UserDao {
     //修改密码
     @Update("update userinfo set md5password = #{md5password} where username = #{username}")
     int updatePassword(@Param(value = "username")String username, @Param(value = "md5password")String newPassword);
+
     //查询用户的密码
     @Select("select md5password from userinfo where username = #{username}")
     String findPassword(String username);
+
+    //插入登陆日志记录
+    int addLogRecord(LogOB logOB);
+
+    //获取登录日志
+    List<LogOB> getLogRecords();
+
+
 
 
 

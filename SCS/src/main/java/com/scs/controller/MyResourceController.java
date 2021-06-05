@@ -1,4 +1,5 @@
 package com.scs.controller;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.scs.pojo.*;
@@ -11,7 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,12 +27,10 @@ import java.util.List;
 public class MyResourceController {
     @Autowired
     private myResourceService myResService;
-    @Autowired
-    private teacherService teaService;
+
     @Autowired
     private resourceService resService;
-    @Autowired
-    private courseService courseService;
+
 
     /**
      * 进行关注
@@ -112,7 +115,7 @@ public class MyResourceController {
             for (String course : courseNames) {
                 id++;
                 jsonList.add(new TeacherResourceOB(id, 0, course, null, "1",
-                        null, null, null, true, null, null, null,courseName));
+                        null, null, null, true, null, null, null, courseName));
             }
             status = new JsonStatusUtils("200", "获取第一层成功");
             data.put("status", status);
@@ -152,8 +155,8 @@ public class MyResourceController {
                     String fileName = myRes.get(i).getTeacherName();
                     jsonList.add(new TeacherResourceOB(id, parentId, fileName,
                             null, "2",
-                            null,fileName , null,
-                            true, null, teacherId, focusId,courseName));
+                            null, fileName, null,
+                            true, null, teacherId, focusId, courseName));
                 }
                 status = new JsonStatusUtils("200", "获取第二层成功");
                 data.put("status", status);
@@ -196,7 +199,7 @@ public class MyResourceController {
                     jsonList.add(new TeacherResourceOB(id, parentId, resource.getFileName(),
                             resource.getFilesize(), "3",
                             resource.getCreateTime(), null, resource.getFileId(),
-                            false, null, null, null,courseName));
+                            false, null, null, null, courseName));
                     id++;
                 }
                 status = new JsonStatusUtils("200", "获取文件成功");
@@ -234,6 +237,85 @@ public class MyResourceController {
         return data.toJSONString();
     }
 
+
+    /**
+     * 搜索关注课程列表信息
+     */
+    @ResponseBody
+    @RequestMapping(value = "/getCourseRes", produces = "application/json;charset=utf-8")
+    public String getCourseRes(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        JSONObject data = new JSONObject();
+        String key = request.getParameter("key");
+        if (key == null || key.equals("")) {
+            String userId = (String) request.getSession().getAttribute("userInformation");
+            List<courseTeaOfFocusOB> allResource = resService.getResInfoToFocus();
+            if (allResource.size() == 0) {
+                data.put("msg", "暂无资源可添加");
+                data.put("data", "");
+                data.put("code", "110");
+                data.put("count", 0);
+                return data.toJSONString();
+            }
+            ArrayList<FocusResInfoOB> jsonList = new ArrayList<>();
+            List<myResource> myResources = myResService.selectMyResById(userId);
+            for (int i = 0; i < allResource.size(); i++) {
+                String courseName = allResource.get(i).getCourseName();
+                String teacherId = allResource.get(i).getTeacherId();
+                String courseId = allResource.get(i).getCourseId();
+                String teacherName = allResource.get(i).getTeacherName();
+                int flag = 0;
+                for (int j = 0; j < myResources.size(); j++) {
+                    myResource myRes = myResources.get(j);
+                    if (courseName.equals(myRes.getCourseName()) && teacherId.equals(myRes.getTeacherId())) {
+                        //该课程已关注
+                        flag = 1;
+                    }
+                }
+                if (flag != 0) {
+                    jsonList.add(new FocusResInfoOB(courseId, courseName, teacherName, teacherId, true));
+                }
+                if (flag == 0) {
+                    jsonList.add(new FocusResInfoOB(courseId, courseName, teacherName, teacherId, false));
+                }
+            }
+            data.put("msg", "可关注资源获取成功");
+            data.put("data", jsonList);
+            data.put("code", "0");
+            data.put("count", jsonList.size());
+        } else {
+            List<courseTeaOfFocusOB> resourceList = resService.selectCourseRes(key);
+            ArrayList<FocusResInfoOB> jsonList = new ArrayList<>();
+            String userId = (String) request.getSession().getAttribute("userInformation");
+            List<myResource> myResources = myResService.selectMyResById(userId);
+            for (int i = 0; i < resourceList.size(); i++) {
+                String courseName = resourceList.get(i).getCourseName();
+                String teacherId = resourceList.get(i).getTeacherId();
+                String courseId = resourceList.get(i).getCourseId();
+                String teacherName = resourceList.get(i).getTeacherName();
+                int flag = 0;
+                for (int j = 0; j < myResources.size(); j++) {
+                    myResource myRes = myResources.get(j);
+                    if (courseName.equals(myRes.getCourseName()) && teacherId.equals(myRes.getTeacherId())) {
+                        //该课程已关注
+                        flag = 1;
+                    }
+                }
+                if (flag != 0) {
+                    jsonList.add(new FocusResInfoOB(courseId, courseName, teacherName, teacherId, true));
+                }
+                if (flag == 0) {
+                    jsonList.add(new FocusResInfoOB(courseId, courseName, teacherName, teacherId, false));
+                }
+            }
+            data.put("code", "0");
+            data.put("msg", "搜索资源完毕");
+            data.put("data", jsonList);
+            data.put("count", jsonList.size());
+        }
+        return data.toJSONString();
+
+    }
+
     /**
      * 获取关注列表
      */
@@ -247,36 +329,35 @@ public class MyResourceController {
             data.put("msg", "暂无资源可添加");
             data.put("data", "");
             data.put("code", "110");
-            data.put("count",0);
+            data.put("count", 0);
             return data.toJSONString();
         }
         ArrayList<FocusResInfoOB> jsonList = new ArrayList<>();
         List<myResource> myResources = myResService.selectMyResById(userId);
-
         for (int i = 0; i < allResource.size(); i++) {
             String courseName = allResource.get(i).getCourseName();
             String teacherId = allResource.get(i).getTeacherId();
             String courseId = allResource.get(i).getCourseId();
             String teacherName = allResource.get(i).getTeacherName();
-            int flag=0;
-            for(int j=0;j<myResources.size();j++){
+            int flag = 0;
+            for (int j = 0; j < myResources.size(); j++) {
                 myResource myRes = myResources.get(j);
-                if (courseName.equals(myRes.getCourseName())&&teacherId.equals(myRes.getTeacherId())){
+                if (courseName.equals(myRes.getCourseName()) && teacherId.equals(myRes.getTeacherId())) {
                     //该课程已关注
-                    flag=1;
+                    flag = 1;
                 }
             }
-            if(flag!=0){
-                jsonList.add(new FocusResInfoOB(courseId, courseName, teacherName, teacherId,true));
+            if (flag != 0) {
+                jsonList.add(new FocusResInfoOB(courseId, courseName, teacherName, teacherId, true));
             }
-            if(flag==0){
-                jsonList.add(new FocusResInfoOB(courseId, courseName, teacherName, teacherId,false));
+            if (flag == 0) {
+                jsonList.add(new FocusResInfoOB(courseId, courseName, teacherName, teacherId, false));
             }
         }
         data.put("msg", "可关注资源获取成功");
         data.put("data", jsonList);
         data.put("code", "0");
-        data.put("count",jsonList.size());
+        data.put("count", jsonList.size());
         return data.toJSONString();
     }
 

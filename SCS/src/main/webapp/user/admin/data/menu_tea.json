@@ -20,12 +20,12 @@
 				"icon": "layui-icon layui-icon-console",
 				"type": 1,
 				"openType": "_iframe",
-				"href": "view/console/console2.html"
+				"href": "view/system/personalInfo_tea.html"
 			},
 			{
-				"id": 12,
-				"title": "教职工考勤",
-				"icon": "layui-icon layui-icon-console",
+				"id": 241,
+				"title": "人脸考勤",
+				"icon": "layui-icon layui-icon-face-cry",
 				"type": 1,
 				"openType": "_iframe",
 				"href": "view/face.html"
@@ -33,30 +33,6 @@
 		]
 	},
 	{
-		"id": "subject",
-		"title": "课程管理",
-		"icon": "layui-icon layui-icon-date",
-		"type": 0,
-		"href": "",
-		"children": [
-			{
-				"id": 203,
-				"title": "我的课程信息",
-				"icon": "layui-icon layui-icon-face-cry",
-				"type": 1,
-				"openType": "_iframe",
-				"href": "view/document/table.html"
-			},{
-				"id": 204,
-				"title": "课程信息管理",
-				"icon": "layui-icon layui-icon-face-cry",
-				"type": 1,
-				"openType": "_iframe",
-				"href": "view/document/table.html"
-			}
-			
-		]
-	},{
 		"id": "resources",
 		"title": "资源管理",
 		"icon": "layui-icon layui-icon-read",
@@ -126,14 +102,6 @@
 				"type": 1,
 				"openType": "_iframe",
 				"href": "view/document/button.html"
-			},
-			{
-				"id": 403,
-				"title": "学生行为日志",
-				"icon": "layui-icon layui-icon-face-cry",
-				"type": 1,
-				"openType": "_iframe",
-				"href": "view/system/log.html"
 			}
 		]
 	},

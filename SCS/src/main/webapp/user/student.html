@@ -28,7 +28,7 @@
 				<ul class="layui-nav layui-layout-right">
 					<li class="layui-nav-item layui-hide-xs"><a href="#" class="fullScreen layui-icon layui-icon-screen-full"></a></li>
 					<!-- <li class="layui-nav-item layui-hide-xs"><a href="http://www.pearadmin.com" class="layui-icon layui-icon-website"></a></li> -->
-<%--					<li class="layui-nav-item layui-hide-xs message"></li>--%>
+<%--
 					<li class="layui-nav-item user">
 						<!-- 头 像 -->
 						<a user-menu-url="./view/system/person.html" user-menu-id="1111" user-menu-title="账号信息">
@@ -36,7 +36,8 @@
 						</a>
 						<!-- 功 能 菜 单 -->
 						<dl class="layui-nav-child">
-							<dd style="cursor: pointer"><a user-menu-url="view/system/person.html" user-menu-id="5555" user-menu-title="修改密码">修改密码</a></dd>
+							<dd style="cursor: pointer"><a id="changePassword">修改密码</a>
+							</dd>
 							<dd><a href="javascript:void(0);" class="logout">退出登录</a></dd>
 						</dl>
 					</li>
@@ -84,7 +85,18 @@
 				let $ = layui.jquery;
 				let convert = layui.convert;
 				let popup = layui.popup;
+				let cp = $('#changePassword');
 
+				cp.click(function () {
+					layer.open({
+						type: 2,
+						title: '<i class="layui-icon layui-icon-password" ">修改密码',
+						shade: 0.1,
+						shadeClose:true,
+						area: ['60%', '70%'],
+						content: '../user/view/changePwd.html'
+					});
+				})
 				// 初始化顶部用户信息,使用ajax获取后端seesion即可实现动态更换用户名
 				$.ajax({
 					url: "/User/getUserInfo",

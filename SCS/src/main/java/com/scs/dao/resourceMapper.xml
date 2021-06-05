@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--绑定Mapper接口-->
+<mapper namespace="com.scs.dao.resourceMapper">
+    <select id="selectCourseRes" parameterType="String" resultType="com.scs.pojo.courseTeaOfFocusOB">
+        select distinct course.courseId, course.courseName, resource.teacherId, teachers.realName as teacherName
+        from resource
+                 inner join teachers
+                            on resource.teacherId = teachers.teacherId
+                                and resource.courseName like '%${key}%'
+                 inner join course on resource.courseName = course.courseName
+        union all
+        select distinct course.courseId, course.courseName, resource.teacherId, teachers.realName as teacherName
+        from resource
+                 inner join teachers
+                            on resource.teacherId = teachers.teacherId
+                                and teachers.realName like '%${key}%'
+                 inner join course on resource.courseName = course.courseName
+        group by course.courseId, resource.courseName, resource.teacherId
+    </select>
+</mapper>

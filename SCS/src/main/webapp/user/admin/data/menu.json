@@ -97,14 +97,6 @@
         "href": "",
         "children": [
           {
-            "id": 241,
-            "title": "人脸考勤",
-            "icon": "layui-icon layui-icon-face-cry",
-            "type": 1,
-            "openType": "_iframe",
-            "href": "view/face.html"
-          },
-          {
             "id": 242,
             "title": "签到记录",
             "icon": "layui-icon layui-icon-face-cry",
@@ -132,7 +124,7 @@
       },
       {
         "id": 313,
-        "title": "我的课程",
+        "title": "我的关注",
         "icon": "layui-icon layui-icon-chart",
         "type": 1,
         "href": "view/system/stuResources.html"
@@ -155,18 +147,18 @@
   },
   {
     "id": "echarts",
-    "title": "数据图表",
+    "title": "系统日志",
     "icon": "layui-icon layui-icon-chart",
     "type": 0,
     "href": "",
     "children": [
       {
         "id": 12121,
-        "title": "折线图",
+        "title": "登录日志",
         "icon": "layui-icon layui-icon-face-smile",
         "type": 1,
         "openType": "_iframe",
-        "href": "view/echarts/line.html"
+        "href": "view/system/log.html"
       },
       {
         "id": 121212,

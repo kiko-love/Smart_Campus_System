@@ -1,6 +1,7 @@
 package com.scs.service.impl;
 
 import com.scs.dao.UserDao;
+import com.scs.pojo.LogOB;
 import com.scs.pojo.User;
 import com.scs.service.UserService;
 
@@ -71,5 +72,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> searchAccount(String username) {
         return userDao.searchAccount(username);
+    }
+
+    @Override
+    public int addLogRecord(LogOB logOB) {
+        return userDao.addLogRecord(logOB);
+    }
+
+    @Override
+    public List<LogOB> getLogRecords() {
+        return userDao.getLogRecords();
     }
 }

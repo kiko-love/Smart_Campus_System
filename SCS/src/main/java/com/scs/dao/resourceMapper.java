@@ -1,11 +1,10 @@
 package com.scs.dao;
 
+import com.scs.pojo.FocusResInfoOB;
 import com.scs.pojo.courseTeaOfFocusOB;
+import com.scs.pojo.myResource;
 import com.scs.pojo.resource;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -125,6 +124,15 @@ public interface resourceMapper {
     @Select("select * from resource where TeacherId=#{arg0} and " +
             "courseName like '%${arg1}' or courseName like '${arg1}%' or courseName like '%${arg1}%'")
     List<resource> getResInfoByCourse(String teacherId, String courseName);
+
+
+    /**
+     * 搜索课程资源
+     * @param key
+     * @return
+     */
+    List<courseTeaOfFocusOB> selectCourseRes(@Param(value = "key")String key);
+
 
     /**
      * 获取可关注资源

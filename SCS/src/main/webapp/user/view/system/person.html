@@ -33,6 +33,31 @@
         border: 1px solid #4c4c4c;
         box-shadow: 1px 1px 2px 4px rgba(0,0,0,0.1);
     }
+
+    userAvatar:after{
+        position:absolute;
+        width:115px;
+        height:115px;
+        content:"";
+        display:block;
+        top:0;
+        left:0;
+        background:url('../../admin/images/news.png');
+        background-size:100%;
+    }
+
+
+    .newPic:after{
+        position:absolute;
+        width:70px;
+        height:65px;
+        content:"";
+        display:block;
+        top:0;
+        left:0;
+        background:url('../../admin/images/news.png');
+        background-size:100%;
+    }
 </style>
 <body class="pear-container">
 <div class="layui-row layui-col-space10">
@@ -84,10 +109,11 @@
 <script src="../../../static/layui/layui.js"></script>
 <script>
     layui.use(['jquery', 'element', 'layer'], function () {
-        var element = layui.element,
+        let element = layui.element,
             layer = layui.layer,
             $ = layui.jquery;
         let MODULE_PATH = "operate/";
+
         $("#userAvatar").attr("src", parent.layui.$(".layui-nav-img").attr("src"));
         $('#userInfoHead_name').html(sessionStorage.getItem("username"));
         window.callback = function (data) {
@@ -106,7 +132,7 @@
                     news.innerHTML = '';
                     for (let i = 0; i < newsNum; i++) {
                         news.innerHTML = news.innerHTML + '<div class="layui-col-md1">\n' +
-                            '<img src=\"' + data.data[i].imgsrc + '\" style="width: 70px;height: 65px;border-radius: 2px;" />\n' +
+                            '<img class="newPic" src=\"' + data.data[i].imgsrc + '\" style="width: 70px;height: 65px;border-radius: 2px;" />\n' +
                             '</div>\n' +
                             '<div class="layui-col-md11 list-item" style="height: 80px;">\n' +
                             '<div class="title" style="font-weight: 600">'
